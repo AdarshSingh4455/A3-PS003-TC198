@@ -67,7 +67,7 @@ The platform combines spatio-temporal graph neural networks (`Graph+LSTM`), a mu
 
 ### Federated Learning Layer (`backend/federated/service.py` & `ml/federated/`)
 - **Partitions**: 4 Regional FL Clients mapped to geographic sectors (`REGION_A` North-East, `REGION_B` South-East, `REGION_C` Central-West, `REGION_D` North-West).
-- **Aggregation**: Federated Averaging (`FedAvg`) weighted by regional sample target counts ($n_i$).
+- **Aggregation**: Federated Averaging (`FedAvg`) weighted by regional valid sample target counts ($n_i$, total 18,429,761: Region A: 4,221,681 [$w \approx 0.229069$], Region B: 5,107,193 [$w \approx 0.277117$], Region C: 5,150,335 [$w \approx 0.279458$], Region D: 3,950,552 [$w \approx 0.214357$]).
 - **Best Model Selection**: Round 8 validation-selected model (`global_best.pt`, 111,047 bytes).
 
 ---

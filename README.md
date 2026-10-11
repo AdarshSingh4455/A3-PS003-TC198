@@ -139,7 +139,7 @@ Evaluated over 6,832 test set samples:
 ## 8. Federated Learning (Phase 8 Simulation)
 
 - **Regional FL Clients**: 4 Subgraphs (Client A: 48, Client B: 57, Client C: 58, Client D: 44 sensors).
-- **Algorithm**: Federated Averaging (`FedAvg`) weighted by target counts ($n_i$).
+- **Algorithm**: Federated Averaging (`FedAvg`) weighted by regional valid target counts ($n_i$, total 18,429,761: Client A: 4,221,681 [$w \approx 0.229069$], Client B: 5,107,193 [$w \approx 0.277117$], Client C: 5,150,335 [$w \approx 0.279458$], Client D: 3,950,552 [$w \approx 0.214357$]).
 - **Best Validation Round**: **Round 8** (Validation MAE = **3.1536 mph**).
 - **Final FL Test Metrics**: **MAE = 3.5322 mph**, **RMSE = 7.0956 mph**, **MAPE = 9.99%**.
 - **FL Gap**: Full-participation FedAvg achieved 3.5322 mph test MAE, 2.75% higher (+0.0944 mph) than the frozen centralized Graph+LSTM reference baseline of 3.4378 mph under the evaluated regional federated setup.
@@ -236,7 +236,9 @@ npm run build
   - Raw Size: **111,119 bytes** | SHA-256: `702cb2bb9406aa36ec25639121377bf939acdb1906370997ccd792f70cf1f384`
 - **Federated Checkpoint**: [data/processed/metr-la/federated/checkpoints/global_best.pt](file:///c:/Users/shaur/OneDrive/Desktop/PS-003/data/processed/metr-la/federated/checkpoints/global_best.pt)
   - Raw Size: **111,047 bytes** | SHA-256: `24710dae0fe0554ca8111ad21e05de03b69a282f0b8d8868a1433ba6fd9c2930`
-- **Canonical Regions Checksum**: `ad064c643b6eb30cf9f7ef57cce71391ac4d94f7e41529dfcf4f0b1cd46e4ff2`
+- **Region Partitions**: [data/processed/metr-la/regions.json](file:///c:/Users/shaur/OneDrive/Desktop/PS-003/data/processed/metr-la/regions.json)
+  - Raw File SHA-256: `3af9827ff16eea2c8469dcfd3f712e7a9074d1ab10ef61c9ee78f99e9b5463b3`
+  - Canonical Content Checksum (`json.dumps(sort_keys=True)`): `ad064c643b6eb30cf9f7ef57cce71391ac4d94f7e41529dfcf4f0b1cd46e4ff2`
 
 ---
 

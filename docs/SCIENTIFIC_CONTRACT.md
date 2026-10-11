@@ -144,7 +144,7 @@ Under the objective space $(\min(\text{payload}), \min(\text{MAE}))$:
 
 ### 7.5 Sensor-Share Factor vs Canonical FedAvg Weight
 - Regional sensor-share factors ($A=48/207 \approx 0.2319$, $B=57/207 \approx 0.2754$, $C=58/207 \approx 0.2802$, $D=44/207 \approx 0.2126$) are **DERIVED / HEURISTIC** spatial parameters used only in CCV weighting.
-- Canonical FedAvg weights ($A \approx 0.229069$, $B \approx 0.277117$, $C \approx 0.279458$, $D \approx 0.214357$) are strictly sample-count proportions computed from 18,429,761 valid training targets.
+- Canonical FedAvg weights ($A \approx 0.229069$, $B \approx 0.277117$, $C \approx 0.279458$, $D \approx 0.214357$) are strictly sample-count proportions computed from 18,429,761 valid training targets across the four regions (Region A: 4,221,681; Region B: 5,107,193; Region C: 5,150,335; Region D: 3,950,552).
 
 ---
 
@@ -172,7 +172,8 @@ The platform strictly maintains the following negative disclaimers:
 The following scientific artifact hashes are immutable and verified:
 - `graph_lstm_best.pt`: `702cb2bb9406aa36ec25639121377bf939acdb1906370997ccd792f70cf1f384`
 - `global_best.pt`: `24710dae0fe0554ca8111ad21e05de03b69a282f0b8d8868a1433ba6fd9c2930`
-- `regions.json` canonical checksum: `ad064c643b6eb30cf9f7ef57cce71391ac4d94f7e41529dfcf4f0b1cd46e4ff2`
+- `regions.json` Raw File SHA-256: `3af9827ff16eea2c8469dcfd3f712e7a9074d1ab10ef61c9ee78f99e9b5463b3`
+- `regions.json` Canonical Content Checksum: `ad064c643b6eb30cf9f7ef57cce71391ac4d94f7e41529dfcf4f0b1cd46e4ff2`
 - Runtime Scaler: mean `58.584258`, standard deviation `12.822883`.
 
 
