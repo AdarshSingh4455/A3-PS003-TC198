@@ -363,25 +363,34 @@ Comprehensive project documentation is maintained in the [`docs/`](docs/) direct
 
 FedAvg – Federated Learning
          https://proceedings.mlr.press/v54/mcmahan17a.html
+         
 DCRNN – Traffic Forecasting
         https://proceedings.mlr.press/v54/mcmahan17a.html
+        
 STGCN – Spatio-Temporal Graph Convolutional Network
          https://www.ijcai.org/proceedings/2018/0505.pdf
+         
  Communication-Efficient Federated Learning on Non-IID Data
         https://ieeexplore.ieee.org/document/8889996
+        
 LSTM – Original Research Paper
         https://arxiv.org/abs/1607.00133
+        
 METR-LA Dataset / DCRNN Repository
          https://github.com/liyaguang/DCRNN
+         
 Differential Privacy / DP-SGD
         https://arxiv.org/abs/1607.00133
+        
 Opacus – Differential Privacy for PyTorch
        https://opacus.ai/
+       
 Secure Aggregation for Federated Learning
         https://research.google/pubs/practical-secure-aggregation-for-privacy-preserving-machine-learning/
+        
 Caltrans PeMS Data Source
        https://dot.ca.gov/programs/traffic-operations/mpr/pems-source
-<img width="1544" height="906" alt="image" src="https://github.com/user-attachments/assets/639ad551-eeff-49e7-8d90-f7081536bef2" />
+
 
 
 ---
