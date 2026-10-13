@@ -27,19 +27,19 @@ export default function TopReplayBar() {
       <div className="max-w-[1720px] mx-auto flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2.5">
         {/* Left Section: Replay Status & Timestamp */}
         <div className="flex items-center gap-3 shrink-0">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-bold tracking-wider uppercase bg-blue-500/10 text-blue-700 dark:text-cyan-300 border border-blue-500/30">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-xs font-semibold tracking-wider uppercase bg-blue-500/10 text-blue-700 dark:text-cyan-300 border border-blue-500/30">
             <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
             HISTORICAL REPLAY
           </span>
 
-          <div className="flex items-center gap-2 font-mono text-xs">
-            <div className="flex items-center gap-1.5 text-slate-800 dark:text-[#F7FAFF] font-semibold px-2 py-0.5 rounded bg-white dark:bg-[#081827] border border-slate-200 dark:border-[#17364E]">
-              <Calendar className="w-3 h-3 text-cyan-400" />
+          <div className="flex items-center gap-2 font-mono text-xs tabular-nums">
+            <div className="flex items-center gap-1.5 text-slate-800 dark:text-[#F5F8FC] font-semibold px-2 py-0.5 rounded bg-white dark:bg-[#081827] border border-slate-200 dark:border-[#17364E]">
+              <Calendar className="w-3.5 h-3.5 text-cyan-400" />
               <span>{timestampStr}</span>
             </div>
 
-            <span className="text-[11px] text-slate-500 dark:text-[#7F96AA]">
-              Index <span className="font-bold text-slate-700 dark:text-[#BCD0E2]">{timeIndex}</span> / {maxTimeSteps - 1}
+            <span className="hidden sm:inline text-xs text-slate-500 dark:text-[#8295A8] font-medium">
+              Index <span className="font-bold text-slate-700 dark:text-[#B8C7D8]">{timeIndex}</span> / {maxTimeSteps - 1}
             </span>
           </div>
         </div>
@@ -49,7 +49,7 @@ export default function TopReplayBar() {
           {/* Step Backward Button */}
           <button
             onClick={stepBackward}
-            className="p-1 rounded-md text-slate-600 dark:text-[#BCD0E2] hover:bg-slate-200 dark:hover:bg-[#102941] transition-colors"
+            className="p-1 rounded-md text-slate-600 dark:text-[#B8C7D8] hover:bg-slate-200 dark:hover:bg-[#102941] transition-colors"
             title="Step Backward (5 min)"
             aria-label="Step backward 5 minutes"
           >
@@ -73,7 +73,7 @@ export default function TopReplayBar() {
           {/* Step Forward Button */}
           <button
             onClick={stepForward}
-            className="p-1 rounded-md text-slate-600 dark:text-[#BCD0E2] hover:bg-slate-200 dark:hover:bg-[#102941] transition-colors"
+            className="p-1 rounded-md text-slate-600 dark:text-[#B8C7D8] hover:bg-slate-200 dark:hover:bg-[#102941] transition-colors"
             title="Step Forward (5 min)"
             aria-label="Step forward 5 minutes"
           >
@@ -96,16 +96,16 @@ export default function TopReplayBar() {
 
         {/* Right Section: Replay Speed Multiplier Selector */}
         <div className="flex items-center gap-2 shrink-0">
-          <span className="hidden sm:inline text-[11px] text-slate-500 dark:text-[#7F96AA]">Replay Speed:</span>
+          <span className="hidden sm:inline text-xs text-slate-500 dark:text-[#8295A8] font-medium">Replay Speed:</span>
           <div className="flex items-center gap-0.5 rounded-lg bg-white dark:bg-[#081827] p-0.5 border border-slate-200 dark:border-[#17364E]">
             {[1, 2, 5, 10].map((s) => (
               <button
                 key={s}
                 onClick={() => setReplaySpeed(s)}
-                className={`px-2 py-0.5 text-[10px] font-mono font-bold rounded transition-colors ${
+                className={`px-2.5 py-0.5 text-xs font-mono font-semibold rounded transition-colors ${
                   replaySpeed === s
                     ? 'bg-blue-600 text-white shadow-xs'
-                    : 'text-slate-500 dark:text-[#7F96AA] hover:text-slate-900 dark:hover:text-[#F7FAFF]'
+                    : 'text-slate-500 dark:text-[#8295A8] hover:text-slate-900 dark:hover:text-[#F5F8FC]'
                 }`}
               >
                 {s}x

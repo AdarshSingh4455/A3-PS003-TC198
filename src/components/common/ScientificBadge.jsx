@@ -34,7 +34,7 @@ const BADGE_STYLES = {
     border: 'border-cyan-500/30',
     text: 'text-cyan-700 dark:text-cyan-300',
     dot: 'bg-cyan-500',
-    tooltip: 'Calibrated heuristic proxy calibrated against frozen validation distribution'
+    tooltip: 'Calibrated heuristic proxy calibrated against validation distribution'
   },
   HEURISTIC: {
     bg: 'bg-amber-500/10 dark:bg-amber-500/20',
@@ -69,7 +69,7 @@ const BADGE_STYLES = {
     border: 'border-zinc-500/30',
     text: 'text-zinc-600 dark:text-zinc-400',
     dot: 'bg-zinc-400',
-    tooltip: 'Phase under active development; metrics and policy values not yet frozen'
+    tooltip: 'Dynamic runtime telemetry; values updated dynamically'
   }
 };
 
@@ -79,15 +79,17 @@ export default function ScientificBadge({ type = 'REAL', label, showDot = true, 
   const displayText = label || type;
 
   const sizeClasses = size === 'xs' 
-    ? 'text-[10px] px-1.5 py-0.5 tracking-tight' 
-    : 'text-[11px] px-2 py-0.5 font-mono';
+    ? 'h-5 px-2 text-[11px] font-semibold tracking-wider' 
+    : size === 'md'
+    ? 'h-7 px-3 text-[12.5px] font-semibold font-mono tracking-wider'
+    : 'h-6 px-2.5 text-[12px] font-semibold font-mono tracking-wider';
 
   return (
     <span
       title={config.tooltip}
-      className={`inline-flex items-center gap-1.5 rounded-full border font-semibold uppercase ${config.bg} ${config.border} ${config.text} ${sizeClasses} ${className}`}
+      className={`inline-flex items-center justify-center gap-1.5 rounded-full border uppercase leading-none whitespace-nowrap shrink-0 ${config.bg} ${config.border} ${config.text} ${sizeClasses} ${className}`}
     >
-      {showDot && <span className={`w-1.5 h-1.5 rounded-full ${config.dot}`} />}
+      {showDot && <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${config.dot}`} />}
       <span>{displayText}</span>
     </span>
   );

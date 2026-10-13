@@ -93,15 +93,35 @@ export async function fetchNeedScore(sensorId = "773869") {
   if (!res.ok) throw new Error(`Need Score Fetch Failed for '${sensorId}': ${res.status} ${res.statusText}`);
   const data = await res.json();
 
+  const factorWeights = {
+    spatialInfluence: 0.15,
+    uncertaintyProxy: 0.20,
+    spatialSpeedDisagreement: 0.20,
+    trafficDrift: 0.15,
+    freshness: 0.10,
+    informationDebt: 0.10,
+    coverageNeed: 0.10,
+    sensorHealth: 0.05,
+    redundancyPenalty: 0.05
+  };
+
   let factorsList = [];
   if (data.factors && typeof data.factors === 'object' && !Array.isArray(data.factors)) {
-    factorsList = Object.entries(data.factors).map(([k, val]) => {
+    factorsList = Object.entries(data.factors)
+      .filter(([k]) => factorWeights[k] !== undefined)
+      .map(([k, val]) => {
       const isNeg = k === 'redundancyPenalty';
       const numVal = typeof val === 'number' ? val : (parseFloat(val) || 0);
+      const coeff = factorWeights[k] || 0.10;
+      const weightedVal = isNeg ? -Math.abs(numVal * coeff) : numVal * coeff;
       return {
+        key: k,
         name: factorNames[k] || k,
-        value: isNeg ? -Math.abs(numVal) : numVal,
-        weight: isNeg ? `-${Math.abs(numVal).toFixed(2)}` : `+${numVal.toFixed(2)}`
+        value: numVal,
+        coefficient: coeff,
+        weightedContribution: weightedVal,
+        weight: isNeg ? `-${Math.abs(weightedVal).toFixed(2)}` : `+${weightedVal.toFixed(2)}`,
+        isNegative: isNeg
       };
     });
   } else if (Array.isArray(data.factors)) {
@@ -110,12 +130,14 @@ export async function fetchNeedScore(sensorId = "773869") {
 
   return {
     sensorId: data.sensorId || sensorId,
+    needScore: data.needScore,
     finalNeedScore: data.needScore,
     reasons: data.reasons || [],
     driftState: data.driftState || "normal",
     confidenceLevel: data.confidenceLevel || "MEDIUM",
     residualUncertaintyMph: data.residualUncertaintyMph,
-    factors: factorsList
+    factors: factorsList,
+    rawFactors: data.factors
   };
 }
 
@@ -137,10 +159,11 @@ export async function fetchBlindSpots() {
   if (!res.ok) throw new Error(`Blind Spots Fetch Failed: ${res.status} ${res.statusText}`);
   const data = await res.json();
   return {
-    coveragePercent: data.overallCoveragePercent || 85,
-    coveredRoads: data.coveredRoads || 176,
-    uncoveredRoads: data.uncoveredRoads || 31,
+    coveragePercent: data.overallCoveragePercent || 75,
+    coveredRoads: data.coveredRoads || 155,
+    uncoveredRoads: data.uncoveredRoads || 52,
     blindSpots: data.blindSpots ? data.blindSpots.length : 0,
+    blindSpotItems: data.blindSpots || [],
     sectorSummaries: data.sectorSummaries || []
   };
 }
@@ -355,5 +378,15 @@ export const getFederatedClients = fetchFederatedClients;
 export const getFederatedRounds = fetchFederatedRounds;
 export const getFederatedMetrics = fetchFederatedMetrics;
 export const getFederatedCommunication = fetchFederatedCommunication;
+
+export async function sendAssistantMessage(message, history = []) {
+  const res = await apiFetch(`${API_BASE}/assistant/chat`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message, history })
+  });
+  if (!res.ok) throw new Error(`Assistant Service Error: ${res.status} ${res.statusText}`);
+  return await res.json();
+}
 
 

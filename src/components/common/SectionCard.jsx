@@ -19,11 +19,11 @@ export default function SectionCard({
               </div>
             )}
             <div>
-              <h3 className="text-sm font-bold text-slate-800 dark:text-[#F7FAFF] tracking-tight">{title}</h3>
-              {subtitle && <p className="text-xs text-slate-500 dark:text-[#7F96AA] mt-0.5">{subtitle}</p>}
+              <h3 className="text-[16px] font-semibold text-slate-900 dark:text-[#F5F8FC] tracking-normal leading-snug">{title}</h3>
+              {subtitle && <p className="text-[13px] text-slate-500 dark:text-[#B8C7D8] font-normal leading-normal mt-0.5">{subtitle}</p>}
             </div>
           </div>
-          {action && <div>{action}</div>}
+          {action && <div className="shrink-0">{action}</div>}
         </div>
       )}
       <div className="flex-1">{children}</div>

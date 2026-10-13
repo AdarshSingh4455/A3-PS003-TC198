@@ -33,7 +33,7 @@ export default function Navbar() {
           <div>
             <span className="text-base font-bold text-slate-900 dark:text-white tracking-tight">TrafficPulse-X</span>
             <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
-              Evidence-on-Demand Federated Traffic-Flow Prediction
+              Evidence-on-Demand Federated Traffic Speed Prediction
             </p>
           </div>
         </div>

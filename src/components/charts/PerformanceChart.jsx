@@ -128,20 +128,20 @@ export default function PerformanceChart() {
       title="Model Benchmark Comparison (Test MAE in MPH)"
       icon={TrendingUp}
       action={<ScientificBadge type="MODEL OUTPUT" label="TEST EVALUATION" />}
-      className="h-full flex flex-col justify-between"
+      className="h-full flex flex-col"
     >
-      <div className="space-y-3">
+      <div className="space-y-4">
         {/* Horizon Tabs */}
         <div className="flex items-center justify-between">
           <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
-          <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-500/10 border border-amber-500/20 text-amber-700 dark:text-amber-400 text-[11px] font-mono">
+          <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-500/10 border border-amber-500/20 text-amber-700 dark:text-amber-400 text-xs font-mono font-medium">
             <Trophy className="w-3.5 h-3.5" />
             <span>Winner: <strong>{currentWinner.name}</strong> ({currentWinner.mae.toFixed(4)} mph)</span>
           </div>
         </div>
 
         {/* Bar Chart comparing 7 models */}
-        <div className="h-[210px] w-full pt-1">
+        <div className="h-[300px] lg:h-[340px] w-full pt-1">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={currentList} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <CartesianGrid 
@@ -152,13 +152,17 @@ export default function PerformanceChart() {
               <XAxis 
                 dataKey="name" 
                 stroke={isDark ? "#94a3b8" : "#64748b"} 
-                fontSize={10} 
+                fontSize={12} 
+                fontFamily="Inter, sans-serif"
+                fontWeight={500}
                 tickLine={false}
                 axisLine={{ stroke: isDark ? '#1e293b' : '#cbd5e1' }}
               />
               <YAxis 
                 stroke={isDark ? "#94a3b8" : "#64748b"} 
-                fontSize={10} 
+                fontSize={12} 
+                fontFamily="Inter, sans-serif"
+                fontWeight={500}
                 domain={[0, 7]} 
                 ticks={[0, 2, 4, 6]}
                 tickLine={false}
@@ -169,13 +173,13 @@ export default function PerformanceChart() {
                   if (active && payload && payload.length) {
                     const data = payload[0].payload;
                     return (
-                      <div className="p-2.5 rounded-xl bg-slate-900/95 dark:bg-[#0c162c] border border-slate-700 text-white text-xs font-mono shadow-xl backdrop-blur-md space-y-1">
-                        <div className="font-bold flex items-center gap-1.5 text-slate-100">
-                          {data.isWinner && <Trophy className="w-3.5 h-3.5 text-amber-400" />}
+                      <div className="p-2.5 rounded-xl bg-white dark:bg-[#0c162c] border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-xs font-mono shadow-xl backdrop-blur-md space-y-1">
+                        <div className="font-bold flex items-center gap-1.5 text-slate-900 dark:text-slate-100">
+                          {data.isWinner && <Trophy className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />}
                           <span>{data.name}</span>
                         </div>
-                        <div className="text-emerald-400 mt-1">MAE: {data.mae.toFixed(4)} mph</div>
-                        {data.isWinner && <div className="text-amber-400 text-[10px] mt-0.5">Top Performer</div>}
+                        <div className="text-emerald-600 dark:text-emerald-400 mt-1">MAE: {data.mae.toFixed(4)} mph</div>
+                        {data.isWinner && <div className="text-amber-600 dark:text-amber-400 text-xs font-semibold mt-0.5">Top Performer</div>}
                       </div>
                     );
                   }

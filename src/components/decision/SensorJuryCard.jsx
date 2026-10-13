@@ -50,43 +50,43 @@ export default function SensorJuryCard({ data, sensorId }) {
       subtitle="Multi-agent deliberation combining model uncertainty, drift, and spatial neighbors"
       icon={Scale}
       action={<ScientificBadge type="DERIVED STATE" label="JURY CONSENSUS" size="xs" />}
-      className="h-full flex flex-col justify-between"
+      className="flex flex-col"
     >
       <div className="space-y-3.5">
         {/* Consensus Decision Badge Banner */}
-        <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+        <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#071624] border border-slate-200 dark:border-[#17364E] flex items-center justify-between">
           <div>
-            <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500 dark:text-slate-400 block">
+            <span className="text-xs uppercase font-semibold tracking-wider text-slate-500 dark:text-[#8295A8] block">
               Consensus Finding
             </span>
-            <div className={`mt-1 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-mono font-bold border ${style.bg}`}>
-              <DecisionIcon className="w-3.5 h-3.5" />
+            <div className={`mt-1.5 inline-flex items-center gap-1.5 h-6 px-2.5 rounded-md text-xs font-mono font-bold border leading-none whitespace-nowrap shrink-0 ${style.bg}`}>
+              <DecisionIcon className="w-3.5 h-3.5 shrink-0" />
               <span>{style.label}</span>
             </div>
           </div>
           <div className="text-right">
-            <span className="text-[10px] text-slate-500 dark:text-slate-400 block">Confidence</span>
-            <span className="text-lg font-bold font-mono text-emerald-600 dark:text-emerald-400">
+            <span className="text-xs text-slate-500 dark:text-[#8295A8] block font-medium">Confidence</span>
+            <span className="text-[22px] font-bold font-mono text-emerald-600 dark:text-emerald-400 tabular-nums leading-tight">
               {jury.juryConfidence || '75%'}
             </span>
           </div>
         </div>
 
         {/* Reason summary */}
-        <p className="text-xs text-slate-700 dark:text-slate-300 leading-snug">
+        <p className="text-xs text-slate-700 dark:text-[#B8C7D8] leading-normal font-medium">
           {jury.reason}
         </p>
 
         {/* Supporting Signals */}
         {jury.supportingSignals && jury.supportingSignals.length > 0 && (
           <div className="space-y-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+            <span className="text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
               Supporting Signals:
             </span>
             <ul className="space-y-1">
               {jury.supportingSignals.map((s, idx) => (
-                <li key={idx} className="flex items-start gap-1.5 text-[11px] text-slate-600 dark:text-slate-400">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1 flex-shrink-0" />
+                <li key={idx} className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-[#B8C7D8] leading-normal">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 flex-shrink-0" />
                   <span>{s}</span>
                 </li>
               ))}
@@ -96,14 +96,14 @@ export default function SensorJuryCard({ data, sensorId }) {
 
         {/* Conflicting Signals */}
         {jury.conflictingSignals && jury.conflictingSignals.length > 0 && (
-          <div className="space-y-1 pt-1 border-t border-slate-100 dark:border-slate-800">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+          <div className="space-y-1 pt-1 border-t border-slate-100 dark:border-[#17364E]">
+            <span className="text-xs font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400">
               Conflicting Evidence:
             </span>
             <ul className="space-y-1">
               {jury.conflictingSignals.map((c, idx) => (
-                <li key={idx} className="flex items-start gap-1.5 text-[11px] text-slate-600 dark:text-slate-400">
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1 flex-shrink-0" />
+                <li key={idx} className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-[#B8C7D8] leading-normal">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5 flex-shrink-0" />
                   <span>{c}</span>
                 </li>
               ))}

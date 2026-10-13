@@ -4,6 +4,8 @@ const ThemeContext = createContext();
 
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(() => {
+    const urlTheme = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('theme') : null;
+    if (urlTheme === 'light' || urlTheme === 'dark') return urlTheme;
     return localStorage.getItem('tp_theme') || 'dark';
   });
 

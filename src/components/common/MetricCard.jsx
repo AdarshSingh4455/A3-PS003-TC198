@@ -37,25 +37,40 @@ export default function MetricCard({
   const CardIcon = config.Icon;
 
   return (
-    <div className="bg-white dark:bg-[#081827] border border-slate-200 dark:border-[#17364E] rounded-xl p-4 sm:p-4.5 flex flex-col justify-between hover:border-slate-300 dark:hover:border-[#24506D] hover:-translate-y-0.5 transition-all duration-200 shadow-xs dark:shadow-md dark:shadow-black/25">
+    <div className="bg-white dark:bg-[#081827] border border-slate-200 dark:border-[#17364E] rounded-xl p-4 sm:p-5 flex flex-col justify-between hover:border-slate-300 dark:hover:border-[#24506D] transition-colors duration-150 shadow-xs dark:shadow-md dark:shadow-black/25">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-xs font-semibold text-slate-500 dark:text-[#7F96AA] tracking-tight">{label}</span>
-        <div className={`w-8 h-8 rounded-lg flex items-center justify-center border ${config.bg} ${config.border} ${config.text} shadow-xs`}>
+        <span className="text-[13.5px] font-semibold text-slate-600 dark:text-[#B8C7D8] tracking-tight">{label}</span>
+        <div className={`w-8 h-8 rounded-lg flex items-center justify-center border ${config.bg} ${config.border} ${config.text} shadow-xs shrink-0`}>
           <CardIcon className="w-4 h-4" />
         </div>
       </div>
 
       <div>
-        <div className="text-2xl sm:text-[26px] font-extrabold font-mono tracking-tight text-slate-900 dark:text-[#F7FAFF] mb-1 tabular-nums">
-          {value}
+        <div className="text-[28px] sm:text-[32px] font-bold font-mono tracking-tight text-slate-900 dark:text-[#F5F8FC] mb-1.5 tabular-nums leading-none whitespace-nowrap overflow-hidden text-ellipsis">
+          {(() => {
+            if (typeof value === 'string') {
+              const parts = value.trim().split(/\s+/);
+              if (parts.length === 2 && /^[~+]?[\d.,]+%?$/.test(parts[0])) {
+                return (
+                  <span className="inline-flex items-baseline gap-1.5 whitespace-nowrap">
+                    <span className="font-bold">{parts[0]}</span>
+                    <span className="text-[16px] sm:text-[18px] font-medium text-slate-500 dark:text-[#8295A8]">
+                      {parts[1]}
+                    </span>
+                  </span>
+                );
+              }
+            }
+            return value;
+          })()}
         </div>
         {subtext && (
-          <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-[#BCD0E2] font-medium">
+          <div className="flex items-center gap-1.5 text-[13px] text-slate-600 dark:text-[#8295A8] font-medium leading-normal">
             {isTrendUp && (
-              <span className={`inline-flex items-center font-bold ${
+              <span className={`inline-flex items-center font-semibold ${
                 variant === 'rose' ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'
               }`}>
-                <ArrowUp className="w-3 h-3 mr-0.5" />
+                <ArrowUp className="w-3.5 h-3.5 mr-0.5" />
                 {subtext}
               </span>
             )}

@@ -33,7 +33,7 @@ export default function StatusBadge({ status, text }) {
   const label = text || labels[normalized] || status;
 
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border ${badgeClass}`}>
+    <span className={`inline-flex items-center justify-center h-6 px-2.5 rounded-md text-[11.5px] font-semibold border leading-none whitespace-nowrap shrink-0 ${badgeClass}`}>
       {label}
     </span>
   );

@@ -32,7 +32,7 @@ export default function PhysicsGateCard({ data, sensorId }) {
       subtitle="Deterministic kinematic filters gating anomalous loop detector telemetry"
       icon={allPassed ? ShieldCheck : ShieldAlert}
       action={<ScientificBadge type="HEURISTIC" label="KINEMATIC GATE" size="xs" />}
-      className="h-full flex flex-col justify-between"
+      className="flex flex-col"
     >
       <div className="space-y-3.5">
         {/* Gate Status Banner */}
@@ -51,28 +51,31 @@ export default function PhysicsGateCard({ data, sensorId }) {
               <span className="font-bold text-xs font-mono block">
                 {allPassed ? 'ALL HEURISTIC CHECKS PASSED' : 'ANOMALY DETECTED BY GATE'}
               </span>
-              <span className="text-[11px] opacity-80 block">{physics.note}</span>
+              <span className="text-xs opacity-80 block mt-0.5">{physics.note}</span>
             </div>
           </div>
           <div className="text-right font-mono">
-            <span className="text-[10px] text-slate-500 block">Telemetry</span>
-            <span className="font-bold text-sm text-slate-900 dark:text-white">
-              {physics.currentSpeedMph} mph
-            </span>
+            <span className="text-xs text-slate-500 dark:text-[#8295A8] block font-medium">Telemetry</span>
+            <div className="flex items-baseline justify-end gap-1">
+              <span className="font-bold text-base text-slate-900 dark:text-white tabular-nums">
+                {physics.currentSpeedMph}
+              </span>
+              <span className="text-xs text-slate-500 dark:text-[#8295A8]">mph</span>
+            </div>
           </div>
         </div>
 
         {/* 3 Physical Consistency Checks */}
         <div className="space-y-2 text-xs font-mono">
           {/* Check 1: Speed Bound */}
-          <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+          <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-[#071624] border border-slate-200 dark:border-[#17364E] flex items-center justify-between">
             <div>
-              <span className="font-semibold text-slate-800 dark:text-slate-200 block">
+              <span className="font-semibold text-slate-800 dark:text-slate-200 block text-[13px]">
                 1. Highway Speed Boundary Check
               </span>
-              <span className="text-[10px] text-slate-500 block">Criterion: 0 &le; v &le; 85 mph</span>
+              <span className="text-xs text-slate-500 dark:text-[#8295A8] block mt-0.5">Criterion: 0 &le; v &le; 85 mph</span>
             </div>
-            <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
+            <span className={`inline-flex items-center justify-center h-6 px-2.5 rounded-md text-xs font-bold border leading-none whitespace-nowrap shrink-0 ${
               checks.validBoundsCheck
                 ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
                 : 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20'
@@ -82,14 +85,14 @@ export default function PhysicsGateCard({ data, sensorId }) {
           </div>
 
           {/* Check 2: Temporal Delta */}
-          <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+          <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-[#071624] border border-slate-200 dark:border-[#17364E] flex items-center justify-between">
             <div>
-              <span className="font-semibold text-slate-800 dark:text-slate-200 block">
+              <span className="font-semibold text-slate-800 dark:text-slate-200 block text-[13px]">
                 2. Step Acceleration Continuity (&Delta;t = 5 min)
               </span>
-              <span className="text-[10px] text-slate-500 block">Criterion: |&Delta;v| &le; 25 mph per 5-min step</span>
+              <span className="text-xs text-slate-500 dark:text-[#8295A8] block mt-0.5">Criterion: |&Delta;v| &le; 25 mph per 5-min step</span>
             </div>
-            <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
+            <span className={`inline-flex items-center justify-center h-6 px-2.5 rounded-md text-xs font-bold border leading-none whitespace-nowrap shrink-0 ${
               checks.stepDeltaCheck
                 ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
                 : 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20'
@@ -99,14 +102,14 @@ export default function PhysicsGateCard({ data, sensorId }) {
           </div>
 
           {/* Check 3: Spatial Neighbor Difference */}
-          <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+          <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-[#071624] border border-slate-200 dark:border-[#17364E] flex items-center justify-between">
             <div>
-              <span className="font-semibold text-slate-800 dark:text-slate-200 block">
+              <span className="font-semibold text-slate-800 dark:text-slate-200 block text-[13px]">
                 3. Spatial Neighbor Gradient Discrepancy
               </span>
-              <span className="text-[10px] text-slate-500 block">Criterion: |v_i - &lt;v_nbr&gt;| &le; 30 mph</span>
+              <span className="text-xs text-slate-500 dark:text-[#8295A8] block mt-0.5">Criterion: |v_i - &lt;v_nbr&gt;| &le; 30 mph</span>
             </div>
-            <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
+            <span className={`inline-flex items-center justify-center h-6 px-2.5 rounded-md text-xs font-bold border leading-none whitespace-nowrap shrink-0 ${
               checks.spatialNeighborCheck
                 ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
                 : 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20'

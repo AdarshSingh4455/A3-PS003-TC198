@@ -10,7 +10,7 @@ const FEATURE_PILLS = [
 
 export default function OverviewHero() {
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#081827] via-[#0B2033] to-[#04101A] border border-slate-200 dark:border-[#17364E] p-6 lg:p-7 shadow-lg shadow-black/20 transition-colors">
+    <div className="relative overflow-hidden rounded-2xl bg-white dark:bg-[#071727] border border-slate-200 dark:border-[#17364E] p-6 lg:p-7 shadow-sm dark:shadow-lg dark:shadow-black/20 transition-colors">
       {/* Decorative ambient highway line art overlay */}
       <div className="absolute inset-0 opacity-20 pointer-events-none">
         <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 800 200">
@@ -41,7 +41,7 @@ export default function OverviewHero() {
                 with Evidence-on-Demand Communication
               </span>
             </h1>
-            <p className="text-sm sm:text-base text-slate-600 dark:text-[#BCD0E2] font-medium leading-relaxed">
+            <p className="text-sm sm:text-base text-slate-600 dark:text-[#B8C7D8] font-medium leading-relaxed">
               Sense only what matters. Ask the next best question. Share only what helps.
             </p>
           </div>
@@ -53,7 +53,7 @@ export default function OverviewHero() {
               return (
                 <div
                   key={pill.id}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/80 dark:bg-[#081827]/90 border border-slate-200 dark:border-[#17364E] text-xs font-semibold text-slate-700 dark:text-[#F7FAFF] shadow-xs"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/80 dark:bg-[#081827]/90 border border-slate-200 dark:border-[#17364E] text-[13px] font-semibold text-slate-700 dark:text-[#F5F8FC] shadow-xs"
                 >
                   <span className={`p-1 rounded-md border ${pill.color}`}>
                     <Icon className="w-3.5 h-3.5" />
@@ -65,15 +65,15 @@ export default function OverviewHero() {
           </div>
         </div>
 
-        {/* Right Column: Research Statement Card */}
+        {/* Right Column: Platform Statement Card */}
         <div className="lg:col-span-4">
           <div className="p-4 sm:p-5 rounded-xl border border-slate-200 dark:border-[#17364E] bg-white/60 dark:bg-[#081827]/80 backdrop-blur-md shadow-md space-y-2">
             <Quote className="w-5 h-5 text-cyan-400 mb-1 rotate-180" />
-            <p className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-[#F7FAFF] leading-snug">
+            <p className="text-[13.5px] sm:text-[14px] font-semibold text-slate-800 dark:text-[#F5F8FC] leading-snug">
               "From traffic observations to intelligent evidence selection and collaborative forecasting."
             </p>
-            <div className="pt-2 border-t border-slate-200 dark:border-[#17364E]/80 flex items-center justify-between text-[11px] font-mono text-slate-500 dark:text-[#7F96AA]">
-              <span>Research Console</span>
+            <div className="pt-2 border-t border-slate-200 dark:border-[#17364E]/80 flex items-center justify-between text-xs font-mono font-medium text-slate-500 dark:text-[#8295A8]">
+              <span>Operations Console</span>
               <span>METR-LA Replay</span>
             </div>
           </div>

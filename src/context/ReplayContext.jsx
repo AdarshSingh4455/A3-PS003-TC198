@@ -8,8 +8,18 @@ const BASE_TIMESTAMP = new Date('2012-03-01T00:00:00Z').getTime();
 
 export function ReplayProvider({ children }) {
   const [timeIndex, setTimeIndex] = useState(0);
+  const [selectedSensorId, setSelectedSensorId] = useState('773869');
   const [isPlaying, setIsPlaying] = useState(false);
-  const [replaySpeed, setReplaySpeed] = useState(1); // 1x, 2x, 5x, 10x
+  const [replaySpeed, setReplaySpeedState] = useState(1); // Default 1x (Normal)
+
+  const setReplaySpeed = useCallback((val) => {
+    const num = Number(val);
+    if ([0.5, 1, 2].includes(num)) {
+      setReplaySpeedState(num);
+    } else {
+      setReplaySpeedState(1);
+    }
+  }, []);
   const [backendStatus, setBackendStatus] = useState('CONNECTED'); // CONNECTED or UNAVAILABLE
   const [timeSemantics, setTimeSemantics] = useState({
     dayName: 'Thursday',
@@ -106,6 +116,8 @@ export function ReplayProvider({ children }) {
       value={{
         timeIndex,
         setTimeIndex,
+        selectedSensorId,
+        setSelectedSensorId,
         maxTimeSteps: MAX_STEPS,
         timestampStr,
         timeSemantics,

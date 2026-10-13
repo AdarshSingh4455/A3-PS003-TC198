@@ -21,8 +21,9 @@ import {
 } from 'recharts';
 
 import { fetchFederatedRounds } from '../../services/api';
-import ScientificBadge from '../../components/common/ScientificBadge';
+import { useTheme } from '../../context/ThemeContext';
 import MetricCard from '../../components/common/MetricCard';
+import IndiaCaseStudiesCard from '../../components/federated/IndiaCaseStudiesCard';
 
 const FROZEN_CLIENT_PARTITIONS = [
   {
@@ -76,6 +77,7 @@ const FROZEN_CLIENT_PARTITIONS = [
 ];
 
 export default function FederatedLearning() {
+  const { isDark } = useTheme();
   const [error, setError] = useState(null);
   const [roundsData, setRoundsData] = useState(null);
 
@@ -157,28 +159,20 @@ export default function FederatedLearning() {
   return (
     <div className="space-y-5 pb-10">
       {/* Header Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#081827] via-[#0B2033] to-[#04101A] border border-slate-200 dark:border-[#17364E] p-5 lg:p-6 shadow-md transition-colors">
+      <div className="relative overflow-hidden rounded-2xl bg-white dark:bg-[#071727] border border-slate-200 dark:border-[#17364E] p-5 lg:p-6 shadow-xs dark:shadow-md transition-colors">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20">
+              <div className="p-2 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">
                 <Network className="w-5 h-5" />
               </div>
-              <h1 className="text-xl lg:text-2xl font-extrabold text-slate-900 dark:text-[#F7FAFF] tracking-tight">
-                Federated Learning Simulation Console
+              <h1 className="text-xl lg:text-2xl font-extrabold text-slate-900 dark:text-[#F5F8FC] tracking-tight">
+                Federated Learning
               </h1>
-              <ScientificBadge type="MODEL OUTPUT" label="FEDERATED SIMULATION" />
             </div>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-[#BCD0E2] font-medium max-w-2xl">
-              Four-client regional FedAvg simulation over METR-LA partitions with exact aggregation weight provenance.
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-[#B8C7D8] font-medium max-w-2xl">
+              Regional collaborative model training across four traffic zones.
             </p>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-mono font-bold bg-purple-500/10 text-purple-400 border border-purple-500/30">
-              <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
-              FEDERATED LEARNING SIMULATION
-            </span>
           </div>
         </div>
       </div>
@@ -223,7 +217,7 @@ export default function FederatedLearning() {
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <span className="font-bold text-xs font-mono text-slate-900 dark:text-white">
-                    {c.clientId}
+                    {c.clientId.replace('_', ' ')}
                   </span>
                   <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded font-bold border ${c.badgeColor}`}>
                     {c.regionId}
@@ -266,39 +260,38 @@ export default function FederatedLearning() {
           <div>
             <div className="flex items-center justify-between mb-3">
               <div>
-                <h3 className="text-sm font-bold text-slate-900 dark:text-[#F7FAFF] flex items-center gap-2">
+                <h3 className="text-[16px] font-semibold text-slate-900 dark:text-[#F5F8FC] flex items-center gap-2">
                   <BarChart2 className="w-4 h-4 text-purple-400" />
                   Global Validation MAE Convergence (Rounds 0–13)
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-[#7F96AA] mt-0.5">
-                  Early-stopping validation selection correctly chose Round 8 (3.1536 mph).
+                <p className="text-[13px] text-slate-500 dark:text-[#B8C7D8] font-normal mt-0.5">
+                  Early-stopping validation selection chose Round 8 (3.1536 mph).
                 </p>
               </div>
-              <ScientificBadge type="MODEL OUTPUT" label="VALIDATION SELECTION" size="xs" />
             </div>
 
             <div className="h-[250px] w-full pt-1">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartRounds} margin={{ top: 15, right: 20, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#17364E" opacity={0.5} vertical={false} />
-                  <XAxis dataKey="round" stroke="#64748b" fontSize={11} tickLine={false} unit=" r" />
-                  <YAxis domain={[3.0, 5.0]} stroke="#64748b" fontSize={11} tickLine={false} unit=" mph" />
+                <LineChart data={chartRounds} margin={{ top: 15, right: 20, left: 5, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#17364E" : "#E2E8F0"} opacity={isDark ? 0.6 : 0.9} vertical={false} />
+                  <XAxis dataKey="round" stroke={isDark ? "#8295A8" : "#60758A"} fontSize={12} fontFamily="Inter, sans-serif" fontWeight={500} tickLine={false} unit=" r" />
+                  <YAxis domain={[3.0, 5.0]} width={56} stroke={isDark ? "#8295A8" : "#60758A"} fontSize={11} fontFamily="Inter, sans-serif" fontWeight={500} tickLine={false} tickFormatter={(v) => `${v.toFixed(1)} mph`} />
                   <Tooltip
                     content={({ active, payload }) => {
                       if (active && payload && payload.length) {
                         const r = payload[0].payload;
                         return (
-                          <div className="p-2.5 rounded-lg bg-[#04101A] border border-[#17364E] text-white text-xs font-mono shadow-xl space-y-1">
-                            <div className="font-bold text-slate-300">Round {r.round}</div>
-                            <div className="text-purple-400">Val MAE: {Number(r.validationMAE).toFixed(4)} mph</div>
-                            {r.round === 8 && <div className="text-emerald-400 font-bold">★ Selected Checkpoint</div>}
+                          <div className="p-2.5 rounded-lg bg-white dark:bg-[#04101A] border border-slate-200 dark:border-[#17364E] text-slate-900 dark:text-white text-xs font-mono shadow-xl space-y-1">
+                            <div className="font-bold text-slate-600 dark:text-slate-300">Round {r.round}</div>
+                            <div className="text-purple-600 dark:text-purple-400 font-semibold">Val MAE: {Number(r.validationMAE).toFixed(4)} mph</div>
+                            {r.round === 8 && <div className="text-emerald-600 dark:text-emerald-400 font-bold">★ Selected Checkpoint</div>}
                           </div>
                         );
                       }
                       return null;
                     }}
                   />
-                  <ReferenceLine x={8} stroke="#10b981" strokeDasharray="3 3" label={{ value: 'Best: Rd 8', fill: '#10b981', fontSize: 10, position: 'top' }} />
+                  <ReferenceLine x={8} stroke="#10b981" strokeDasharray="3 3" label={{ value: 'Best: Rd 8', fill: '#10b981', fontSize: 12, fontFamily: 'Inter, sans-serif', fontWeight: 600, position: 'top' }} />
                   <ReferenceDot x={8} y={3.1536} r={5} fill="#10b981" stroke="#fff" />
                   <Line
                     type="monotone"
@@ -313,9 +306,9 @@ export default function FederatedLearning() {
             </div>
           </div>
 
-          <div className="text-[11px] text-slate-500 dark:text-[#7F96AA] pt-2 border-t border-slate-100 dark:border-[#17364E] flex items-center justify-between">
+          <div className="text-xs text-slate-500 dark:text-[#8295A8] pt-2 border-t border-slate-100 dark:border-[#17364E] flex items-center justify-between">
             <span>Rounds 9–13 exhibited early validation saturation.</span>
-            <span>Selected Model Checkpoint: <strong>Round 8</strong></span>
+            <span>Selected Model Checkpoint: <strong className="text-slate-800 dark:text-[#F5F8FC]">Round 8</strong></span>
           </div>
         </div>
 
@@ -323,11 +316,10 @@ export default function FederatedLearning() {
         <div className="lg:col-span-5 bg-white dark:bg-[#081827] border border-slate-200 dark:border-[#17364E] rounded-xl p-4.5 shadow-xs flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-bold text-slate-900 dark:text-[#F7FAFF] flex items-center gap-2">
+              <h3 className="text-[16px] font-semibold text-slate-900 dark:text-[#F5F8FC] flex items-center gap-2">
                 <Cpu className="w-4 h-4 text-cyan-400" />
                 FedAvg Weight Provenance
               </h3>
-              <ScientificBadge type="DERIVED" label="EXACT EQUATION" size="xs" />
             </div>
 
             <p className="text-xs text-slate-600 dark:text-[#BCD0E2] mb-3 leading-relaxed">
@@ -350,18 +342,21 @@ export default function FederatedLearning() {
           <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-800 dark:text-emerald-300 flex items-start gap-2 mt-3">
             <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
             <div>
-              <strong className="block">Scientific Boundary Verification:</strong>
+              <strong className="block">Performance Reference:</strong>
               Centralized reference MAE is 3.4378 mph. FedAvg achieved 3.5322 mph with only a 0.0944 mph gap (+2.75%), preserving predictive accuracy.
             </div>
           </div>
         </div>
       </div>
 
+      {/* India Smart-Mobility Case Studies */}
+      <IndiaCaseStudiesCard />
+
       {/* Checkpoint Provenance Strip */}
       <div className="p-4 rounded-xl bg-white dark:bg-[#081827] border border-slate-200 dark:border-[#17364E] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono">
         <div className="flex items-center gap-2">
           <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-          <span className="text-slate-600 dark:text-[#BCD0E2]">Frozen Global Checkpoint SHA-256:</span>
+          <span className="text-slate-600 dark:text-[#BCD0E2]">Global Checkpoint SHA-256:</span>
           <span className="text-blue-600 dark:text-cyan-400 font-bold break-all">
             24710dae0fe0554ca8111ad21e05de03b69a282f0b8d8868a1433ba6fd9c2930
           </span>

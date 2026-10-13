@@ -46,23 +46,23 @@ export default function HistoricalReplayBar({
   const formattedTime = timestampStr ? timestampStr.replace('T', ' ').substring(0, 19) : '2012-03-01 00:00:00';
 
   return (
-    <div className="p-3.5 bg-slate-900 text-white rounded-xl border border-slate-800 shadow-xl flex flex-col md:flex-row items-center justify-between gap-4">
+    <div className="p-3.5 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-xl border border-slate-200 dark:border-slate-800 shadow-xl flex flex-col md:flex-row items-center justify-between gap-4">
       {/* Historical Replay Mode Label & Timestamp Info */}
       <div className="flex items-center gap-3">
-        <div className="p-2 rounded-lg bg-blue-600/20 text-blue-400 border border-blue-500/30">
+        <div className="p-2 rounded-lg bg-blue-600/10 dark:bg-blue-600/20 text-blue-600 dark:text-blue-400 border border-blue-500/30">
           <Clock className="w-5 h-5 animate-pulse" />
         </div>
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30">
+            <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-blue-500/10 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border border-blue-500/30">
               HISTORICAL REPLAY
             </span>
-            <span className="text-xs text-slate-400">METR-LA (2012-03-01 &rarr; 2012-06-27)</span>
+            <span className="text-xs text-slate-500 dark:text-slate-400">METR-LA (2012-03-01 &rarr; 2012-06-27)</span>
           </div>
           <div className="flex items-center gap-2 mt-0.5">
-            <span className="font-mono font-bold text-emerald-400 text-sm">{formattedTime}</span>
+            <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400 text-sm">{formattedTime}</span>
             {timeSemantics.dayName && (
-              <span className="text-xs text-slate-400 font-medium">
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
                 ({timeSemantics.dayName}, {timeSemantics.timeOfDay})
               </span>
             )}
@@ -75,7 +75,7 @@ export default function HistoricalReplayBar({
         <div className="flex items-center gap-2">
           <button
             onClick={handleStepBack}
-            className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
+            className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors"
             title="Previous 5 min (-1 step)"
           >
             <SkipBack className="w-4 h-4" />
@@ -91,7 +91,7 @@ export default function HistoricalReplayBar({
 
           <button
             onClick={handleStepForward}
-            className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
+            className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors"
             title="Next 5 min (+1 step)"
           >
             <SkipForward className="w-4 h-4" />
@@ -106,10 +106,10 @@ export default function HistoricalReplayBar({
               setIsPlaying(false);
               onTimeIndexChange(Number(e.target.value));
             }}
-            className="flex-1 accent-blue-500 cursor-pointer h-2 bg-slate-800 rounded-lg"
+            className="flex-1 accent-blue-500 cursor-pointer h-2 bg-slate-200 dark:bg-slate-800 rounded-lg"
           />
 
-          <span className="font-mono text-xs text-slate-400 min-w-[70px] text-right">
+          <span className="font-mono text-xs text-slate-500 dark:text-slate-400 min-w-[70px] text-right">
             Step {timeIndex}/{maxTimeSteps - 1}
           </span>
         </div>
@@ -117,8 +117,8 @@ export default function HistoricalReplayBar({
 
       {/* Speed Multiplier Dropdown */}
       <div className="flex items-center gap-2">
-        <span className="text-xs text-slate-400">Speed:</span>
-        <div className="flex rounded-lg bg-slate-800 border border-slate-700 p-0.5">
+        <span className="text-xs text-slate-500 dark:text-slate-400">Speed:</span>
+        <div className="flex rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-0.5">
           {[1, 2, 5, 10].map(s => (
             <button
               key={s}
@@ -126,7 +126,7 @@ export default function HistoricalReplayBar({
               className={`px-2 py-0.5 text-xs font-mono font-bold rounded transition-colors ${
                 replaySpeed === s
                   ? 'bg-blue-600 text-white shadow'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               {s}x

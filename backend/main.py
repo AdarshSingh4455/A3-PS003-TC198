@@ -16,6 +16,7 @@ from backend.datasets.metr_la import (
     get_metr_la_ml_ready_status
 )
 from backend.communication_intelligence.service import get_comm_intel_service
+from backend.assistant import ChatRequest, ChatResponse, generate_chat_reply
 
 app = FastAPI(
     title="TrafficPulse-X API",
@@ -462,6 +463,12 @@ def get_phase9_rounds_history(policy: str):
         raise HTTPException(status_code=404, detail=str(fe))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to load rounds history: {str(e)}")
+
+
+@app.post("/api/assistant/chat", response_model=ChatResponse)
+def chat_with_assistant(req: ChatRequest):
+    """Processes AI assistant queries using server-side Gemini integration or domain fallback."""
+    return generate_chat_reply(req)
 
 
 
