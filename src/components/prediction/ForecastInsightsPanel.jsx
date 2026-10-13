@@ -1,10 +1,10 @@
 import React from 'react';
-import { 
-  TrendingUp, 
-  TrendingDown, 
-  Minus, 
-  AlertTriangle, 
-  ShieldCheck, 
+import {
+  TrendingUp,
+  TrendingDown,
+  Minus,
+  AlertTriangle,
+  ShieldCheck,
   Zap,
   Activity
 } from 'lucide-react';
@@ -78,7 +78,7 @@ export default function ForecastInsightsPanel({
 
   return (
     <div className="flex flex-col h-full rounded-2xl bg-white dark:bg-[#071727] border border-slate-200 dark:border-[#17364E] shadow-xl p-5 transition-colors">
-      
+
       {/* Header */}
       <div className="flex items-center justify-between gap-3 mb-3 pb-3 border-b border-slate-100 dark:border-[#17364E]/80">
         <div className="flex items-center gap-2.5">

@@ -252,7 +252,7 @@ export default function NextBestQueryTable({ onQuery, onSelectSensor, data }) {
                   </thead>
                   <tbody className="divide-y divide-slate-100 dark:divide-[#17364E]/60 text-slate-700 dark:text-[#B8C7D8]">
                     {candidates.map((c) => (
-                      <tr 
+                      <tr
                         key={c.sensorId}
                         onClick={() => onSelectSensor && onSelectSensor(c)}
                         className="hover:bg-slate-50 dark:hover:bg-slate-800/40 cursor-pointer"

@@ -15,9 +15,9 @@ export default function CommunicationHeroFlow({
 
   return (
     <div className="relative overflow-hidden rounded-2xl bg-white dark:bg-[#061220] border border-slate-200 dark:border-cyan-900/40 shadow-xs dark:shadow-2xl p-5 lg:p-6 transition-colors">
-      
+
       {/* Background Ambience: Subtle Perspective Grid & Traffic Light Streaks */}
-      <div 
+      <div
         className="absolute inset-0 opacity-10 dark:opacity-20 pointer-events-none"
         style={{
           backgroundImage: `
@@ -28,18 +28,18 @@ export default function CommunicationHeroFlow({
           maskImage: 'radial-gradient(ellipse 90% 80% at 50% 50%, black 40%, transparent 100%)'
         }}
       />
-      
+
       {/* Subtle Glowing Beams */}
       <div className="absolute top-0 right-0 w-96 h-32 bg-gradient-to-l from-cyan-500/10 via-purple-500/10 to-transparent blur-2xl pointer-events-none" />
 
       {/* Main Container: Flow Strip (Left/Center/Right Stages) + Summary Callout */}
       <div className="relative z-10 flex flex-col xl:flex-row items-stretch gap-6">
-        
+
         {/* ==================================================================== */}
         {/* LEFT & CENTER: TWO-TIER HIERARCHICAL PIPELINE                        */}
         {/* ==================================================================== */}
         <div className="flex-1 flex flex-col justify-between">
-          
+
           {/* Top Labels for Sensor-to-Edge and Federated Model Exchange */}
           <div className="grid grid-cols-2 gap-4 pb-2.5 border-b border-slate-200 dark:border-cyan-900/30 text-xs font-semibold">
             <div className="flex items-center gap-2 text-cyan-700 dark:text-cyan-300">
@@ -54,7 +54,7 @@ export default function CommunicationHeroFlow({
 
           {/* Interactive Graphic Stages Row */}
           <div className="grid grid-cols-1 md:grid-cols-11 items-center gap-3 py-3">
-            
+
             {/* STAGE 1: METR-LA SENSORS (Cols 1-3) */}
             <div className="md:col-span-3 flex flex-col items-center text-center p-3.5 rounded-xl bg-slate-50 dark:bg-[#091C31]/80 border border-slate-200 dark:border-cyan-500/30 shadow-xs dark:shadow-md relative group hover:border-cyan-500/50 transition-all">
               {/* Isometric Road & Sensor Towers Graphic */}
@@ -63,7 +63,7 @@ export default function CommunicationHeroFlow({
                   {/* Perspective Freeway Road */}
                   <path d="M10 70 L80 32 L150 70 L80 98 Z" className="fill-slate-200 dark:fill-[#0c233c] stroke-slate-300 dark:stroke-[#18426b]" strokeWidth="1.5" />
                   <path d="M30 60 L80 34 L130 60" stroke="#06b6d4" strokeWidth="1" strokeDasharray="4 3" opacity="0.6" />
-                  
+
                   {/* Sensor Tower 1 (Left - Cyan) */}
                   <line x1="45" y1="60" x2="45" y2="30" stroke="#0284c7" strokeWidth="2.5" strokeLinecap="round" />
                   <circle cx="45" cy="28" r="4.5" fill="#0284c7" />
@@ -104,11 +104,11 @@ export default function CommunicationHeroFlow({
               {/* Directional Flow Beam */}
               <div className="w-full flex items-center justify-center py-1">
                 <svg className="w-16 h-5 overflow-visible" viewBox="0 0 60 16">
-                  <path 
-                    d="M 5 8 Q 30 14 55 8" 
-                    fill="none" 
-                    stroke="#06b6d4" 
-                    strokeWidth="2.5" 
+                  <path
+                    d="M 5 8 Q 30 14 55 8"
+                    fill="none"
+                    stroke="#06b6d4"
+                    strokeWidth="2.5"
                     strokeDasharray="5 3"
                     className="animate-pulse"
                   />
@@ -129,7 +129,7 @@ export default function CommunicationHeroFlow({
                 <svg className="w-full h-full" viewBox="0 0 160 100" fill="none">
                   {/* Glowing Base Platform */}
                   <ellipse cx="80" cy="80" rx="52" ry="14" className="fill-slate-200 dark:fill-[#132a4e] stroke-blue-400 dark:stroke-[#2563eb]" strokeWidth="1.5" />
-                  
+
                   {/* 3D Edge Server Chassis Block */}
                   <path d="M55 42 L80 30 L80 72 L55 84 Z" className="fill-blue-100 dark:fill-[#1e3a63] stroke-blue-400 dark:stroke-[#3b82f6]" strokeWidth="1" />
                   <path d="M80 30 L105 42 L105 84 L80 72 Z" className="fill-blue-200 dark:fill-[#294f85] stroke-blue-400 dark:stroke-[#3b82f6]" strokeWidth="1" />
@@ -166,11 +166,11 @@ export default function CommunicationHeroFlow({
               {/* Directional Flow Beam */}
               <div className="w-full flex items-center justify-center py-1">
                 <svg className="w-16 h-5 overflow-visible" viewBox="0 0 60 16">
-                  <path 
-                    d="M 5 8 Q 30 2 55 8" 
-                    fill="none" 
-                    stroke="#a855f7" 
-                    strokeWidth="2.5" 
+                  <path
+                    d="M 5 8 Q 30 2 55 8"
+                    fill="none"
+                    stroke="#a855f7"
+                    strokeWidth="2.5"
                     strokeDasharray="5 3"
                     className="animate-pulse"
                   />
@@ -231,7 +231,7 @@ export default function CommunicationHeroFlow({
         {/* RIGHT: TOTAL COMMUNICATION SUMMARY (REACTIVE TO STRATEGY)           */}
         {/* ==================================================================== */}
         <div className="xl:w-80 shrink-0 flex flex-col justify-between p-4 lg:p-5 rounded-xl bg-slate-50 dark:bg-[#07172B]/90 border border-slate-200 dark:border-cyan-500/30 shadow-xs dark:shadow-xl backdrop-blur-md">
-          
+
           <div>
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
@@ -270,7 +270,7 @@ export default function CommunicationHeroFlow({
                 </div>
               )}
             </div>
-            
+
             <p className="text-[11px] text-slate-500 dark:text-[#8295A8] font-medium mt-0.5">
               {reductionPercent > 0 ? `${reductionPercent.toFixed(1)}% application-payload reduction vs full baseline` : 'Reference full-federation baseline'}
             </p>
@@ -296,7 +296,7 @@ export default function CommunicationHeroFlow({
                 <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">{formattedSelected}</span>
               </div>
               <div className="w-full h-2.5 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
-                <div 
+                <div
                   className="h-full bg-gradient-to-r from-emerald-500 to-cyan-400 rounded-full transition-all duration-500"
                   style={{ width: `${Math.max(15, 100 - reductionPercent)}%` }}
                 />

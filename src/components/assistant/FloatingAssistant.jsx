@@ -1,17 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { 
-  Sparkles, 
-  X, 
-  Send, 
-  Bot, 
-  User, 
-  RefreshCw, 
-  Minimize2, 
-  Maximize2,
-  Trash2,
-  Cpu,
-  CheckCircle2,
-  HelpCircle
+import {
+  X,
+  Send,
+  Bot,
+  User,
+  Minimize2,
+  Trash2
 } from 'lucide-react';
 import { sendAssistantMessage } from '../../services/api';
 
@@ -39,7 +33,7 @@ export default function FloatingAssistant() {
   ]);
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [_error, setError] = useState(null);
 
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
@@ -116,7 +110,7 @@ export default function FloatingAssistant() {
 
   return (
     <div className="fixed bottom-5 right-5 z-50">
-      
+
       {/* Floating Launcher Button (When closed) */}
       {!isOpen && (
         <button
@@ -137,7 +131,7 @@ export default function FloatingAssistant() {
       {/* Floating Chat Window (When open) */}
       {isOpen && (
         <div className="w-[360px] sm:w-[420px] max-w-[calc(100vw-2rem)] h-[560px] max-h-[calc(100vh-6rem)] rounded-2xl bg-white dark:bg-[#071727] border border-slate-200 dark:border-[#17364E] shadow-2xl flex flex-col overflow-hidden transition-all duration-200 animate-in fade-in zoom-in-95">
-          
+
           {/* Header */}
           <div className="p-3.5 bg-slate-50 dark:bg-[#04101A] border-b border-slate-200 dark:border-[#17364E] flex items-center justify-between">
             <div className="flex items-center gap-2.5">

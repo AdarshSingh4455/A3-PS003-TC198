@@ -1,12 +1,12 @@
 import React from 'react';
-import { 
-  ShieldCheck, 
-  Scale, 
-  GitCompare, 
-  CheckCircle2, 
-  AlertTriangle, 
-  AlertCircle, 
-  HelpCircle, 
+import {
+  ShieldCheck,
+  Scale,
+  GitCompare,
+  CheckCircle2,
+  AlertTriangle,
+  AlertCircle,
+  HelpCircle,
   ArrowRight,
   Check
 } from 'lucide-react';
@@ -174,7 +174,7 @@ export default function ValidationLayer({ juryData, physicsData, spatialData, se
                 <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                 <span className="font-bold text-xs text-slate-900 dark:text-white">Heuristic Plausibility Gate</span>
               </div>
-              <span 
+              <span
                 title="Rule-based plausibility checks; not a physical-law guarantee."
                 className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-semibold border border-emerald-200 dark:border-emerald-800 cursor-help"
               >

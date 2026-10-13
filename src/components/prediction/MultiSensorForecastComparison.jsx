@@ -66,7 +66,7 @@ export default function MultiSensorForecastComparison({
 
   return (
     <div className="flex flex-col h-full rounded-2xl bg-white dark:bg-[#071727] border border-slate-200 dark:border-[#17364E] shadow-xl p-5 transition-colors">
-      
+
       {/* Header with Title & Horizon Window Selector */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-100 dark:border-[#17364E]/80">
         <div className="flex items-center gap-2.5">
@@ -133,24 +133,24 @@ export default function MultiSensorForecastComparison({
       {/* Grouped Bar Chart Area */}
       <div className="w-full h-[230px] pt-1">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart 
-            data={chartData} 
+          <BarChart
+            data={chartData}
             margin={{ top: 15, right: 15, left: -20, bottom: 5 }}
             barGap={4}
           >
             <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#17364E" : "#E2E8F0"} vertical={false} opacity={0.7} />
-            <XAxis 
-              dataKey="label" 
-              stroke={isDark ? "#8295A8" : "#64748B"} 
-              fontSize={11} 
-              fontFamily="Inter, monospace" 
+            <XAxis
+              dataKey="label"
+              stroke={isDark ? "#8295A8" : "#64748B"}
+              fontSize={11}
+              fontFamily="Inter, monospace"
               fontWeight={600}
               tickLine={false}
             />
-            <YAxis 
-              domain={[50, 75]} 
-              stroke={isDark ? "#8295A8" : "#64748B"} 
-              fontSize={11} 
+            <YAxis
+              domain={[50, 75]}
+              stroke={isDark ? "#8295A8" : "#64748B"}
+              fontSize={11}
               fontFamily="Inter, monospace"
               tickLine={false}
               unit=" mph"
@@ -186,21 +186,21 @@ export default function MultiSensorForecastComparison({
               }}
             />
             <ReferenceLine y={60} stroke="#64748B" strokeDasharray="3 3" opacity={0.4} />
-            <Bar 
-              dataKey="current" 
-              name="Current Speed" 
-              fill={isDark ? "#2563EB" : "#3B82F6"} 
-              radius={[4, 4, 0, 0]} 
+            <Bar
+              dataKey="current"
+              name="Current Speed"
+              fill={isDark ? "#2563EB" : "#3B82F6"}
+              radius={[4, 4, 0, 0]}
               barSize={20}
               isAnimationActive={false}
               onClick={(entry) => onSelectSensor && onSelectSensor(entry.id)}
               className="cursor-pointer"
             />
-            <Bar 
-              dataKey="forecast" 
-              name={`+${horizonWindow} Forecast`} 
-              fill="#00D2FF" 
-              radius={[4, 4, 0, 0]} 
+            <Bar
+              dataKey="forecast"
+              name={`+${horizonWindow} Forecast`}
+              fill="#00D2FF"
+              radius={[4, 4, 0, 0]}
               barSize={20}
               isAnimationActive={false}
               onClick={(entry) => onSelectSensor && onSelectSensor(entry.id)}

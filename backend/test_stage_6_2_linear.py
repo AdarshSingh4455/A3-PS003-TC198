@@ -42,7 +42,7 @@ def test_linear_regression_fitting_and_no_leakage():
     y_train_mask = train_data["y_mask"]
 
     lr = LinearRegressionBaseline(scaler_mean=58.584258, scaler_std=12.822883)
-    
+
     # Assert unfitted model raises error on predict
     with pytest.raises(RuntimeError, match="must be fitted before predict"):
         lr.predict(x_train, x_train_mask)
@@ -59,7 +59,7 @@ def test_linear_regression_fitting_and_no_leakage():
 def test_linear_regression_prediction_shape_and_units():
     """3. Verify prediction shape is (N, 4, 207, 1) and output is inverse-scaled to raw MPH."""
     lr = LinearRegressionBaseline(scaler_mean=58.584258, scaler_std=12.822883)
-    
+
     # Mock single-step fit with dummy weights
     for h in [0, 1, 2, 3]:
         from sklearn.linear_model import LinearRegression

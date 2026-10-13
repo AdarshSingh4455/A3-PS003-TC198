@@ -47,4 +47,8 @@ This document establishes the **authoritative frozen baseline** for all centrali
 - **Canonical Sensors**: 207 sensors.
 - **Scaler Contract**: Train-only mean = `58.584258`, std = `12.822883`.
 - **Masking Contract**: Targets <= 0.0 mph are excluded from evaluation.
-- **Inference Pipeline**: Sensor history $ightarrow$ Normalize with scaler $ightarrow$ Graph+LSTM forward pass $ightarrow$ Denormalize output $ightarrow$ Expose to FastAPI endpoint (Stage 6.7).
+- **Inference Pipeline**: Sensor history $
+ightarrow$ Normalize with scaler $
+ightarrow$ Graph+LSTM forward pass $
+ightarrow$ Denormalize output $
+ightarrow$ Expose to FastAPI endpoint (Stage 6.7).

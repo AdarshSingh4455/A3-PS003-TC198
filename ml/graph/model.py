@@ -16,7 +16,7 @@ def calculate_normalized_adjacency(adj_matrix: np.ndarray, is_identity: bool = F
     A_hat = A + I
     D_hat[i, i] = sum_j A_hat[i, j]
     A_norm = D_hat^(-1/2) * A_hat * D_hat^(-1/2)
-    
+
     If is_identity is True, returns identity matrix I_N for graph ablation.
     """
     num_nodes = adj_matrix.shape[0]

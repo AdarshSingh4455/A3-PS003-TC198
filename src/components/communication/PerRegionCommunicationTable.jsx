@@ -73,7 +73,7 @@ export default function PerRegionCommunicationTable({
 
   return (
     <div className="flex flex-col h-full rounded-2xl bg-white dark:bg-[#071727] border border-slate-200 dark:border-[#17364E] shadow-xs dark:shadow-md p-5 transition-colors justify-between min-h-[350px]">
-      
+
       {/* Header */}
       <div>
         <div className="flex items-center justify-between gap-3 mb-1">

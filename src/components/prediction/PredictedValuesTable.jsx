@@ -10,7 +10,7 @@ export default function PredictedValuesTable({
 }) {
   return (
     <div className="flex flex-col h-full rounded-2xl bg-white dark:bg-[#071727] border border-slate-200 dark:border-[#17364E] shadow-xl p-4.5 transition-colors">
-      
+
       {/* Header */}
       <div className="flex items-center justify-between pb-3 mb-2 border-b border-slate-100 dark:border-[#17364E]/80">
         <div className="flex items-center gap-2">

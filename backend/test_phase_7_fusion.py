@@ -247,7 +247,7 @@ def test_validation_calibration_artifact_integrity():
     assert os.path.exists(path)
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
-    
+
     assert "val.npz" in data["source"]
     assert data["horizons"]["5"]["mae"] == 2.1868
     assert data["horizons"]["60"]["mae"] == 4.1364
@@ -258,14 +258,14 @@ def test_phase6_artifacts_and_region_checksum_immutable():
     import os
     import json
     import hashlib
-    
+
     ckpt_path = "data/processed/metr-la/models/spatiotemporal/graph_lstm_best.pt"
     assert os.path.exists(ckpt_path)
     assert os.path.getsize(ckpt_path) == 111119
 
     with open("data/processed/metr-la/regions.json", "r", encoding="utf-8") as f:
         reg_data = json.load(f)
-    
+
     csum = hashlib.sha256(json.dumps(reg_data, sort_keys=True).encode("utf-8")).hexdigest()
     assert csum == "ad064c643b6eb30cf9f7ef57cce71391ac4d94f7e41529dfcf4f0b1cd46e4ff2"
 
@@ -278,6 +278,6 @@ def test_communication_bytes_proxy_classification():
     assert os.path.exists(path)
     with open(path, "r", encoding="utf-8") as f:
         data = json.load(f)
-    
+
     assert data["communicationAccounting"]["classification"] == "APPLICATION_PAYLOAD_BYTES_PROXY"
     assert data["communicationAccounting"]["formattedString"] == "4.2 KB"

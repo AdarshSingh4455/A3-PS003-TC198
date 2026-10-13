@@ -1,25 +1,25 @@
 import React from 'react';
-import { 
-  Radio, 
-  Wifi, 
-  WifiOff, 
-  AlertTriangle, 
-  Layers, 
-  TrendingUp, 
-  Clock, 
+import {
+  Radio,
+  Wifi,
+  WifiOff,
+  AlertTriangle,
+  Layers,
+  TrendingUp,
+  Clock,
   Database,
   ArrowUp,
   Circle
 } from 'lucide-react';
 
-export default function MetricCard({ 
-  label, 
-  value, 
-  subtext, 
-  isTrendUp, 
-  isBullet, 
-  variant = 'blue', 
-  iconType 
+export default function MetricCard({
+  label,
+  value,
+  subtext,
+  isTrendUp,
+  isBullet,
+  variant = 'blue',
+  iconType
 }) {
   const iconConfig = {
     sensor: { Icon: Radio, bg: "bg-blue-500/10", border: "border-blue-500/30", text: "text-blue-500 dark:text-cyan-400" },

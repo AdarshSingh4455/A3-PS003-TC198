@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { 
-  Layers, 
-  ChevronDown, 
-  ChevronUp, 
-  Award, 
+import {
+  Layers,
+  ChevronDown,
+  ChevronUp,
+  Award,
   Cpu
 } from 'lucide-react';
 import {
@@ -21,49 +21,49 @@ import ScientificBadge from '../common/ScientificBadge';
 import { useTheme } from '../../context/ThemeContext';
 
 export const REGIONAL_METRICS = [
-  { 
-    id: 'REGION_A', 
-    label: 'Region A', 
-    fullName: 'REGION_A (North-East)', 
-    sensors: 48, 
-    mae: 2.4446, 
-    note: 'Lowest error across network', 
+  {
+    id: 'REGION_A',
+    label: 'Region A',
+    fullName: 'REGION_A (North-East)',
+    sensors: 48,
+    mae: 2.4446,
+    note: 'Lowest error across network',
     isBest: true,
     color: '#10B981', // emerald
     lightColor: '#059669',
     advantage: '-28.9% vs global'
   },
-  { 
-    id: 'REGION_C', 
-    label: 'Region C', 
-    fullName: 'REGION_C (Central-West)', 
-    sensors: 58, 
-    mae: 3.4840, 
-    note: 'Arterial highway cluster', 
+  {
+    id: 'REGION_C',
+    label: 'Region C',
+    fullName: 'REGION_C (Central-West)',
+    sensors: 58,
+    mae: 3.4840,
+    note: 'Arterial highway cluster',
     isBest: false,
     color: '#3B82F6', // blue
     lightColor: '#2563EB',
     advantage: '+1.3% vs global'
   },
-  { 
-    id: 'REGION_B', 
-    label: 'Region B', 
-    fullName: 'REGION_B (South-East)', 
-    sensors: 57, 
-    mae: 4.0770, 
-    note: 'High-density corridor', 
+  {
+    id: 'REGION_B',
+    label: 'Region B',
+    fullName: 'REGION_B (South-East)',
+    sensors: 57,
+    mae: 4.0770,
+    note: 'High-density corridor',
     isBest: false,
     color: '#F59E0B', // amber
     lightColor: '#D97706',
     advantage: '+18.6% vs global'
   },
-  { 
-    id: 'REGION_D', 
-    label: 'Region D', 
-    fullName: 'REGION_D (North-West)', 
-    sensors: 44, 
-    mae: 4.0979, 
-    note: 'Valley transition chokepoint', 
+  {
+    id: 'REGION_D',
+    label: 'Region D',
+    fullName: 'REGION_D (North-West)',
+    sensors: 44,
+    mae: 4.0979,
+    note: 'Valley transition chokepoint',
     isBest: false,
     color: '#F43F5E', // rose
     lightColor: '#E11D48',
@@ -77,7 +77,7 @@ export default function CollapsibleRegionalAnalysis() {
 
   return (
     <div className="bg-white dark:bg-[#081827] border border-slate-200 dark:border-[#17364E] rounded-2xl overflow-hidden shadow-xl transition-colors">
-      
+
       {/* Header Button Toggle */}
       <button
         onClick={() => setIsOpen(!isOpen)}
@@ -105,7 +105,7 @@ export default function CollapsibleRegionalAnalysis() {
       {/* Expanded Chart & Comparison Area */}
       {isOpen && (
         <div className="p-5 border-t border-slate-200 dark:border-[#17364E] bg-slate-50/40 dark:bg-[#05111D] space-y-4 animate-fade-in">
-          
+
           {/* Header Subtitle with Legend */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-mono">
             <div>
@@ -124,25 +124,25 @@ export default function CollapsibleRegionalAnalysis() {
 
           {/* Analytical Column Chart */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
-            
+
             {/* Chart Area (~65%) */}
             <div className="lg:col-span-8 bg-white dark:bg-[#081827] border border-slate-200 dark:border-[#17364E] rounded-xl p-4 shadow-xs">
               <div className="h-[220px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={REGIONAL_METRICS} margin={{ top: 20, right: 20, left: -20, bottom: 5 }} barSize={38}>
                     <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#17364E" : "#E2E8F0"} vertical={false} opacity={0.7} />
-                    <XAxis 
-                      dataKey="label" 
-                      stroke={isDark ? "#8295A8" : "#64748B"} 
-                      fontSize={11} 
-                      fontFamily="Inter, monospace" 
+                    <XAxis
+                      dataKey="label"
+                      stroke={isDark ? "#8295A8" : "#64748B"}
+                      fontSize={11}
+                      fontFamily="Inter, monospace"
                       fontWeight={600}
                       tickLine={false}
                     />
-                    <YAxis 
-                      domain={[0, 5]} 
-                      stroke={isDark ? "#8295A8" : "#64748B"} 
-                      fontSize={11} 
+                    <YAxis
+                      domain={[0, 5]}
+                      stroke={isDark ? "#8295A8" : "#64748B"}
+                      fontSize={11}
                       fontFamily="Inter, monospace"
                       tickLine={false}
                       unit=" mph"
@@ -183,23 +183,23 @@ export default function CollapsibleRegionalAnalysis() {
                       }}
                     />
                     {/* Global MAE Reference Line */}
-                    <ReferenceLine 
-                      y={3.4378} 
-                      stroke="#00D2FF" 
-                      strokeDasharray="4 4" 
+                    <ReferenceLine
+                      y={3.4378}
+                      stroke="#00D2FF"
+                      strokeDasharray="4 4"
                       strokeWidth={1.5}
                       label={{ value: 'Network Baseline 3.44 mph', fill: isDark ? '#00D2FF' : '#0284C7', fontSize: 10, position: 'top', fontFamily: 'monospace' }}
                     />
-                    <Bar 
-                      dataKey="mae" 
+                    <Bar
+                      dataKey="mae"
                       radius={[6, 6, 0, 0]}
                       isAnimationActive={false}
                       barSize={34}
                     >
                       {REGIONAL_METRICS.map((entry) => (
-                        <Cell 
-                          key={`cell-${entry.id}`} 
-                          fill={isDark ? entry.color : entry.lightColor} 
+                        <Cell
+                          key={`cell-${entry.id}`}
+                          fill={isDark ? entry.color : entry.lightColor}
                           opacity={entry.isBest ? 1 : 0.85}
                         />
                       ))}
@@ -212,7 +212,7 @@ export default function CollapsibleRegionalAnalysis() {
             {/* Region Comparison Cards (~35%) */}
             <div className="lg:col-span-4 space-y-2 text-xs font-mono">
               {REGIONAL_METRICS.map((reg) => (
-                <div 
+                <div
                   key={reg.id}
                   className={`p-2.5 rounded-xl border transition-all ${
                     reg.isBest

@@ -139,7 +139,7 @@ def generate_chat_reply(request: ChatRequest) -> ChatResponse:
     clean_message = raw_message[:1000]
 
     api_key = os.getenv("GEMINI_API_KEY", "").strip()
-    
+
     if not api_key:
         reply_text = _query_local_knowledge_base(clean_message)
         return ChatResponse(
@@ -151,7 +151,7 @@ def generate_chat_reply(request: ChatRequest) -> ChatResponse:
     # Attempt Gemini API call
     try:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
-        
+
         contents = []
         # Include history if available (limit to last 4 turns)
         if request.history:
@@ -162,7 +162,7 @@ def generate_chat_reply(request: ChatRequest) -> ChatResponse:
                     "role": role,
                     "parts": [{"text": safe_text}]
                 })
-        
+
         contents.append({
             "role": "user",
             "parts": [{"text": clean_message}]

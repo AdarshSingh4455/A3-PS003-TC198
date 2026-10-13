@@ -21,7 +21,7 @@ class METRLATemporalDataset(Dataset):
         data = np.load(npz_path)
         x = data["x"].astype(np.float32)           # (N, 12, 207, 1) normalized
         x_mask = data["x_mask"].astype(np.float32) # (N, 12, 207, 1) binary mask
-        
+
         # Concatenate normalized speed and input mask into 2 input channels
         self.x_2ch = np.concatenate([x, x_mask], axis=-1) # (N, 12, 207, 2)
         self.y = data["y"].astype(np.float32)              # (N, 4, 207, 1) raw MPH

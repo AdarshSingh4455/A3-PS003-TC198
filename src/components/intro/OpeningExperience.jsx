@@ -90,7 +90,7 @@ export default function OpeningExperience({ onComplete }) {
 
       {/* Center Main Stage: Skyline, Branding, and Roadway */}
       <main className="relative z-10 flex-1 flex flex-col justify-center items-center px-4 w-full max-w-6xl mx-auto">
-        
+
         {/* Subtle City Skyline Silhouette */}
         <div className="w-full h-24 mb-1 overflow-hidden relative flex items-end justify-center opacity-60">
           <svg

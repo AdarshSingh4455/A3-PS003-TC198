@@ -19,12 +19,12 @@ export default function ForecastQualityPanel({
   const { isDark } = useTheme();
 
   const horizonProfileData = [
-    { 
-      horizon: '+5 min', 
+    {
+      horizon: '+5 min',
       label: '+5m',
-      uncertaintyVal: 1.65, 
-      uncertaintyStr: '±1.65 mph', 
-      confidence: 'HIGH', 
+      uncertaintyVal: 1.65,
+      uncertaintyStr: '±1.65 mph',
+      confidence: 'HIGH',
       confidencePct: 92,
       mae: '2.36 mph',
       statusColor: '#10B981', // emerald
@@ -32,12 +32,12 @@ export default function ForecastQualityPanel({
       statusText: 'text-emerald-600 dark:text-emerald-400',
       statusBorder: 'border-emerald-500/30'
     },
-    { 
-      horizon: '+15 min', 
+    {
+      horizon: '+15 min',
       label: '+15m',
-      uncertaintyVal: 2.10, 
-      uncertaintyStr: '±2.10 mph', 
-      confidence: 'HIGH', 
+      uncertaintyVal: 2.10,
+      uncertaintyStr: '±2.10 mph',
+      confidence: 'HIGH',
       confidencePct: 84,
       mae: '3.00 mph',
       statusColor: '#06B6D4', // cyan
@@ -45,12 +45,12 @@ export default function ForecastQualityPanel({
       statusText: 'text-cyan-600 dark:text-cyan-400',
       statusBorder: 'border-cyan-500/30'
     },
-    { 
-      horizon: '+30 min', 
+    {
+      horizon: '+30 min',
       label: '+30m',
-      uncertaintyVal: 2.85, 
-      uncertaintyStr: '±2.85 mph', 
-      confidence: 'MEDIUM', 
+      uncertaintyVal: 2.85,
+      uncertaintyStr: '±2.85 mph',
+      confidence: 'MEDIUM',
       confidencePct: 68,
       mae: '3.67 mph',
       statusColor: '#F59E0B', // amber
@@ -58,12 +58,12 @@ export default function ForecastQualityPanel({
       statusText: 'text-amber-600 dark:text-amber-400',
       statusBorder: 'border-amber-500/30'
     },
-    { 
-      horizon: '+60 min', 
+    {
+      horizon: '+60 min',
       label: '+60m',
-      uncertaintyVal: 3.90, 
-      uncertaintyStr: '±3.90 mph', 
-      confidence: 'LOW', 
+      uncertaintyVal: 3.90,
+      uncertaintyStr: '±3.90 mph',
+      confidence: 'LOW',
       confidencePct: 45,
       mae: '4.72 mph',
       statusColor: '#F43F5E', // rose
@@ -75,7 +75,7 @@ export default function ForecastQualityPanel({
 
   return (
     <div className="flex flex-col h-full rounded-2xl bg-white dark:bg-[#071727] border border-slate-200 dark:border-[#17364E] shadow-xl p-5 transition-colors">
-      
+
       {/* Header */}
       <div className="flex items-center justify-between gap-3 mb-3 pb-3 border-b border-slate-100 dark:border-[#17364E]/80">
         <div className="flex items-center gap-2.5">
@@ -106,19 +106,19 @@ export default function ForecastQualityPanel({
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#17364E" : "#E2E8F0"} vertical={false} opacity={0.6} />
-            <XAxis 
-              dataKey="horizon" 
-              stroke={isDark ? "#8295A8" : "#64748B"} 
-              fontSize={11} 
-              fontFamily="Inter, sans-serif" 
+            <XAxis
+              dataKey="horizon"
+              stroke={isDark ? "#8295A8" : "#64748B"}
+              fontSize={11}
+              fontFamily="Inter, sans-serif"
               fontWeight={600}
               tickLine={false}
             />
-            <YAxis 
-              domain={[0, 4.5]} 
+            <YAxis
+              domain={[0, 4.5]}
               width={42}
-              stroke={isDark ? "#8295A8" : "#64748B"} 
-              fontSize={10} 
+              stroke={isDark ? "#8295A8" : "#64748B"}
+              fontSize={10}
               fontFamily="Inter, sans-serif"
               tickLine={false}
               tickFormatter={(v) => `${v} mph`}

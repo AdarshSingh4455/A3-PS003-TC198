@@ -12,7 +12,7 @@ export default function CommunicationBreakdownDonut({
   const halfBytes = Math.round(totalBytes / 2);
   const uploadBytes = halfBytes;
   const downloadBytes = halfBytes;
-  
+
   // Queries are evidence-on-demand proxies
   const segments = [
     {
@@ -90,7 +90,7 @@ export default function CommunicationBreakdownDonut({
 
   return (
     <div className="flex flex-col h-full rounded-2xl bg-white dark:bg-[#071727] border border-slate-200 dark:border-[#17364E] shadow-xs dark:shadow-md p-5 transition-colors justify-between min-h-[350px]">
-      
+
       {/* Header: Title + Subtitle */}
       <div>
         <div className="flex items-center justify-between gap-3 mb-1">
@@ -115,7 +115,7 @@ export default function CommunicationBreakdownDonut({
 
       {/* Middle: Donut + Legend */}
       <div className="flex-1 flex flex-col sm:flex-row items-center justify-center gap-7 py-3">
-        
+
         {/* Donut Container */}
         <div className="relative w-44 h-44 sm:w-48 sm:h-48 shrink-0 flex items-center justify-center">
           <svg className="w-full h-full -rotate-90 transform overflow-visible" viewBox="0 0 160 160">
@@ -170,16 +170,16 @@ export default function CommunicationBreakdownDonut({
             <div
               key={seg.id}
               className={`flex items-center justify-between p-2.5 rounded-xl border transition-all cursor-pointer ${
-                hoveredId === seg.id 
-                  ? 'bg-slate-100 dark:bg-[#0E2740] border-slate-300 dark:border-[#1E4B72] shadow-xs' 
+                hoveredId === seg.id
+                  ? 'bg-slate-100 dark:bg-[#0E2740] border-slate-300 dark:border-[#1E4B72] shadow-xs'
                   : 'border-transparent hover:bg-slate-50 dark:hover:bg-[#0B2033]/60 hover:border-slate-200 dark:hover:border-[#17364E]'
               }`}
               onMouseEnter={() => setHoveredId(seg.id)}
               onMouseLeave={() => setHoveredId(null)}
             >
               <div className="flex items-center gap-2.5 min-w-0">
-                <span 
-                  className="w-2.5 h-2.5 rounded-full shrink-0" 
+                <span
+                  className="w-2.5 h-2.5 rounded-full shrink-0"
                   style={{ backgroundColor: seg.color }}
                 />
                 <div className="flex items-center gap-1.5 truncate">

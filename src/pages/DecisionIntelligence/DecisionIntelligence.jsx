@@ -8,26 +8,26 @@ import NextBestQueryTable from '../../components/decision/NextBestQueryTable';
 import ValidationLayer from '../../components/decision/ValidationLayer';
 import RecentDecisionsTable from '../../components/decision/RecentDecisionsTable';
 import DecisionTechnicalDetails from '../../components/decision/DecisionTechnicalDetails';
-import { 
-  fetchNeedScore, 
-  fetchCounterfactual, 
-  fetchEvidenceChain, 
-  fetchSpatialSpeedConsistency, 
-  fetchQueryCandidates, 
-  fetchBlindSpots, 
+import {
+  fetchNeedScore,
+  fetchCounterfactual,
+  fetchEvidenceChain,
+  fetchSpatialSpeedConsistency,
+  fetchQueryCandidates,
+  fetchBlindSpots,
   executeQuery,
   fetchSensorJury,
   fetchPhysicsGate
 } from '../../services/api';
 import { useReplay } from '../../context/ReplayContext';
-import { 
-  Cpu, 
-  Zap, 
-  Eye, 
-  Compass, 
-  Filter, 
-  Send, 
-  ShieldCheck, 
+import {
+  Cpu,
+  Zap,
+  Eye,
+  Compass,
+  Filter,
+  Send,
+  ShieldCheck,
   RefreshCw,
   ArrowRight
 } from 'lucide-react';
@@ -307,17 +307,17 @@ export default function DecisionIntelligence() {
       {/* 3. Row 1: Need Analysis (6 cols) & Next-Best Query (6 cols) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
         <div className="lg:col-span-6">
-          <NeedScoreBreakdown 
-            data={needScoreData} 
+          <NeedScoreBreakdown
+            data={needScoreData}
             sensorId={selectedSensorId}
           />
         </div>
 
         <div className="lg:col-span-6">
-          <NextBestQueryTable 
+          <NextBestQueryTable
             data={candidates}
-            onQuery={handleQuery} 
-            onSelectSensor={handleSelectFromTable} 
+            onQuery={handleQuery}
+            onSelectSensor={handleSelectFromTable}
           />
         </div>
       </div>
@@ -325,15 +325,15 @@ export default function DecisionIntelligence() {
       {/* 4. Row 2: Evidence Progression (6 cols) & Query Impact (6 cols) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
         <div className="lg:col-span-6">
-          <EvidenceChain 
-            data={evidenceData} 
+          <EvidenceChain
+            data={evidenceData}
             targetSensorId={selectedSensorId}
           />
         </div>
 
         <div className="lg:col-span-6">
-          <CounterfactualQueryCard 
-            data={counterfactualData} 
+          <CounterfactualQueryCard
+            data={counterfactualData}
             onExecuteQuery={handleQuery}
           />
         </div>
@@ -351,7 +351,7 @@ export default function DecisionIntelligence() {
 
       {/* 6. Row 4: Recent Decisions Table */}
       <div>
-        <RecentDecisionsTable 
+        <RecentDecisionsTable
           onSelectSensor={handleSelectFromTable}
         />
       </div>

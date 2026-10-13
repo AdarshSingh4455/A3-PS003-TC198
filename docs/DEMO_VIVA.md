@@ -129,7 +129,7 @@ Pareto Frontier: 2/4 & 1/4
 > Comparing selective policies (which also use `max_batches=30`) against the unconstrained Stage 8 baseline would conflate client selection efficiency with local sample budget disparities. Therefore, Controlled 4/4 is the strictly valid matched denominator.
 
 **Q8: What is the authoritative best validation MAE for Controlled 4/4?**
-> **Answer**: Based on the persisted empirical artifact [policy_controlled_4_of_4.json](file:///c:/Users/shaur/OneDrive/Desktop/PS-003/data/processed/metr-la/phase9/policy_controlled_4_of_4.json), the authoritative best validation MAE is **3.2542 mph** achieved at **Round 13**.
+> **Answer**: Based on the persisted empirical artifact [policy_controlled_4_of_4.json](data/processed/metr-la/phase9/policy_controlled_4_of_4.json), the authoritative best validation MAE is **3.2542 mph** achieved at **Round 13**.
 
 **Q9: Why are sensor-share factors not FedAvg aggregation weights?**
 > **Answer**: Sensor-share factors ($A=48/207 \approx 0.2319$, $B=57/207 \approx 0.2754$, $C=58/207 \approx 0.2802$, $D=44/207 \approx 0.2126$) are topological sensor proportions used exclusively in CCV client utility ranking. In contrast, canonical Phase-8 FedAvg weights ($A \approx 0.229069$, $B \approx 0.277117$, $C \approx 0.279458$, $D \approx 0.214357$) are strictly sample-count proportions computed from 18,429,761 valid training targets ($A$: 4,221,681; $B$: 5,107,193; $C$: 5,150,335; $D$: 3,950,552).

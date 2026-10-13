@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
-import { 
-  Bell, 
-  Clock, 
+import {
+  Bell,
+  Clock,
   ShieldCheck
 } from 'lucide-react';
 import MetricCard from '../../components/common/MetricCard';
@@ -328,7 +328,7 @@ export default function Alerts() {
   const filteredAlerts = useMemo(() => {
     return REPLAY_ALERTS_DATA.filter((item) => {
       const term = searchTerm.toLowerCase();
-      const matchesSearch = 
+      const matchesSearch =
         item.sensorId.toLowerCase().includes(term) ||
         item.summary.toLowerCase().includes(term) ||
         item.condition.toLowerCase().includes(term) ||

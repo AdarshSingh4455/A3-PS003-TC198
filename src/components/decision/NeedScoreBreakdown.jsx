@@ -263,8 +263,8 @@ export default function NeedScoreBreakdown({ data, onClose, sensorId: propSensor
                         {f.value.toFixed(2)}
                       </span>
                       <span className={`w-14 text-right font-bold ${
-                        f.isNegative 
-                          ? 'text-rose-600 dark:text-rose-400' 
+                        f.isNegative
+                          ? 'text-rose-600 dark:text-rose-400'
                           : 'text-cyan-600 dark:text-cyan-400'
                       }`}>
                         {f.weightedContribution >= 0 ? `+${f.weightedContribution.toFixed(2)}` : f.weightedContribution.toFixed(2)}
@@ -276,8 +276,8 @@ export default function NeedScoreBreakdown({ data, onClose, sensorId: propSensor
                   <div className="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
                     <div
                       className={`h-full rounded-full transition-all duration-300 ${
-                        f.isNegative 
-                          ? 'bg-rose-500 shadow-xs' 
+                        f.isNegative
+                          ? 'bg-rose-500 shadow-xs'
                           : 'bg-cyan-500 dark:bg-cyan-400 shadow-xs'
                       }`}
                       style={{ width: `${barWidth}%` }}

@@ -36,7 +36,7 @@ def test_3_canonical_sensor_counts():
     res = client.get("/api/federated/clients")
     data = res.json()
     client_map = {c["clientId"]: c for c in data}
-    
+
     assert client_map["CLIENT_A"]["sensorCount"] == 48
     assert client_map["CLIENT_B"]["sensorCount"] == 57
     assert client_map["CLIENT_C"]["sensorCount"] == 58

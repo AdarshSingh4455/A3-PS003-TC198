@@ -27,7 +27,7 @@ export default function OverviewHeroConsole({
 
   return (
     <div className="relative overflow-hidden rounded-2xl bg-white dark:bg-[#071727] border border-slate-200 dark:border-[#17364E] p-5 lg:p-6 shadow-xs dark:shadow-xl transition-colors">
-      
+
       {/* Ambient background curve lines */}
       <div className="absolute inset-0 opacity-15 pointer-events-none">
         <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 800 160">
@@ -37,7 +37,7 @@ export default function OverviewHeroConsole({
       </div>
 
       <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-5">
-        
+
         {/* Title & Subtitle */}
         <div className="space-y-1.5">
           <div className="flex items-center gap-2.5">
@@ -63,7 +63,7 @@ export default function OverviewHeroConsole({
 
         {/* Mini Sensor Switcher & Controls */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-3 shrink-0">
-          
+
           {/* Quick Representative Sensor Pills */}
           <div className="flex items-center gap-1.5 bg-slate-50 dark:bg-[#0B2033]/80 p-1 rounded-xl border border-slate-200 dark:border-[#17364E]">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2 hidden xl:inline">

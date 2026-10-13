@@ -78,8 +78,8 @@ export default function ScientificBadge({ type = 'REAL', label, showDot = true, 
   const config = BADGE_STYLES[normalizedKey] || BADGE_STYLES.REAL;
   const displayText = label || type;
 
-  const sizeClasses = size === 'xs' 
-    ? 'h-5 px-2 text-[11px] font-semibold tracking-wider' 
+  const sizeClasses = size === 'xs'
+    ? 'h-5 px-2 text-[11px] font-semibold tracking-wider'
     : size === 'md'
     ? 'h-7 px-3 text-[12.5px] font-semibold font-mono tracking-wider'
     : 'h-6 px-2.5 text-[12px] font-semibold font-mono tracking-wider';

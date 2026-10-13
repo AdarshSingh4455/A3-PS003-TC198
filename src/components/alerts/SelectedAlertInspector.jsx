@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { 
-  FileText, 
-  ExternalLink, 
-  ArrowRight, 
-  AlertTriangle, 
-  AlertCircle, 
+import {
+  FileText,
+  ExternalLink,
+  ArrowRight,
+  AlertTriangle,
+  AlertCircle,
   Info,
   Compass
 } from 'lucide-react';

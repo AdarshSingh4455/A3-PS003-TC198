@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { 
-  Building2, 
-  MapPin, 
-  Cpu, 
-  Layers, 
+import {
+  Building2,
+  MapPin,
+  Cpu,
+  Layers,
   ArrowRight,
-  ShieldCheck, 
+  ShieldCheck,
   Info,
   CheckCircle2,
   ExternalLink,
@@ -115,7 +115,7 @@ export default function IndiaCaseStudiesCard() {
 
   return (
     <div className="bg-white dark:bg-[#071727] border border-slate-200 dark:border-[#17364E] rounded-2xl p-5 lg:p-6 shadow-xs dark:shadow-md transition-colors">
-      
+
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-[#17364E]/70">
         <div>
@@ -149,7 +149,7 @@ export default function IndiaCaseStudiesCard() {
           <strong className="text-slate-800 dark:text-[#F5F8FC] block mb-0.5">
             Scientific Separation of Real Deployments vs. Federated Learning Mapping:
           </strong>
-          These case studies document verified municipal intelligent-traffic implementations under India&apos;s Smart Cities Mission (MoHUA). 
+          These case studies document verified municipal intelligent-traffic implementations under India&apos;s Smart Cities Mission (MoHUA).
           <strong> None of these cities deployed TrafficPulse-X or federated learning.</strong> They are presented to show how real municipal multi-junction telemetry environments naturally map to the distributed client partitions of a federated learning architecture.
         </div>
       </div>
@@ -193,7 +193,7 @@ export default function IndiaCaseStudiesCard() {
 
       {/* Active Case Study Detailed Card */}
       <div className="bg-slate-50/60 dark:bg-[#051321] border border-slate-200 dark:border-[#17364E] rounded-xl p-5 space-y-5">
-        
+
         {/* Title & Provenance Strip */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-200 dark:border-[#17364E]">
           <div>
@@ -264,7 +264,7 @@ export default function IndiaCaseStudiesCard() {
 
         {/* 3 Core Analytical Comparison Blocks */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
-          
+
           {/* Block 1: Challenge / Problem */}
           <div className="p-3.5 rounded-xl bg-white dark:bg-[#071727] border border-slate-200 dark:border-[#17364E] flex flex-col justify-between">
             <div>

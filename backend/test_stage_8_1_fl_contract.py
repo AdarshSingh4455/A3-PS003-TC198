@@ -123,7 +123,7 @@ def test_10_regional_tensors_select_correct_node_indices():
     """Verify client regional data slices match global array slicing along node dimension."""
     train_npz = np.load("data/processed/metr-la/ml_ready/train.npz")
     partitions = load_client_partitions()
-    
+
     g_a = partitions["REGION_A"]["globalIndices"]
     x_a, _, _, _ = get_client_data_slice("REGION_A", split="train")
 

@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { 
-  Radio, 
+import {
+  Radio,
   AlertTriangle
 } from 'lucide-react';
-import { 
+import {
   fetchFederatedCommunication,
   fetchPhase9Selection,
   fetchPhase9ClientValues,
@@ -74,7 +74,7 @@ const STRATEGIES_MAP = {
 export default function Communication() {
   const [commData, setCommData] = useState(null);
   const [error, setError] = useState(null);
-  
+
   // Interactive Active Strategy (Defaults to 50% Participation - Best Observed Balanced Trade-off)
   const [activeStrategy, setActiveStrategy] = useState('FIFTY');
 
@@ -131,7 +131,7 @@ export default function Communication() {
 
   return (
     <div className="space-y-6 pb-12">
-      
+
       {/* ==================================================================== */}
       {/* 1. CINEMATIC HEADER STRIP                                            */}
       {/* ==================================================================== */}

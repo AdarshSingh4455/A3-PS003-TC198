@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { 
-  Activity, 
-  Map, 
-  TrendingUp, 
-  Cpu, 
-  Radio, 
-  Network, 
-  Bell, 
-  Menu, 
-  X, 
-  Database 
+import {
+  Activity,
+  Map,
+  TrendingUp,
+  Cpu,
+  Radio,
+  Network,
+  Bell,
+  Menu,
+  X,
+  Database
 } from 'lucide-react';
 import { useReplay } from '../../context/ReplayContext';
 import ThemeToggle from './ThemeToggle';

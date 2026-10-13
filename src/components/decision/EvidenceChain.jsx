@@ -86,7 +86,7 @@ export default function EvidenceChain({ data, _onClose, _targetSensorId }) {
                       {step.sensorId}
                     </span>
                     <span className={`text-[10px] font-mono px-1 py-0.2 rounded uppercase ${
-                      isComplete 
+                      isComplete
                         ? "bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300"
                         : "bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400"
                     }`}>

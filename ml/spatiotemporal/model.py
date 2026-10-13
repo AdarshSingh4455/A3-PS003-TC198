@@ -16,7 +16,7 @@ from ml.graph.model import GraphConv, calculate_normalized_adjacency, count_para
 class SpatialGraphLSTM(nn.Module):
     """
     Spatio-Temporal Graph + LSTM Model (SpatialGraphLSTM).
-    
+
     Architecture:
     1. Spatial GCN Encoder (applied across ALL 12 timesteps):
        - GraphConv(2 -> 32), ReLU

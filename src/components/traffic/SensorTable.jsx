@@ -109,7 +109,7 @@ export default function SensorTable({ sensors, selectedSensorId, onSelectSensor 
       key: "needScore",
       className: "whitespace-nowrap text-right",
       render: (row) => {
-        const score = row.needScore !== undefined 
+        const score = row.needScore !== undefined
           ? (typeof row.needScore === 'number' ? row.needScore.toFixed(2) : row.needScore)
           : '0.42';
         const num = parseFloat(score);

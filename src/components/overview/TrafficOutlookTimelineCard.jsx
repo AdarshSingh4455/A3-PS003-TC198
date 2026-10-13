@@ -49,7 +49,7 @@ export default function TrafficOutlookTimelineCard({
 
   return (
     <div className="flex flex-col justify-between h-full rounded-2xl bg-white dark:bg-[#071727] border border-slate-200 dark:border-[#17364E] p-5 shadow-xl transition-colors">
-      
+
       {/* Header */}
       <div>
         <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100 dark:border-[#17364E]/80">

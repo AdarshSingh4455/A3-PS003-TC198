@@ -1,14 +1,14 @@
 import React from 'react';
-import { 
-  AreaChart, 
-  Area, 
-  XAxis, 
-  YAxis, 
-  Tooltip, 
-  ResponsiveContainer, 
-  PieChart, 
-  Pie, 
-  Cell 
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell
 } from 'recharts';
 import { TrendingUp, PieChart as PieIcon } from 'lucide-react';
 import SectionCard from '../common/SectionCard';
@@ -69,42 +69,42 @@ export default function AlertAnalyticsCharts({ alerts = [] }) {
                       <stop offset="95%" stopColor="#06b6d4" stopOpacity={0.0} />
                     </linearGradient>
                   </defs>
-                  <XAxis 
-                    dataKey="time" 
-                    stroke="#8295a8" 
-                    fontSize={11} 
+                  <XAxis
+                    dataKey="time"
+                    stroke="#8295a8"
+                    fontSize={11}
                     fontFamily="Inter, sans-serif"
-                    tickLine={false} 
+                    tickLine={false}
                     axisLine={{ stroke: '#334155', strokeWidth: 0.5 }}
                   />
-                  <YAxis 
-                    stroke="#8295a8" 
-                    fontSize={11} 
+                  <YAxis
+                    stroke="#8295a8"
+                    fontSize={11}
                     width={36}
                     fontFamily="Inter, sans-serif"
-                    tickLine={false} 
+                    tickLine={false}
                     axisLine={{ stroke: '#334155', strokeWidth: 0.5 }}
                     domain={[0, 'dataMax + 2']}
                   />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: '#0f172a', 
-                      borderColor: '#1e293b', 
-                      borderRadius: '8px', 
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#0f172a',
+                      borderColor: '#1e293b',
+                      borderRadius: '8px',
                       fontSize: '11px',
                       fontFamily: 'monospace',
                       color: '#f8fafc'
                     }}
                     labelStyle={{ color: '#06b6d4', fontWeight: 'bold' }}
                   />
-                  <Area 
-                    type="monotone" 
-                    dataKey="alerts" 
+                  <Area
+                    type="monotone"
+                    dataKey="alerts"
                     name="Derived Alerts"
-                    stroke="#06b6d4" 
-                    strokeWidth={2} 
-                    fillOpacity={1} 
-                    fill="url(#alertGrad)" 
+                    stroke="#06b6d4"
+                    strokeWidth={2}
+                    fillOpacity={1}
+                    fill="url(#alertGrad)"
                   />
                 </AreaChart>
               </ResponsiveContainer>
@@ -147,10 +147,10 @@ export default function AlertAnalyticsCharts({ alerts = [] }) {
                       ))}
                     </Pie>
                     <Tooltip
-                      contentStyle={{ 
-                        backgroundColor: '#0f172a', 
-                        borderColor: '#1e293b', 
-                        borderRadius: '8px', 
+                      contentStyle={{
+                        backgroundColor: '#0f172a',
+                        borderColor: '#1e293b',
+                        borderRadius: '8px',
                         fontSize: '11px',
                         fontFamily: 'monospace',
                         color: '#f8fafc'

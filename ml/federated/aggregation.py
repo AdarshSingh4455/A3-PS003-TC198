@@ -92,7 +92,7 @@ def fedavg_aggregate(
         acc = torch.zeros_like(client_states[0][k], dtype=torch.float32)
         for state, w in zip(client_states, norm_weights):
             acc += state[k].float() * w
-        
+
         # Cast back to original dtype
         aggregated_state[k] = acc.to(dtype=client_states[0][k].dtype)
 

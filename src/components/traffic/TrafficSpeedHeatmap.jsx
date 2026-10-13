@@ -223,7 +223,7 @@ export default function TrafficSpeedHeatmap({
       try {
         const stepOffsets = timeColumns.map(c => c.stepOffset).filter(o => o !== 0);
         const stepsToFetch = stepOffsets.map(o => Math.max(0, timeIndex + o));
-        
+
         // Fetch up to 3 historical snapshots in parallel
         const promises = stepsToFetch.slice(0, 4).map(async step => {
           try {
@@ -293,7 +293,7 @@ export default function TrafficSpeedHeatmap({
 
   return (
     <div className="flex flex-col h-full bg-white dark:bg-[#071727] rounded-2xl border border-slate-200 dark:border-[#17364E] shadow-xl p-5 transition-colors">
-      
+
       {/* 1. Header Row: Title + Time Window Dropdown */}
       <div className="flex items-center justify-between gap-3 mb-4">
         <div className="flex items-center gap-2.5">
@@ -357,10 +357,10 @@ export default function TrafficSpeedHeatmap({
 
       {/* 2. Heatmap Grid + Vertical Right Color Scale */}
       <div className="flex-1 flex gap-4 min-h-[250px] relative items-stretch">
-        
+
         {/* Heatmap Matrix Canvas */}
         <div className="flex-1 flex flex-col justify-between overflow-x-auto no-scrollbar">
-          
+
           {/* Matrix Rows */}
           <div className="flex flex-col gap-1.5">
             {targetSensorIds.map(sid => {

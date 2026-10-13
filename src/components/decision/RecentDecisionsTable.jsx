@@ -92,7 +92,7 @@ export default function RecentDecisionsTable({ data, onSelectSensor }) {
                 const score = typeof row.needScore === 'number' ? row.needScore.toFixed(2) : (row.score || "0.58");
 
                 return (
-                  <tr 
+                  <tr
                     key={idx}
                     onClick={() => onSelectSensor && onSelectSensor(row.sensor || row.sensorId)}
                     className="hover:bg-slate-50 dark:hover:bg-slate-800/40 cursor-pointer transition-colors"
@@ -108,7 +108,7 @@ export default function RecentDecisionsTable({ data, onSelectSensor }) {
                     </td>
                     <td className="py-2 px-3 text-center whitespace-nowrap">
                       <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold border ${
-                        isQuery 
+                        isQuery
                           ? "bg-emerald-50 dark:bg-emerald-950/60 border-emerald-300 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300"
                           : "bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-400"
                       }`}>

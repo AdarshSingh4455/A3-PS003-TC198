@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { 
-  ChevronDown, 
-  ChevronUp, 
-  Sliders, 
-  History, 
-  Cpu, 
+import {
+  ChevronDown,
+  ChevronUp,
+  Sliders,
+  History,
+  Cpu,
   ShieldCheck,
   CheckCircle2,
   FileText

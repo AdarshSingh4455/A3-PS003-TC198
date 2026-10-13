@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { 
-  MapPin, 
-  Clock, 
-  RefreshCw, 
-  Gauge, 
-  SlidersHorizontal, 
-  Filter, 
-  ChevronLeft, 
+import {
+  MapPin,
+  Clock,
+  RefreshCw,
+  Gauge,
+  SlidersHorizontal,
+  Filter,
+  ChevronLeft,
   ChevronRight,
   ChevronDown,
   Check
@@ -87,10 +87,10 @@ export default function ForecastControlBar({
   return (
     <div className="relative z-30 rounded-2xl bg-white dark:bg-[#071727] border border-slate-200 dark:border-[#17364E] p-2.5 sm:p-3 shadow-xs transition-colors">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-2.5">
-        
+
         {/* Main Controls: Region, Sensor, Horizon, Metric */}
         <div className="flex flex-wrap items-center gap-2 flex-1 min-w-0">
-          
+
           {/* Group 1: Region & Sensor */}
           <div className="flex items-center gap-2">
             {/* 1. Region Selector */}
@@ -165,8 +165,8 @@ export default function ForecastControlBar({
                   setMetricOpen(prev => !prev);
                 }}
                 className={`h-9 flex items-center gap-1.5 bg-slate-50 dark:bg-[#0B2033] px-2.5 rounded-xl border text-xs font-bold text-slate-900 dark:text-[#F7FAFF] transition-all cursor-pointer ${
-                  metricOpen 
-                    ? 'border-cyan-500 ring-2 ring-cyan-500/20 shadow-xs' 
+                  metricOpen
+                    ? 'border-cyan-500 ring-2 ring-cyan-500/20 shadow-xs'
                     : 'border-slate-200 dark:border-[#17364E] hover:border-slate-300 dark:hover:border-slate-700'
                 }`}
                 aria-expanded={metricOpen}
@@ -181,7 +181,7 @@ export default function ForecastControlBar({
 
               {/* Floating Dropdown Menu (Guaranteed above cards via z-[60]) */}
               {metricOpen && (
-                <div 
+                <div
                   className="absolute top-full left-0 mt-1.5 w-68 z-[60] rounded-xl bg-white dark:bg-[#071727] border border-slate-200 dark:border-[#17364E] shadow-2xl p-1.5 space-y-1 animate-in fade-in slide-in-from-top-1"
                   role="listbox"
                   id="prediction-metric-menu"

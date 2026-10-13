@@ -8,43 +8,43 @@ export default function SavingsVsPredictionQualityChart({
   const [hoveredIdx, setHoveredIdx] = useState(null);
 
   const strategies = [
-    { 
-      id: 'FULL', 
-      name: 'Full Participation', 
-      short: 'Full (4/4)', 
-      bytes: 11468184, 
-      mb: 11.47, 
-      mae: 3.6473, 
+    {
+      id: 'FULL',
+      name: 'Full Participation',
+      short: 'Full (4/4)',
+      bytes: 11468184,
+      mb: 11.47,
+      mae: 3.6473,
       reduction: '0.0%',
       isBaseline: true
     },
-    { 
-      id: 'SEVENTY_FIVE', 
-      name: '75% Participation', 
-      short: '75% (3/4)', 
-      bytes: 8601138, 
-      mb: 8.60, 
-      mae: 3.6530, 
+    {
+      id: 'SEVENTY_FIVE',
+      name: '75% Participation',
+      short: '75% (3/4)',
+      bytes: 8601138,
+      mb: 8.60,
+      mae: 3.6530,
       reduction: '25.0%',
       isDominated: true
     },
-    { 
-      id: 'FIFTY', 
-      name: '50% Participation', 
-      short: '50% (2/4)', 
-      bytes: 5734092, 
-      mb: 5.73, 
-      mae: 3.6448, 
+    {
+      id: 'FIFTY',
+      name: '50% Participation',
+      short: '50% (2/4)',
+      bytes: 5734092,
+      mb: 5.73,
+      mae: 3.6448,
       reduction: '50.0%',
       isBestTradeoff: true
     },
-    { 
-      id: 'TWENTY_FIVE', 
-      name: '25% Participation', 
-      short: '25% (1/4)', 
-      bytes: 2867046, 
-      mb: 2.87, 
-      mae: 3.6699, 
+    {
+      id: 'TWENTY_FIVE',
+      name: '25% Participation',
+      short: '25% (1/4)',
+      bytes: 2867046,
+      mb: 2.87,
+      mae: 3.6699,
       reduction: '75.0%',
       isMaxReduction: true
     }
@@ -88,7 +88,7 @@ export default function SavingsVsPredictionQualityChart({
 
   return (
     <div className="flex flex-col h-full rounded-2xl bg-white dark:bg-[#071727] border border-slate-200 dark:border-[#17364E] shadow-xs dark:shadow-md p-5 transition-colors justify-between min-h-[350px]">
-      
+
       {/* Header: Title + Legends */}
       <div>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-1">
@@ -122,8 +122,8 @@ export default function SavingsVsPredictionQualityChart({
 
       {/* Interactive Dual-Axis SVG Chart */}
       <div className="flex-1 flex flex-col justify-center relative py-2">
-        <svg 
-          viewBox={`0 0 ${width} ${height}`} 
+        <svg
+          viewBox={`0 0 ${width} ${height}`}
           className="w-full h-full overflow-visible"
           preserveAspectRatio="none"
         >
@@ -174,7 +174,7 @@ export default function SavingsVsPredictionQualityChart({
             const isSelected = activeStrategy === p.id;
 
             return (
-              <g 
+              <g
                 key={p.name}
                 onMouseEnter={() => setHoveredIdx(i)}
                 onMouseLeave={() => setHoveredIdx(null)}

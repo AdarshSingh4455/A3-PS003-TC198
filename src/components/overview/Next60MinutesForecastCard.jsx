@@ -52,7 +52,7 @@ export default function Next60MinutesForecastCard({
 
   return (
     <div className="flex flex-col justify-between h-full rounded-2xl bg-white dark:bg-[#071727] border border-slate-200 dark:border-[#17364E] p-5 shadow-xl transition-colors">
-      
+
       {/* Top Header */}
       <div>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 mb-3 border-b border-slate-100 dark:border-[#17364E]/80">
@@ -124,14 +124,14 @@ export default function Next60MinutesForecastCard({
               />
               {/* Shaded Forecast Horizon Area */}
               <ReferenceArea x1="NOW" stroke="none" fill="#0284c7" fillOpacity={isDark ? 0.08 : 0.05} />
-              
+
               {/* Vertical NOW Line */}
-              <ReferenceLine 
-                x="NOW" 
-                stroke="#f59e0b" 
+              <ReferenceLine
+                x="NOW"
+                stroke="#f59e0b"
                 strokeWidth={2}
-                strokeDasharray="3 3" 
-                label={{ value: 'NOW', fill: '#f59e0b', fontSize: 10, fontFamily: 'Inter, sans-serif', fontWeight: 700, position: 'top' }} 
+                strokeDasharray="3 3"
+                label={{ value: 'NOW', fill: '#f59e0b', fontSize: 10, fontFamily: 'Inter, sans-serif', fontWeight: 700, position: 'top' }}
               />
 
               {/* Upper Uncertainty Bound */}

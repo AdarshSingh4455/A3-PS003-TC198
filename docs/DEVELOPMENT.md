@@ -57,7 +57,7 @@ The React User Interface will be accessible at `http://localhost:5173`.
 ## 4. Testing & Verification
 
 ### Running Backend Unit & Regression Tests
-Run the full 270-test backend pytest suite:
+Run the full 300-test backend pytest suite:
 ```bash
 # On Windows PowerShell
 $env:PYTHONPATH="." ; pytest backend -v
@@ -65,17 +65,40 @@ $env:PYTHONPATH="." ; pytest backend -v
 # On Linux/macOS
 PYTHONPATH=. pytest backend -v
 ```
-All **270 tests** must pass.
+All **300 tests** must pass.
 
-### Building Frontend Production Assets
-Verify the Vite production build succeeds:
+### Frontend Linting & Production Build
+Verify ESLint and the Vite production build succeed:
 ```bash
+npm run lint
 npm run build
 ```
 
 ---
 
-## 5. Key Repository Conventions
+## 5. Branch Workflow & Pull Request Expectations
+
+1. **Main Branch Protection**: The `main` branch represents production-ready, submission-frozen code.
+2. **Feature Branching**: Development occurs on descriptive feature or fix branches (e.g., `feat/decision-metrics`, `fix/route-nav`).
+3. **Pull Request Requirements**:
+   - Clean lint (`npm run lint` with 0 errors).
+   - Successful production bundle (`npm run build`).
+   - 100% backend test pass (`pytest backend -v` passing all 300 tests).
+   - Zero hardcoded secrets or environment dumps.
+   - Preserved scientific provenance and model checkpoints.
+
+---
+
+## 6. Environment Variables & Secrets
+
+- **Frontend**: Contains **zero** secrets. All frontend configuration connects to the backend API (`http://localhost:8000/api`).
+- **Backend**:
+  - `GEMINI_API_KEY` (Optional): Set in `.env` or system environment for the server-side Gemini AI assistant proxy (`backend/assistant.py`).
+  - `.env` is ignored by `.gitignore` and must never be committed to source control.
+
+---
+
+## 7. Key Repository Conventions
 
 1. **Single FastAPI Rule**: All API routes are declared in `backend/main.py` under `/api/*`. Do NOT spawn parallel backend servers.
 2. **Frontend Gateway Rule**: All UI components fetch data through `src/services/api.js`. Do NOT write component-level `fetch` calls.

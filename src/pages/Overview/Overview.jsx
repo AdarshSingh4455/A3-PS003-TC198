@@ -143,7 +143,7 @@ export default function Overview() {
 
   return (
     <div className="space-y-6 pb-12 w-full">
-      
+
       {/* SECTION 1: TOP HERO OPERATIONAL BRIEFING */}
       <OverviewHeroConsole
         selectedSensor={selectedSensor}

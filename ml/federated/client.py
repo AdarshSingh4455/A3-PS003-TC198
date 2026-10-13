@@ -94,7 +94,7 @@ class FederatedClient:
         """
         if not validate_model_parameters(global_state_dict):
             raise ValueError(f"Client {self.client_id} received non-finite global weights.")
-        
+
         # Clone downloaded state dict for update L2 norm calculation
         self.downloaded_state_dict = {k: v.clone().cpu() for k, v in global_state_dict.items()}
         self.model.load_state_dict(global_state_dict)

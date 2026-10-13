@@ -7,7 +7,7 @@ This document provides the authoritative single source of scientific parameters,
 ## 1. Dataset Parameters & Split Contract
 
 - **Dataset**: METR-LA (Los Angeles County highway speed sensors).
-- **Authoritative Raw Path**: [data/raw/metr-la/metr-la.h5](file:///c:/Users/shaur/OneDrive/Desktop/PS-003/data/raw/metr-la/metr-la.h5) (57,038,056 bytes).
+- **Authoritative Raw Path**: [data/raw/metr-la/metr-la.h5](data/raw/metr-la/metr-la.h5) (57,038,056 bytes).
 - **Raw Matrix Dimensions**: **34,272 time steps × 207 traffic sensors**.
 - **Sampling Frequency**: 5 minutes.
 - **Date Range**: `2012-03-01 00:00:00` to `2012-06-27 23:55:00`.
@@ -74,7 +74,7 @@ Evaluated across the 6,832 test set samples:
 - **+60 min**: **4.7158 mph**
 
 ### Centralized Model Checkpoint
-- Path: [data/processed/metr-la/models/spatiotemporal/graph_lstm_best.pt](file:///c:/Users/shaur/OneDrive/Desktop/PS-003/data/processed/metr-la/models/spatiotemporal/graph_lstm_best.pt)
+- Path: [data/processed/metr-la/models/spatiotemporal/graph_lstm_best.pt](data/processed/metr-la/models/spatiotemporal/graph_lstm_best.pt)
 - Size: **111,119 bytes**
 - SHA-256: `702cb2bb9406aa36ec25639121377bf939acdb1906370997ccd792f70cf1f384`
 
@@ -85,7 +85,7 @@ Evaluated across the 6,832 test set samples:
 - Best Validation Round: **Round 8** (Validation MAE: **3.1536 mph**).
 - Final FL Test Metrics: **MAE = 3.5322 mph**, **RMSE = 7.0956 mph**, **MAPE = 9.99%**.
 - FL vs Centralized Gap: Full-participation FedAvg achieved 3.5322 mph test MAE, 2.75% higher (+0.0944 mph) than the frozen centralized Graph+LSTM reference baseline of 3.4378 mph under the evaluated regional federated setup.
-- Federated Checkpoint Path: [data/processed/metr-la/federated/checkpoints/global_best.pt](file:///c:/Users/shaur/OneDrive/Desktop/PS-003/data/processed/metr-la/federated/checkpoints/global_best.pt)
+- Federated Checkpoint Path: [data/processed/metr-la/federated/checkpoints/global_best.pt](data/processed/metr-la/federated/checkpoints/global_best.pt)
   - Size: **111,047 bytes**
   - SHA-256: `24710dae0fe0554ca8111ad21e05de03b69a282f0b8d8868a1433ba6fd9c2930`
 

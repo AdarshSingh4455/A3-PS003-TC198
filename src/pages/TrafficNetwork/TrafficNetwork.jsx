@@ -10,11 +10,11 @@ import EvidenceChain from '../../components/decision/EvidenceChain';
 import MetricCard from '../../components/common/MetricCard';
 import TrafficSpeedHeatmap from '../../components/traffic/TrafficSpeedHeatmap';
 import CoverageBlindSpotsPanel from '../../components/traffic/CoverageBlindSpotsPanel';
-import { 
-  fetchNeedScore, 
-  fetchCounterfactual, 
-  fetchEvidenceChain, 
-  executeQuery, 
+import {
+  fetchNeedScore,
+  fetchCounterfactual,
+  fetchEvidenceChain,
+  executeQuery,
   fetchMetrSnapshot,
   fetchSpatialSpeedConsistency,
   fetchNetworkTopology
@@ -292,13 +292,13 @@ export default function TrafficNetwork() {
 
   return (
     <div className="space-y-5 pb-10">
-      
+
       {/* ==================================================================== */}
       {/* 1. COMPACT OPERATIONS HEADER (Reference Style: Title + Regions + Search) */}
       {/* ==================================================================== */}
       <div className="rounded-2xl bg-white dark:bg-[#071727] border border-slate-200 dark:border-[#17364E] p-4 lg:p-5 shadow-xs transition-colors">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          
+
           {/* Left: Brand Title & Replay Subtitle */}
           <div className="flex items-center gap-3">
             <div className="p-2.5 rounded-xl bg-blue-500/10 text-cyan-600 dark:text-cyan-400 border border-blue-500/20 shrink-0">
@@ -403,11 +403,11 @@ export default function TrafficNetwork() {
       {/* ==================================================================== */}
       {/* 3. MAIN OPERATIONS CONSOLE (75% Large Map + 25% Side Sensor Panel)  */}
       {/* ==================================================================== */}
-      <div 
+      <div
         ref={consoleRef}
         className={`transition-all ${
-          isFullscreen 
-            ? 'fixed inset-0 z-[1000] bg-slate-950 p-4 flex flex-col lg:flex-row gap-4 overflow-hidden' 
+          isFullscreen
+            ? 'fixed inset-0 z-[1000] bg-slate-950 p-4 flex flex-col lg:flex-row gap-4 overflow-hidden'
             : 'grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch'
         }`}
       >
@@ -494,14 +494,14 @@ export default function TrafficNetwork() {
       {activeModal && (
         <div className="p-4 rounded-xl bg-white dark:bg-[#081827] border border-blue-500/40 shadow-2xl relative transition-colors">
           {activeModal === 'why-selected' && (
-            <NeedScoreBreakdown 
-              data={needScoreData} 
-              onClose={() => setActiveModal(null)} 
+            <NeedScoreBreakdown
+              data={needScoreData}
+              onClose={() => setActiveModal(null)}
             />
           )}
           {activeModal === 'counterfactual' && (
-            <CounterfactualQueryCard 
-              data={counterfactualData} 
+            <CounterfactualQueryCard
+              data={counterfactualData}
               onClose={() => setActiveModal(null)}
               onExecuteQuery={async (id) => {
                 await executeQuery(id);
@@ -511,9 +511,9 @@ export default function TrafficNetwork() {
             />
           )}
           {activeModal === 'evidence' && (
-            <EvidenceChain 
-              data={evidenceData} 
-              onClose={() => setActiveModal(null)} 
+            <EvidenceChain
+              data={evidenceData}
+              onClose={() => setActiveModal(null)}
             />
           )}
         </div>

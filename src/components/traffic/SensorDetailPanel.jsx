@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { 
-  Radio, Zap, HelpCircle, Activity, 
+import {
+  Radio, Zap, HelpCircle, Activity,
   MapPin, ExternalLink, ChevronRight
 } from 'lucide-react';
 import StatusBadge from '../common/StatusBadge';
@@ -28,9 +28,9 @@ function getGeoDistanceKm(lat1, lon1, lat2, lon2) {
   const R = 6371; // Earth's radius in km
   const dLat = (lat2 - lat1) * Math.PI / 180;
   const dLon = (lon2 - lon1) * Math.PI / 180;
-  const a = 
+  const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
     Math.sin(dLon / 2) * Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return (R * c).toFixed(1);
@@ -52,46 +52,46 @@ export default function SensorDetailPanel({
   const regionId = activeSensor.regionId || "REGION_C";
 
   // Telemetry formatting
-  const speedVal = typeof activeSensor.speed === 'number' 
-    ? activeSensor.speed.toFixed(1) 
+  const speedVal = typeof activeSensor.speed === 'number'
+    ? activeSensor.speed.toFixed(1)
     : (activeSensor.speed ? String(activeSensor.speed) : "64.2");
 
-  const speedCondition = activeSensor.speedCondition || 
+  const speedCondition = activeSensor.speedCondition ||
     (Number(activeSensor.speed) < 35 ? "congested" : Number(activeSensor.speed) < 50 ? "moderate" : "normal");
 
-  const qualityText = activeSensor.dataQuality !== undefined 
-    ? `${(activeSensor.dataQuality * 100).toFixed(1)}%` 
+  const qualityText = activeSensor.dataQuality !== undefined
+    ? `${(activeSensor.dataQuality * 100).toFixed(1)}%`
     : "94.2%";
 
-  const uncertaintyText = activeSensor.uncertainty !== undefined 
-    ? `±${activeSensor.uncertainty.toFixed(2)} mph` 
+  const uncertaintyText = activeSensor.uncertainty !== undefined
+    ? `±${activeSensor.uncertainty.toFixed(2)} mph`
     : "±2.14 mph";
 
-  const driftText = activeSensor.trafficDrift !== undefined 
-    ? `${activeSensor.trafficDrift.toFixed(2)}` 
+  const driftText = activeSensor.trafficDrift !== undefined
+    ? `${activeSensor.trafficDrift.toFixed(2)}`
     : "0.18";
 
-  const needScoreVal = activeSensor.needScore !== undefined 
-    ? (typeof activeSensor.needScore === 'number' ? activeSensor.needScore.toFixed(2) : activeSensor.needScore) 
+  const needScoreVal = activeSensor.needScore !== undefined
+    ? (typeof activeSensor.needScore === 'number' ? activeSensor.needScore.toFixed(2) : activeSensor.needScore)
     : "0.87";
 
   // Build real connected neighbors from topology
   const rawNeighborIds = neighborsMap[sensorId] || activeSensor.graphNeighbors || [];
   const neighborIdsKey = Array.isArray(rawNeighborIds) ? rawNeighborIds.join(',') : '';
-  
+
   const connectedNeighbors = useMemo(() => {
     if (!neighborIdsKey) return [];
     const list = neighborIdsKey.split(',');
     const sensorMap = new Map((allSensors || []).map(s => [String(s.sensorId || s.id), s]));
-    
+
     return list.map(nid => {
       const sid = String(nid);
       const found = sensorMap.get(sid);
       if (found) {
         const distKm = getGeoDistanceKm(
-          activeSensor.latitude, 
-          activeSensor.longitude, 
-          found.latitude, 
+          activeSensor.latitude,
+          activeSensor.longitude,
+          found.latitude,
           found.longitude
         );
         return {
@@ -117,8 +117,8 @@ export default function SensorDetailPanel({
   }, [neighborIdsKey, allSensors, activeSensor, regionId]);
 
   // Traffic state color
-  const statusColor = speedCondition === 'congested' 
-    ? 'text-rose-500 bg-rose-500/10 border-rose-500/30' 
+  const statusColor = speedCondition === 'congested'
+    ? 'text-rose-500 bg-rose-500/10 border-rose-500/30'
     : speedCondition === 'moderate'
     ? 'text-amber-500 bg-amber-500/10 border-amber-500/30'
     : 'text-emerald-500 bg-emerald-500/10 border-emerald-500/30';
@@ -131,7 +131,7 @@ export default function SensorDetailPanel({
 
   return (
     <div className="flex flex-col h-full bg-white dark:bg-[#071727] rounded-2xl border border-slate-200 dark:border-[#17364E] shadow-xl overflow-hidden transition-colors">
-      
+
       {/* 1. Header Bar: Title + Subtitle */}
       <div className="p-4 border-b border-slate-100 dark:border-[#17364E]/80 bg-slate-50/70 dark:bg-[#0A1D30]/60 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
@@ -198,7 +198,7 @@ export default function SensorDetailPanel({
 
       {/* 4. Tab Body Content Area (Scrollable within own panel) */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar">
-        
+
         {/* =================================================================== */}
         {/* TAB 1: OVERVIEW */}
         {/* =================================================================== */}
@@ -342,15 +342,15 @@ export default function SensorDetailPanel({
 
             <div className="space-y-1.5">
               {connectedNeighbors.map(nbr => {
-                const spd = nbr.speed !== null && nbr.speed !== undefined 
-                  ? `${Number(nbr.speed).toFixed(1)} mph` 
+                const spd = nbr.speed !== null && nbr.speed !== undefined
+                  ? `${Number(nbr.speed).toFixed(1)} mph`
                   : "62.1 mph";
 
                 const nbrCondition = nbr.speedCondition || "normal";
-                const dotColor = nbrCondition === 'congested' 
-                  ? 'bg-rose-500' 
-                  : nbrCondition === 'moderate' 
-                  ? 'bg-amber-500' 
+                const dotColor = nbrCondition === 'congested'
+                  ? 'bg-rose-500'
+                  : nbrCondition === 'moderate'
+                  ? 'bg-amber-500'
                   : 'bg-emerald-500';
 
                 return (

@@ -1,7 +1,7 @@
 # TrafficPulse-X: Final Authoritative A–Z Implementation & Provenance Audit Report
 
 > [!IMPORTANT]
-> **Audit Revision**: Authoritative Audit generated directly from local HEAD [`850657ea16ba2cacdf9d661679014e3056c182c8`](file:///c:/Users/shaur/OneDrive/Desktop/PS-003) (`origin/main` [`850657ea16ba2cacdf9d661679014e3056c182c8`](file:///c:/Users/shaur/OneDrive/Desktop/PS-003)). Supersedes all prior draft audit notes.
+> **Audit Revision**: Authoritative Audit generated directly from local HEAD [`850657ea16ba2cacdf9d661679014e3056c182c8`](#) (`origin/main` [`850657ea16ba2cacdf9d661679014e3056c182c8`](#)). Supersedes all prior draft audit notes.
 
 ---
 
@@ -15,11 +15,11 @@ TrafficPulse-X is an **Evidence-on-Demand Federated Traffic-Flow Prediction Plat
 | **Phase 1** | Frontend Foundation | **COMPLETE** | — | — |
 | **Phase 2** | Traffic Network + Decision UI | **COMPLETE** | — | — |
 | **Phase 3** | Backend + Sensor Graph | **COMPLETE** | — | — |
-| **Phase 4** | Real Decision Intelligence | **COMPLETE** | [`phase-4-complete`](file:///c:/Users/shaur/OneDrive/Desktop/PS-003) | `c741ac06403317ed151d2dddb141525663e78cc0` |
-| **Phase 5** | Real Dataset + Geospatial Traffic Network | **COMPLETE** | [`phase-5-complete`](file:///c:/Users/shaur/OneDrive/Desktop/PS-003) | `ff668cf616f8ca8e09d9f8853a9d2a6c998b65a9` |
-| **Phase 6** | Traffic Prediction ML | **COMPLETE / FROZEN** | [`phase-6-complete`](file:///c:/Users/shaur/OneDrive/Desktop/PS-003) (`e789daab...`) | `660d28d0147945c126635d6f2f0273939f965cb6` |
-| **Phase 7** | Prediction + Decision Intelligence Fusion | **COMPLETE / FROZEN** | [`phase-7-complete`](file:///c:/Users/shaur/OneDrive/Desktop/PS-003) (`b14bb4c9...`) | `9548a14f964fdc0fede7971e3652296ef473aa47` |
-| **Phase 8** | Federated Learning | **COMPLETE / FROZEN** | [`phase-8-complete`](file:///c:/Users/shaur/OneDrive/Desktop/PS-003) (`22743db3...`) | `d42c67e025c46cd2337a513f98a95105ea0940bc` |
+| **Phase 4** | Real Decision Intelligence | **COMPLETE** | [`phase-4-complete`](#) | `c741ac06403317ed151d2dddb141525663e78cc0` |
+| **Phase 5** | Real Dataset + Geospatial Traffic Network | **COMPLETE** | [`phase-5-complete`](#) | `ff668cf616f8ca8e09d9f8853a9d2a6c998b65a9` |
+| **Phase 6** | Traffic Prediction ML | **COMPLETE / FROZEN** | [`phase-6-complete`](#) (`e789daab...`) | `660d28d0147945c126635d6f2f0273939f965cb6` |
+| **Phase 7** | Prediction + Decision Intelligence Fusion | **COMPLETE / FROZEN** | [`phase-7-complete`](#) (`b14bb4c9...`) | `9548a14f964fdc0fede7971e3652296ef473aa47` |
+| **Phase 8** | Federated Learning | **COMPLETE / FROZEN** | [`phase-8-complete`](#) (`22743db3...`) | `d42c67e025c46cd2337a513f98a95105ea0940bc` |
 | **Phase 9** | Communication Intelligence | **COMPLETE & EVALUATED** | — | — |
 | **Phase 10** | Experiments + Final System | **COMPLETE & FROZEN** | — | — |
 
@@ -28,8 +28,8 @@ TrafficPulse-X is an **Evidence-on-Demand Federated Traffic-Flow Prediction Plat
 ## 2. Dataset, Splits & Input Tensor Contract
 
 ### Dataset Contract
-- **Authoritative Raw Dataset Source Path**: [data/raw/metr-la/metr-la.h5](file:///c:/Users/shaur/OneDrive/Desktop/PS-003/data/raw/metr-la/metr-la.h5) (57,038,056 bytes). Note: `df_in_sine.h5` was an intermediate/original dataset artifact during initial extraction.
-- **ML-Ready Artifact Location**: [data/processed/metr-la/ml_ready/](file:///c:/Users/shaur/OneDrive/Desktop/PS-003/data/processed/metr-la/ml_ready/) (`train.npz`, `val.npz`, `test.npz`).
+- **Authoritative Raw Dataset Source Path**: [data/raw/metr-la/metr-la.h5](data/raw/metr-la/metr-la.h5) (57,038,056 bytes). Note: `df_in_sine.h5` was an intermediate/original dataset artifact during initial extraction.
+- **ML-Ready Artifact Location**: [data/processed/metr-la/ml_ready/](data/processed/metr-la/ml_ready/) (`train.npz`, `val.npz`, `test.npz`).
 - **Raw Matrix Shape**: **34,272 × 207** (34,272 time steps across 207 traffic sensors).
 - **Sampling Interval**: 5 minutes.
 - **Authoritative Date Bounds**: `2012-03-01 00:00:00` to `2012-06-27 23:55:00`.
@@ -66,7 +66,7 @@ TrafficPulse-X is an **Evidence-on-Demand Federated Traffic-Flow Prediction Plat
 ## 3. Geospatial Subgraphs & Regional FL Client Distribution
 
 ### Canonical Client Partitioning
-Sensors are mapped across 4 geographical subgraphs defined in [ml/federated/client_partitions.json](file:///c:/Users/shaur/OneDrive/Desktop/PS-003/ml/federated/client_partitions.json):
+Sensors are mapped across 4 geographical subgraphs defined in [ml/federated/client_partitions.json](ml/federated/client_partitions.json):
 
 | Client ID | Region Name | Sector | Sensor Count | Valid Target Cells ($n_i$) | Authoritative FedAvg Weight |
 |---|---|---|---|---|---|
@@ -85,7 +85,7 @@ Sensors are mapped across 4 geographical subgraphs defined in [ml/federated/clie
 ## 4. Phase-6 Model Benchmark & Frozen Checkpoints
 
 ### Spatial Graph Normalization
-Adjacency formulation in [ml/graph/model.py](file:///c:/Users/shaur/OneDrive/Desktop/PS-003/ml/graph/model.py):
+Adjacency formulation in [ml/graph/model.py](ml/graph/model.py):
 $$\tilde{A} = A + I_{207}$$
 $$\tilde{D}_{ii} = \sum_j \tilde{A}_{ij}$$
 $$A_{norm} = \tilde{D}^{-1/2} \tilde{A} \tilde{D}^{-1/2}$$
@@ -109,10 +109,10 @@ Termed: **weighted symmetrically normalized adjacency with self-loops**.
 - **+60 min** (`step 12`): **4.7158 mph** *(Historical Average wins +60m at 4.1934 mph due to long-horizon variance smoothing)*
 
 ### Model Checkpoints Verification
-- **Centralized Checkpoint**: [data/processed/metr-la/models/spatiotemporal/graph_lstm_best.pt](file:///c:/Users/shaur/OneDrive/Desktop/PS-003/data/processed/metr-la/models/spatiotemporal/graph_lstm_best.pt)
+- **Centralized Checkpoint**: [data/processed/metr-la/models/spatiotemporal/graph_lstm_best.pt](data/processed/metr-la/models/spatiotemporal/graph_lstm_best.pt)
   - Raw File Size: **111,119 bytes**
   - Raw File SHA-256: `702cb2bb9406aa36ec25639121377bf939acdb1906370997ccd792f70cf1f384`
-- **Federated Checkpoint**: [data/processed/metr-la/federated/checkpoints/global_best.pt](file:///c:/Users/shaur/OneDrive/Desktop/PS-003/data/processed/metr-la/federated/checkpoints/global_best.pt)
+- **Federated Checkpoint**: [data/processed/metr-la/federated/checkpoints/global_best.pt](data/processed/metr-la/federated/checkpoints/global_best.pt)
   - Raw File Size: **111,047 bytes**
   - Raw File SHA-256: `24710dae0fe0554ca8111ad21e05de03b69a282f0b8d8868a1433ba6fd9c2930`
 

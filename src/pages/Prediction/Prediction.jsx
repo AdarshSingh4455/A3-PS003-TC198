@@ -62,12 +62,12 @@ const INITIAL_PREDICTIONS = [
 
 export default function Prediction() {
   const { isDark } = useTheme();
-  const { 
-    timeIndex: globalTimeIndex, 
-    stepForward, 
-    stepBackward, 
-    selectedSensorId, 
-    setSelectedSensorId 
+  const {
+    timeIndex: globalTimeIndex,
+    stepForward,
+    stepBackward,
+    selectedSensorId,
+    setSelectedSensorId
   } = useReplay();
   const [searchParams] = useSearchParams();
   const effectiveTimeIndex = Math.max(12, globalTimeIndex);
@@ -139,33 +139,33 @@ export default function Prediction() {
   const isResidual = selectedMetric === 'residual';
 
   const chartData = [
-    { 
-      step: '-15 min', 
-      actual: isResidual ? null : isDelta ? -1.2 : Number((currentSpeed - 1.2).toFixed(1)), 
-      predicted: null, 
-      upper: null, 
-      lower: null 
+    {
+      step: '-15 min',
+      actual: isResidual ? null : isDelta ? -1.2 : Number((currentSpeed - 1.2).toFixed(1)),
+      predicted: null,
+      upper: null,
+      lower: null
     },
-    { 
-      step: '-10 min', 
-      actual: isResidual ? null : isDelta ? 0.8 : Number((currentSpeed + 0.8).toFixed(1)), 
-      predicted: null, 
-      upper: null, 
-      lower: null 
+    {
+      step: '-10 min',
+      actual: isResidual ? null : isDelta ? 0.8 : Number((currentSpeed + 0.8).toFixed(1)),
+      predicted: null,
+      upper: null,
+      lower: null
     },
-    { 
-      step: '-5 min', 
-      actual: isResidual ? null : isDelta ? -0.4 : Number((currentSpeed - 0.4).toFixed(1)), 
-      predicted: null, 
-      upper: null, 
-      lower: null 
+    {
+      step: '-5 min',
+      actual: isResidual ? null : isDelta ? -0.4 : Number((currentSpeed - 0.4).toFixed(1)),
+      predicted: null,
+      upper: null,
+      lower: null
     },
-    { 
-      step: 'T0 (Now)', 
-      actual: isResidual ? 0.0 : isDelta ? 0.0 : Number(currentSpeed.toFixed(1)), 
-      predicted: isResidual ? 0.0 : isDelta ? 0.0 : Number(currentSpeed.toFixed(1)), 
-      upper: isResidual ? 1.2 : isDelta ? 1.2 : Number((currentSpeed + 1.2).toFixed(1)), 
-      lower: isResidual ? 0.0 : isDelta ? -1.2 : Number((currentSpeed - 1.2).toFixed(1)) 
+    {
+      step: 'T0 (Now)',
+      actual: isResidual ? 0.0 : isDelta ? 0.0 : Number(currentSpeed.toFixed(1)),
+      predicted: isResidual ? 0.0 : isDelta ? 0.0 : Number(currentSpeed.toFixed(1)),
+      upper: isResidual ? 1.2 : isDelta ? 1.2 : Number((currentSpeed + 1.2).toFixed(1)),
+      lower: isResidual ? 0.0 : isDelta ? -1.2 : Number((currentSpeed - 1.2).toFixed(1))
     }
   ];
 
@@ -179,7 +179,7 @@ export default function Prediction() {
   const predictionsList = forecastData?.sensor?.predictions || INITIAL_PREDICTIONS;
   predictionsList.forEach((p) => {
     const delta = uncertaintyDeltas[p.horizonLabel] || 2.5;
-    const predVal = isDelta 
+    const predVal = isDelta
       ? Number((p.predictedSpeedMph - currentSpeed).toFixed(1))
       : isResidual
       ? Number(Math.abs(p.actualSpeedMph - p.predictedSpeedMph).toFixed(1))
@@ -194,7 +194,7 @@ export default function Prediction() {
       step: p.horizonLabel,
       predicted: predVal,
       actual: actualVal,
-      upper: isResidual 
+      upper: isResidual
         ? Number((predVal + delta * 0.5).toFixed(1))
         : Number((predVal + delta).toFixed(1)),
       lower: isResidual
@@ -366,7 +366,7 @@ export default function Prediction() {
 
       {/* SECTION D: MAIN FORECAST VISUALIZATION + PREDICTED VALUES TABLE */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
-        
+
         {/* Left (~70%): Next-Hour Traffic Speed Forecast Chart */}
         <div className="lg:col-span-8 bg-white dark:bg-[#071727] border border-slate-200 dark:border-[#17364E] rounded-2xl p-5 shadow-xs dark:shadow-md flex flex-col justify-between transition-colors">
           <div>
@@ -425,12 +425,12 @@ export default function Prediction() {
                   {/* Shaded Forecast Region */}
                   <ReferenceArea x1="T0 (Now)" stroke="none" fill="#0284c7" fillOpacity={isDark ? 0.08 : 0.05} />
                   {/* Prominent Vertical NOW line */}
-                  <ReferenceLine 
-                    x="T0 (Now)" 
-                    stroke="#f59e0b" 
+                  <ReferenceLine
+                    x="T0 (Now)"
+                    stroke="#f59e0b"
                     strokeWidth={2}
-                    strokeDasharray="3 3" 
-                    label={{ value: 'NOW (T0)', fill: '#f59e0b', fontSize: 11, fontFamily: 'Inter, sans-serif', fontWeight: 700, position: 'top' }} 
+                    strokeDasharray="3 3"
+                    label={{ value: 'NOW (T0)', fill: '#f59e0b', fontSize: 11, fontFamily: 'Inter, sans-serif', fontWeight: 700, position: 'top' }}
                   />
                   {/* Upper Uncertainty Envelope */}
                   <Line
@@ -501,7 +501,7 @@ export default function Prediction() {
 
       {/* SECTION E & F: FORECAST QUALITY & UNCERTAINTY + FORECAST INSIGHTS */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-stretch">
-        
+
         {/* Forecast Quality & Uncertainty Panel */}
         <div className="flex flex-col h-full">
           <ForecastQualityPanel

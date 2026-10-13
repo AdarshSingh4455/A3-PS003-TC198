@@ -101,7 +101,7 @@ export default function CoverageBlindSpotsPanel({
 
   return (
     <div className="flex flex-col h-full bg-white dark:bg-[#071727] rounded-2xl border border-slate-200 dark:border-[#17364E] shadow-xl p-5 transition-colors">
-      
+
       {/* 1. Header: Icon, Title & Badge */}
       <div className="flex items-center justify-between gap-3 mb-4">
         <div className="flex items-center gap-2.5">
@@ -123,7 +123,7 @@ export default function CoverageBlindSpotsPanel({
 
       {/* 2. Middle Row: Donut Chart + Legend */}
       <div className="flex-1 flex flex-col sm:flex-row items-center justify-center gap-6 py-2">
-        
+
         {/* Donut Chart Container */}
         <div className="relative w-44 h-44 shrink-0 flex items-center justify-center">
           <svg className="w-44 h-44 -rotate-90 transform" viewBox="0 0 140 140">
@@ -191,7 +191,7 @@ export default function CoverageBlindSpotsPanel({
 
         {/* Legend & Count Breakdown */}
         <div className="w-full sm:w-auto flex-1 flex flex-col justify-center space-y-3">
-          
+
           {/* Covered Sensors */}
           <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 dark:bg-[#0B2033]/60 border border-slate-100 dark:border-[#17364E]/60">
             <div className="flex items-center gap-2.5">

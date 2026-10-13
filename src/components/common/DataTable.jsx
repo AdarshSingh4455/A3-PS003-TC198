@@ -1,9 +1,9 @@
 import React from 'react';
 
-export default function DataTable({ 
-  columns, 
-  data, 
-  emptyText = "No records found", 
+export default function DataTable({
+  columns,
+  data,
+  emptyText = "No records found",
   onRowClick,
   containerClassName = "",
   maxHeight
@@ -15,7 +15,7 @@ export default function DataTable({
   const heightStyle = maxHeight ? { maxHeight: typeof maxHeight === 'number' ? `${maxHeight}px` : maxHeight } : undefined;
 
   return (
-    <div 
+    <div
       style={heightStyle}
       className={`overflow-x-auto w-full ${maxHeight ? 'overflow-y-auto custom-scrollbar' : ''} ${containerClassName}`}
     >
@@ -31,8 +31,8 @@ export default function DataTable({
         </thead>
         <tbody className="divide-y divide-slate-100 dark:divide-[#17364E]/60">
           {data.map((row, rowIndex) => (
-            <tr 
-              key={row.id || rowIndex} 
+            <tr
+              key={row.id || rowIndex}
               onClick={() => onRowClick && onRowClick(row)}
               className={`hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors ${
                 onRowClick ? "cursor-pointer" : ""

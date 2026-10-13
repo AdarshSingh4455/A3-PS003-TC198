@@ -50,7 +50,7 @@ def evaluate_stage_6_2_linear(
     scaler_path = os.path.join(processed_dir, "scaler.json")
     idx_path = os.path.join(processed_dir, "sensor_index.json")
     reg_path = os.path.join(processed_dir, "regions.json")
-    
+
     train_path = os.path.join(processed_dir, "ml_ready/train.npz")
     val_path = os.path.join(processed_dir, "ml_ready/val.npz")
     test_path = os.path.join(processed_dir, "ml_ready/test.npz")

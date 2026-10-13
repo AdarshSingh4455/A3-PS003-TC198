@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { 
-  Award, 
-  ChevronDown, 
-  ChevronUp, 
-  CheckCircle2, 
+import {
+  Award,
+  ChevronDown,
+  ChevronUp,
+  CheckCircle2,
   Clock
 } from 'lucide-react';
 import {
@@ -18,74 +18,74 @@ import {
 import { useTheme } from '../../context/ThemeContext';
 
 export const BENCHMARK_MODELS = [
-  { 
-    name: 'Graph+LSTM', 
+  {
+    name: 'Graph+LSTM',
     shortName: 'Graph+LSTM',
-    mae: 3.4378, 
-    mae60: 4.7158, 
-    type: 'Spatio-Temporal', 
-    isWinner: true, 
+    mae: 3.4378,
+    mae60: 4.7158,
+    type: 'Spatio-Temporal',
+    isWinner: true,
     badge: 'Best Overall',
     overallScore: 92.5,
     longHorizonScore: 76.1
   },
-  { 
-    name: 'LSTM (Temporal)', 
+  {
+    name: 'LSTM (Temporal)',
     shortName: 'LSTM',
-    mae: 3.5613, 
-    mae60: 4.9156, 
-    type: 'Standard Recurrent', 
+    mae: 3.5613,
+    mae60: 4.9156,
+    type: 'Standard Recurrent',
     isWinner: false,
     overallScore: 87.1,
     longHorizonScore: 69.5
   },
-  { 
-    name: 'GRU (Temporal)', 
+  {
+    name: 'GRU (Temporal)',
     shortName: 'GRU',
-    mae: 3.5669, 
-    mae60: 4.9284, 
-    type: 'Gated Recurrent', 
+    mae: 3.5669,
+    mae60: 4.9284,
+    type: 'Gated Recurrent',
     isWinner: false,
     overallScore: 86.9,
     longHorizonScore: 69.1
   },
-  { 
-    name: 'Linear Regression', 
+  {
+    name: 'Linear Regression',
     shortName: 'Linear Reg',
-    mae: 3.9763, 
-    mae60: 5.5879, 
-    type: 'Linear Baseline', 
+    mae: 3.9763,
+    mae60: 5.5879,
+    type: 'Linear Baseline',
     isWinner: false,
     overallScore: 72.3,
     longHorizonScore: 47.1
   },
-  { 
-    name: 'Last Value', 
+  {
+    name: 'Last Value',
     shortName: 'Last Value',
-    mae: 3.9839, 
-    mae60: 5.3987, 
-    type: 'Naive Persistent', 
+    mae: 3.9839,
+    mae60: 5.3987,
+    type: 'Naive Persistent',
     isWinner: false,
     overallScore: 72.0,
     longHorizonScore: 53.4
   },
-  { 
-    name: 'Historical Average', 
+  {
+    name: 'Historical Average',
     shortName: 'Hist Avg',
-    mae: 4.1930, 
-    mae60: 4.1934, 
-    type: 'Long-Horizon Robust', 
-    isWinner: false, 
+    mae: 4.1930,
+    mae60: 4.1934,
+    type: 'Long-Horizon Robust',
+    isWinner: false,
     badge: '+60m Baseline',
     overallScore: 64.5,
     longHorizonScore: 93.6
   },
-  { 
-    name: 'Spatial GCN', 
+  {
+    name: 'Spatial GCN',
     shortName: 'Spatial GCN',
-    mae: 5.4604, 
-    mae60: 6.4201, 
-    type: 'Pure Spatial', 
+    mae: 5.4604,
+    mae60: 6.4201,
+    type: 'Pure Spatial',
     isWinner: false,
     overallScore: 22.0,
     longHorizonScore: 19.3
@@ -113,7 +113,7 @@ export default function CompactModelBenchmark() {
 
   return (
     <div className="bg-white dark:bg-[#081827] border border-slate-200 dark:border-[#17364E] rounded-2xl p-5 shadow-xl transition-colors">
-      
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-100 dark:border-[#17364E]/80">
         <div>
@@ -172,10 +172,10 @@ export default function CompactModelBenchmark() {
 
       {/* Main Grid: Radar Chart (Left) + Model Analytical Summary (Right) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
-        
+
         {/* Left (~58%): Radar / Spider Chart */}
         <div className="lg:col-span-7 flex flex-col items-center justify-center relative min-h-[340px] pt-2">
-          
+
           {/* Subtle Radar Legend */}
           <div className="flex items-center justify-center gap-5 text-xs font-mono mb-2">
             {(activeMetric === 'both' || activeMetric === 'overall') && (
@@ -195,22 +195,22 @@ export default function CompactModelBenchmark() {
           <div className="w-full h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart cx="50%" cy="50%" outerRadius="75%" data={radarData}>
-                <PolarGrid 
-                  stroke={isDark ? "#1B3B56" : "#E2E8F0"} 
-                  strokeOpacity={isDark ? 0.7 : 0.9} 
+                <PolarGrid
+                  stroke={isDark ? "#1B3B56" : "#E2E8F0"}
+                  strokeOpacity={isDark ? 0.7 : 0.9}
                 />
-                <PolarAngleAxis 
-                  dataKey="model" 
-                  tick={{ 
-                    fill: isDark ? "#A0B8D0" : "#4A5D6E", 
-                    fontSize: 11, 
+                <PolarAngleAxis
+                  dataKey="model"
+                  tick={{
+                    fill: isDark ? "#A0B8D0" : "#4A5D6E",
+                    fontSize: 11,
                     fontFamily: 'Inter, sans-serif',
                     fontWeight: 600
-                  }} 
+                  }}
                 />
-                <PolarRadiusAxis 
-                  angle={30} 
-                  domain={[0, 100]} 
+                <PolarRadiusAxis
+                  angle={30}
+                  domain={[0, 100]}
                   stroke={isDark ? "#17364E" : "#CBD5E1"}
                   tick={{ fill: isDark ? "#607386" : "#94A3B8", fontSize: 9 }}
                 />
@@ -288,7 +288,7 @@ export default function CompactModelBenchmark() {
 
         {/* Right (~42%): Highlighted Model Analytical Cards */}
         <div className="lg:col-span-5 space-y-2.5">
-          
+
           {/* Primary Highlight Card: Graph+LSTM */}
           <div className="p-3.5 rounded-xl bg-gradient-to-br from-blue-500/10 via-cyan-500/5 to-transparent border border-blue-500/40 dark:border-cyan-500/40 shadow-xs relative">
             <div className="flex items-center justify-between mb-2">
@@ -342,8 +342,8 @@ export default function CompactModelBenchmark() {
               <span>Test MAE</span>
             </div>
             {BENCHMARK_MODELS.filter(m => !m.isWinner && m.name !== 'Historical Average').map(m => (
-              <div 
-                key={m.name} 
+              <div
+                key={m.name}
                 onMouseEnter={() => setHoveredModel(m.shortName)}
                 onMouseLeave={() => setHoveredModel(null)}
                 className={`flex justify-between items-center py-0.5 px-1.5 rounded transition-colors ${

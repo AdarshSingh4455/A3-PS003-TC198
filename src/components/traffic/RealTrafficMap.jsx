@@ -2,8 +2,8 @@ import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { MapContainer, TileLayer, Marker, Tooltip, Polyline, Polygon, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { 
-  ChevronDown, Crosshair, Check, Maximize2, Minimize2, 
+import {
+  ChevronDown, Crosshair, Check, Maximize2, Minimize2,
   Globe, Play, Pause, ChevronLeft, ChevronRight, RotateCcw,
   Layers, Activity, GitFork
 } from 'lucide-react';
@@ -220,13 +220,13 @@ function createRealSensorIcon({
       <div style="position: relative; display: flex; align-items: center; user-select: none;">
         <!-- Animated Expanding Red Radar Ripple Wave 1 -->
         <div class="red-radar-pulse-ring" style="position: absolute; top: -28px; left: -28px; width: 78px; height: 78px; border-radius: 9999px; border: 2px solid rgba(239, 68, 68, 0.75); background: radial-gradient(circle, rgba(239, 68, 68, 0.25) 0%, transparent 72%); pointer-events: none;"></div>
-        
+
         <!-- Animated Expanding Red Radar Ripple Wave 2 (Phase Delayed) -->
         <div class="red-radar-pulse-ring-delayed" style="position: absolute; top: -28px; left: -28px; width: 78px; height: 78px; border-radius: 9999px; border: 1.5px solid rgba(239, 68, 68, 0.55); pointer-events: none;"></div>
-        
+
         <!-- Intermediate Static Soft Red Glow Ring -->
         <div style="position: absolute; top: -14px; left: -14px; width: 50px; height: 50px; border-radius: 9999px; border: 2px solid rgba(239, 68, 68, 0.9); background: rgba(239, 68, 68, 0.18); pointer-events: none;"></div>
-        
+
         <!-- Central Red Tactical Beacon -->
         <div style="position: relative; width: 22px; height: 22px; border-radius: 9999px; background-color: #ef4444; border: 2.5px solid #ffffff; box-shadow: 0 0 18px rgba(239, 68, 68, 0.95); display: flex; align-items: center; justify-content: center; z-index: 10;">
           <span style="width: 6px; height: 6px; border-radius: 9999px; background-color: #ffffff;"></span>
@@ -345,16 +345,16 @@ function UnifiedMapControls({
   onRegionChange
 }) {
   const map = useMap();
-  const { 
-    timeIndex, 
-    timestampStr, 
-    isPlaying, 
-    replaySpeed, 
-    setReplaySpeed, 
-    togglePlay, 
-    stepForward, 
-    stepBackward, 
-    jumpToStep 
+  const {
+    timeIndex,
+    timestampStr,
+    isPlaying,
+    replaySpeed,
+    setReplaySpeed,
+    togglePlay,
+    stepForward,
+    stepBackward,
+    jumpToStep
   } = useReplay();
 
   const [metricDropdownOpen, setMetricDropdownOpen] = useState(false);
@@ -410,11 +410,11 @@ function UnifiedMapControls({
       {/* 1. TOP-LEFT OVERLAYS: HISTORICAL REPLAY + REGION SELECTOR (Screenshots 1 & 5) */}
       {/* ==================================================================== */}
       <div className="absolute top-3 left-3 z-[500] flex flex-col gap-2 pointer-events-none max-w-[calc(100%-110px)] sm:max-w-[calc(100%-240px)]">
-        
+
         {/* Row 1: Historical Replay Control Bar */}
         <div className="pointer-events-auto self-start relative z-20">
           <div className="relative flex items-center h-8 bg-white/95 dark:bg-[#071727]/95 backdrop-blur-md px-1.5 rounded-xl border border-slate-200 dark:border-[#17364E] shadow-md text-xs font-semibold select-none gap-1">
-            
+
             {/* Step & Time Display */}
             <div className="flex items-center gap-1.5 px-1.5 font-mono text-xs text-slate-800 dark:text-[#F5F8FC]">
               <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse shrink-0" />
@@ -441,8 +441,8 @@ function UnifiedMapControls({
             <button
               onClick={togglePlay}
               className={`w-7 h-7 flex items-center justify-center rounded-md transition-colors cursor-pointer ${
-                isPlaying 
-                  ? 'bg-amber-500/20 text-amber-500 hover:bg-amber-500/30' 
+                isPlaying
+                  ? 'bg-amber-500/20 text-amber-500 hover:bg-amber-500/30'
                   : 'text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500/10'
               }`}
               title="Play / Pause"
@@ -468,8 +468,8 @@ function UnifiedMapControls({
               <button
                 onClick={() => setSpeedDropdownOpen(prev => !prev)}
                 className={`h-6 px-1.5 rounded-md text-[11px] font-mono font-bold flex items-center gap-0.5 transition-colors cursor-pointer ${
-                  speedDropdownOpen 
-                    ? 'bg-slate-200 dark:bg-[#0E2438] text-slate-900 dark:text-white' 
+                  speedDropdownOpen
+                    ? 'bg-slate-200 dark:bg-[#0E2438] text-slate-900 dark:text-white'
                     : 'text-slate-700 dark:text-[#BACCDA] hover:bg-slate-100 dark:hover:bg-[#0E2438]'
                 }`}
                 title="Playback Speed"
@@ -555,7 +555,7 @@ function UnifiedMapControls({
       {/* 2. TOP-RIGHT OVERLAYS: METRIC + EDGES + BASEMAP (Screenshot 3 simplified) */}
       {/* ==================================================================== */}
       <div className="absolute top-3 right-3 z-[500] flex items-center gap-2 pointer-events-none">
-        
+
         {/* Metric Overlay Selector */}
         <div className="pointer-events-auto relative hidden sm:block" ref={metricRef}>
           <button
@@ -682,10 +682,10 @@ function UnifiedMapControls({
       {/* 3. BOTTOM OVERLAYS: VIEWPORT CONTROLS + SPEED LEGEND (Screenshots 6 & 7) */}
       {/* ==================================================================== */}
       <div className="absolute bottom-3 left-3 right-3 z-[500] flex flex-col items-center gap-2 pointer-events-none">
-        
+
         {/* Row 1: Viewport Navigation Toolbar */}
         <div className="w-full flex items-center justify-between pointer-events-none">
-          
+
           {/* Left: Full Network & Focus Target (Screenshot 6 repositioned to Screenshot 7 area) */}
           <div className="pointer-events-auto flex items-center gap-1 bg-white/95 dark:bg-[#071727]/95 backdrop-blur-md p-1 rounded-xl border border-slate-200 dark:border-[#17364E] shadow-md select-none">
             <button
@@ -915,7 +915,7 @@ export default function RealTrafficMap({
   // Filter real sensors based on activeRegion tab
   const visibleSensors = useMemo(() => {
     if (!sensors || sensors.length === 0) return [];
-    const valid = sensors.filter(s => 
+    const valid = sensors.filter(s =>
       typeof s?.latitude === 'number' && !isNaN(s.latitude) &&
       typeof s?.longitude === 'number' && !isNaN(s.longitude)
     );
@@ -932,8 +932,8 @@ export default function RealTrafficMap({
     let candidateEdges = [];
     if (edgeMode === 'neighborhood') {
       // DEFAULT: only highlight direct neighbors of the selected sensor
-      candidateEdges = graphEdges.filter(e => 
-        String(e.fromSensorId) === activeSelectedId || 
+      candidateEdges = graphEdges.filter(e =>
+        String(e.fromSensorId) === activeSelectedId ||
         String(e.toSensorId) === activeSelectedId
       );
     } else {
@@ -942,13 +942,13 @@ export default function RealTrafficMap({
     }
 
     const styled = candidateEdges.map(edge => {
-      const isDirectSelected = 
-        String(edge.fromSensorId) === activeSelectedId || 
+      const isDirectSelected =
+        String(edge.fromSensorId) === activeSelectedId ||
         String(edge.toSensorId) === activeSelectedId;
 
-      const isNeighborLink = 
+      const isNeighborLink =
         !isDirectSelected && (
-          neighborIdSet.has(String(edge.fromSensorId)) && 
+          neighborIdSet.has(String(edge.fromSensorId)) &&
           neighborIdSet.has(String(edge.toSensorId))
         );
 
@@ -997,7 +997,7 @@ export default function RealTrafficMap({
     <div className={`relative w-full rounded-2xl overflow-hidden border border-slate-200 dark:border-[#17364E] bg-slate-100 dark:bg-[#050b14] shadow-xl flex flex-col select-none transition-all ${
       isFullscreen ? 'h-full flex-1 min-h-0' : 'h-[640px] min-h-[580px]'
     }`}>
-      
+
       {/* ==================================================================== */}
       {/* LEAFLET MAP CONTAINER                                                */}
       {/* ==================================================================== */}
