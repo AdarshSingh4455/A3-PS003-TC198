@@ -361,11 +361,28 @@ Comprehensive project documentation is maintained in the [`docs/`](docs/) direct
 
 ## 21. References
 
-1. **Li, Y., Yu, R., Shahabi, C., & Liu, Y. (2018)**. *Diffusion Convolutional Recurrent Neural Network: Data-Driven Traffic Forecasting*. International Conference on Learning Representations (ICLR).
-2. **Yu, B., Yin, H., & Zhu, Z. (2018)**. *Spatio-Temporal Graph Convolutional Networks: A Deep Learning Framework for Traffic Forecasting*. International Joint Conference on Artificial Intelligence (IJCAI).
-3. **McMahan, B., Moore, E., Ramage, D., Hampson, S., & y Arcas, B. A. (2017)**. *Communication-Efficient Learning of Deep Networks from Decentralized Data*. Artificial Intelligence and Statistics (AISTATS).
-4. **Chen, C., Petty, K., Skabardonis, A., Varaiya, P., & Jia, Z. (2001)**. *Freeway Performance Measurement System (PeMS)*. Transportation Research Record.
-5. **Ministry of Housing and Urban Affairs (MoHUA), Government of India (2015–2024)**. *Smart Cities Mission: Integrated Command and Control Centres (ICCC) and Adaptive Traffic Control Systems (ATCS)*.
+FedAvg – Federated Learning
+         https://proceedings.mlr.press/v54/mcmahan17a.html
+DCRNN – Traffic Forecasting
+        https://proceedings.mlr.press/v54/mcmahan17a.html
+STGCN – Spatio-Temporal Graph Convolutional Network
+         https://www.ijcai.org/proceedings/2018/0505.pdf
+ Communication-Efficient Federated Learning on Non-IID Data
+        https://ieeexplore.ieee.org/document/8889996
+LSTM – Original Research Paper
+        https://arxiv.org/abs/1607.00133
+METR-LA Dataset / DCRNN Repository
+         https://github.com/liyaguang/DCRNN
+Differential Privacy / DP-SGD
+        https://arxiv.org/abs/1607.00133
+Opacus – Differential Privacy for PyTorch
+       https://opacus.ai/
+Secure Aggregation for Federated Learning
+        https://research.google/pubs/practical-secure-aggregation-for-privacy-preserving-machine-learning/
+Caltrans PeMS Data Source
+       https://dot.ca.gov/programs/traffic-operations/mpr/pems-source
+<img width="1544" height="906" alt="image" src="https://github.com/user-attachments/assets/639ad551-eeff-49e7-8d90-f7081536bef2" />
+
 
 ---
 
