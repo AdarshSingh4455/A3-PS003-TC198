@@ -6,7 +6,11 @@ import {
   Network,
   Cpu,
   Layers,
-  ShieldCheck
+  ShieldCheck,
+  ArrowDown,
+  Info,
+  ChevronDown,
+  Compass
 } from 'lucide-react';
 import {
   LineChart,
@@ -23,11 +27,18 @@ import {
 import { fetchFederatedRounds } from '../../services/api';
 import { useTheme } from '../../context/ThemeContext';
 import MetricCard from '../../components/common/MetricCard';
+import CentralizedVsFederatedCard from '../../components/federated/CentralizedVsFederatedCard';
+import ExperimentDistributionCard from '../../components/federated/ExperimentDistributionCard';
+import DistributionReproducibilitySection from '../../components/federated/DistributionReproducibilitySection';
+import EvaluationProtocolCard from '../../components/federated/EvaluationProtocolCard';
+import FederatedCommunicationSummaryCard from '../../components/federated/FederatedCommunicationSummaryCard';
+import PrivacyExperimentSection from '../../components/federated/PrivacyExperimentSection';
 import IndiaCaseStudiesCard from '../../components/federated/IndiaCaseStudiesCard';
 
 const FROZEN_CLIENT_PARTITIONS = [
   {
     clientId: 'CLIENT_A',
+    clientLabel: 'Simulated Client A',
     regionId: 'REGION_A',
     regionName: 'North-East Cluster',
     sensorCount: 48,
@@ -40,6 +51,7 @@ const FROZEN_CLIENT_PARTITIONS = [
   },
   {
     clientId: 'CLIENT_B',
+    clientLabel: 'Simulated Client B',
     regionId: 'REGION_B',
     regionName: 'South-East Corridor',
     sensorCount: 57,
@@ -52,6 +64,7 @@ const FROZEN_CLIENT_PARTITIONS = [
   },
   {
     clientId: 'CLIENT_C',
+    clientLabel: 'Simulated Client C',
     regionId: 'REGION_C',
     regionName: 'Central-West Arterial',
     sensorCount: 58,
@@ -64,6 +77,7 @@ const FROZEN_CLIENT_PARTITIONS = [
   },
   {
     clientId: 'CLIENT_D',
+    clientLabel: 'Simulated Client D',
     regionId: 'REGION_D',
     regionName: 'North-West Chokepoints',
     sensorCount: 44,
@@ -80,6 +94,7 @@ export default function FederatedLearning() {
   const { isDark } = useTheme();
   const [error, setError] = useState(null);
   const [roundsData, setRoundsData] = useState(null);
+  const [showDeploymentContext, setShowDeploymentContext] = useState(false);
 
   const loadData = async () => {
     setError(null);
@@ -112,7 +127,7 @@ export default function FederatedLearning() {
     { round: 13, validationMAE: 3.2100 }
   ];
 
-  // Top 5 KPIs matching Section 26
+  // Top 5 KPIs matching PS-003 frozen evaluation
   const flKPIs = [
     {
       id: "best-round",
@@ -124,7 +139,7 @@ export default function FederatedLearning() {
     },
     {
       id: "val-mae",
-      label: "Best Val MAE",
+      label: "Best Val Speed MAE",
       value: "3.1536 mph",
       subtext: "Optimal Validation Performance",
       iconType: "accuracy",
@@ -132,7 +147,7 @@ export default function FederatedLearning() {
     },
     {
       id: "test-mae",
-      label: "Final Test MAE",
+      label: "Final Test Speed MAE",
       value: "3.5322 mph",
       subtext: "Evaluated on Full 207-Sensor Test Set",
       iconType: "layers",
@@ -157,8 +172,8 @@ export default function FederatedLearning() {
   ];
 
   return (
-    <div className="space-y-5 pb-10">
-      {/* Header Banner */}
+    <div className="space-y-6 pb-12">
+      {/* 1. Header Banner */}
       <div className="relative overflow-hidden rounded-2xl bg-white dark:bg-[#071727] border border-slate-200 dark:border-[#17364E] p-5 lg:p-6 shadow-xs dark:shadow-md transition-colors">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
@@ -170,14 +185,19 @@ export default function FederatedLearning() {
                 Federated Learning
               </h1>
             </div>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-[#B8C7D8] font-medium max-w-2xl">
-              Regional collaborative model training across four traffic zones.
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-[#B8C7D8] font-medium max-w-3xl">
+              Decentralized collaborative speed forecasting across four simulated regional traffic zones using FedAvg on METR-LA historical replay.
             </p>
+          </div>
+          <div className="flex items-center gap-2 self-start md:self-auto">
+            <span className="text-[11px] font-mono px-3 py-1 rounded-full bg-slate-100 dark:bg-[#0B2033] border border-slate-200 dark:border-[#17364E] text-slate-600 dark:text-[#BCD0E2]">
+              Framework: Federated Averaging (FedAvg)
+            </span>
           </div>
         </div>
       </div>
 
-      {/* Top 5 KPI Cards Row */}
+      {/* 2. Top 5 KPI Cards Row */}
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3.5">
         {flKPIs.map((kpi) => (
           <MetricCard
@@ -201,13 +221,27 @@ export default function FederatedLearning() {
         </div>
       )}
 
-      {/* 4 Regional FL Client Partitions Strip */}
-      <div>
-        <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-[#7F96AA] mb-3 flex items-center gap-2">
-          <Layers className="w-4 h-4 text-cyan-400" />
-          4 Regional Client Partitions (METR-LA K-Means Clustering)
-        </h2>
+      {/* 3. NEW: Centralized vs Federated Performance */}
+      <CentralizedVsFederatedCard />
 
+      {/* 4. Federated Client Distribution & Architecture */}
+      <div className="space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-[#7F96AA] flex items-center gap-2">
+              <Layers className="w-4 h-4 text-cyan-400" />
+              Federated Client Distribution (4 Simulated FL Clients)
+            </h2>
+            <p className="text-[11px] text-slate-500 dark:text-[#7F96AA] mt-0.5">
+              Partitioned via spatial highway clusters across the 207-sensor METR-LA freeway network
+            </p>
+          </div>
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 self-start sm:self-auto">
+            Partition Type: Geographic / Heterogeneous (Non-IID)
+          </span>
+        </div>
+
+        {/* 4 Regional Client Partitions Strip */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
           {FROZEN_CLIENT_PARTITIONS.map((c) => (
             <div
@@ -217,7 +251,7 @@ export default function FederatedLearning() {
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <span className="font-bold text-xs font-mono text-slate-900 dark:text-white">
-                    {c.clientId.replace('_', ' ')}
+                    {c.clientLabel}
                   </span>
                   <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded font-bold border ${c.badgeColor}`}>
                     {c.regionId}
@@ -235,11 +269,11 @@ export default function FederatedLearning() {
                     <strong className="text-cyan-400">{c.fedAvgWeight}</strong>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-500">Target Count:</span>
+                    <span className="text-slate-500">Valid Targets:</span>
                     <span className="text-slate-400">{c.targets}</span>
                   </div>
                   <div className="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-[#17364E]">
-                    <span className="text-slate-500">Client Test MAE:</span>
+                    <span className="text-slate-500">Speed Test MAE:</span>
                     <strong className="text-emerald-400">{c.testMae}</strong>
                   </div>
                 </div>
@@ -251,9 +285,30 @@ export default function FederatedLearning() {
             </div>
           ))}
         </div>
+
+        {/* Aggregation Architecture Flow Representation */}
+        <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#071727] border border-slate-200 dark:border-[#17364E] text-xs flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-center">
+          <div className="flex items-center gap-1.5 font-mono text-slate-600 dark:text-slate-300">
+            <span className="px-2 py-0.5 rounded bg-blue-500/10 text-blue-500 border border-blue-500/20 font-bold">Client A (48)</span>
+            <span>+</span>
+            <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 font-bold">Client B (57)</span>
+            <span>+</span>
+            <span className="px-2 py-0.5 rounded bg-purple-500/10 text-purple-500 border border-purple-500/20 font-bold">Client C (58)</span>
+            <span>+</span>
+            <span className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-500 border border-amber-500/20 font-bold">Client D (44)</span>
+          </div>
+          <ArrowDown className="w-4 h-4 text-slate-400 rotate-[-90deg] hidden sm:inline" />
+          <div className="flex items-center gap-1.5 font-mono text-cyan-600 dark:text-cyan-400 font-bold">
+            <span className="px-2.5 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/30">Target-Weighted FedAvg</span>
+          </div>
+          <ArrowDown className="w-4 h-4 text-slate-400 rotate-[-90deg] hidden sm:inline" />
+          <div className="flex items-center gap-1.5 font-mono text-emerald-600 dark:text-emerald-400 font-bold">
+            <span className="px-2.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30">Global SpatialGraphLSTM (207 Sensors)</span>
+          </div>
+        </div>
       </div>
 
-      {/* Main Row: Convergence Chart Left (60%) + FedAvg Weight Provenance Right (40%) */}
+      {/* 5. Main Row: Federated Convergence Left (60%) + FedAvg Weight Provenance Right (40%) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
         {/* Global Validation Convergence Chart */}
         <div className="lg:col-span-7 bg-white dark:bg-[#081827] border border-slate-200 dark:border-[#17364E] rounded-xl p-4.5 shadow-xs flex flex-col justify-between">
@@ -262,10 +317,10 @@ export default function FederatedLearning() {
               <div>
                 <h3 className="text-[16px] font-semibold text-slate-900 dark:text-[#F5F8FC] flex items-center gap-2">
                   <BarChart2 className="w-4 h-4 text-purple-400" />
-                  Global Validation MAE Convergence (Rounds 0–13)
+                  Federated Convergence (Global Validation Speed MAE)
                 </h3>
                 <p className="text-[13px] text-slate-500 dark:text-[#B8C7D8] font-normal mt-0.5">
-                  Early-stopping validation selection chose Round 8 (3.1536 mph).
+                  Real validation history across Rounds 0–13. Optimal checkpoint selected at Round 8 (3.1536 mph).
                 </p>
               </div>
             </div>
@@ -275,7 +330,7 @@ export default function FederatedLearning() {
                 <LineChart data={chartRounds} margin={{ top: 15, right: 20, left: 5, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#17364E" : "#E2E8F0"} opacity={isDark ? 0.6 : 0.9} vertical={false} />
                   <XAxis dataKey="round" stroke={isDark ? "#8295A8" : "#60758A"} fontSize={12} fontFamily="Inter, sans-serif" fontWeight={500} tickLine={false} unit=" r" />
-                  <YAxis domain={[3.0, 5.0]} width={56} stroke={isDark ? "#8295A8" : "#60758A"} fontSize={11} fontFamily="Inter, sans-serif" fontWeight={500} tickLine={false} tickFormatter={(v) => `${v.toFixed(1)} mph`} />
+                  <YAxis domain={[3.0, 5.0]} width={58} stroke={isDark ? "#8295A8" : "#60758A"} fontSize={11} fontFamily="Inter, sans-serif" fontWeight={500} tickLine={false} tickFormatter={(v) => `${v.toFixed(1)} mph`} />
                   <Tooltip
                     content={({ active, payload }) => {
                       if (active && payload && payload.length) {
@@ -283,8 +338,8 @@ export default function FederatedLearning() {
                         return (
                           <div className="p-2.5 rounded-lg bg-white dark:bg-[#04101A] border border-slate-200 dark:border-[#17364E] text-slate-900 dark:text-white text-xs font-mono shadow-xl space-y-1">
                             <div className="font-bold text-slate-600 dark:text-slate-300">Round {r.round}</div>
-                            <div className="text-purple-600 dark:text-purple-400 font-semibold">Val MAE: {Number(r.validationMAE).toFixed(4)} mph</div>
-                            {r.round === 8 && <div className="text-emerald-600 dark:text-emerald-400 font-bold">★ Selected Checkpoint</div>}
+                            <div className="text-purple-600 dark:text-purple-400 font-semibold">Val Speed MAE: {Number(r.validationMAE).toFixed(4)} mph</div>
+                            {r.round === 8 && <div className="text-emerald-600 dark:text-emerald-400 font-bold">★ Selected Global Checkpoint</div>}
                           </div>
                         );
                       }
@@ -296,7 +351,7 @@ export default function FederatedLearning() {
                   <Line
                     type="monotone"
                     dataKey="validationMAE"
-                    name="Global Validation MAE"
+                    name="Global Validation Speed MAE"
                     stroke="#9D5CFF"
                     strokeWidth={2.5}
                     dot={{ r: 3, fill: '#9D5CFF' }}
@@ -343,27 +398,87 @@ export default function FederatedLearning() {
             <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
             <div>
               <strong className="block">Performance Reference:</strong>
-              Centralized reference MAE is 3.4378 mph. FedAvg achieved 3.5322 mph with only a 0.0944 mph gap (+2.75%), preserving predictive accuracy.
+              Centralized reference Speed MAE is 3.4378 mph. FedAvg achieved 3.5322 mph with only a 0.0944 mph gap (+2.75%), preserving predictive accuracy.
             </div>
           </div>
         </div>
       </div>
 
-      {/* India Smart-Mobility Case Studies */}
-      <IndiaCaseStudiesCard />
+      {/* 6. Experiment Distribution (Non-IID Evaluated vs IID Not Evaluated) */}
+      <ExperimentDistributionCard />
 
-      {/* Checkpoint Provenance Strip */}
-      <div className="p-4 rounded-xl bg-white dark:bg-[#081827] border border-slate-200 dark:border-[#17364E] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono">
-        <div className="flex items-center gap-2">
-          <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-          <span className="text-slate-600 dark:text-[#BCD0E2]">Global Checkpoint SHA-256:</span>
-          <span className="text-blue-600 dark:text-cyan-400 font-bold break-all">
-            24710dae0fe0554ca8111ad21e05de03b69a282f0b8d8868a1433ba6fd9c2930
-          </span>
+      {/* 7. NEW: Distribution & Reproducibility (3-Seed Evaluation & IID vs Non-IID Statistical Analysis) */}
+      <DistributionReproducibilitySection />
+
+      {/* 8. Evaluation Protocol & Multi-Seed Handling */}
+      <EvaluationProtocolCard />
+
+      {/* 8. NEW: Federated Communication Summary */}
+      <FederatedCommunicationSummaryCard />
+
+      {/* 9. OPTIONAL: Formal Differential Privacy & Secure Aggregation Experiment */}
+      <PrivacyExperimentSection />
+
+      {/* 10. Checkpoint Provenance Strip & Privacy Note */}
+      <div className="space-y-2">
+        <div className="p-4 rounded-xl bg-white dark:bg-[#081827] border border-slate-200 dark:border-[#17364E] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+            <span className="text-slate-600 dark:text-[#BCD0E2]">Global Checkpoint SHA-256:</span>
+            <span className="text-blue-600 dark:text-cyan-400 font-bold break-all">
+              24710dae0fe0554ca8111ad21e05de03b69a282f0b8d8868a1433ba6fd9c2930
+            </span>
+          </div>
+          <div className="text-slate-500 shrink-0">
+            File: global_best.pt (111,047 B)
+          </div>
         </div>
-        <div className="text-slate-500 shrink-0">
-          File: global_best.pt (111,047 B)
+
+        <div className="px-3 py-2 rounded-lg bg-slate-50 dark:bg-[#071727] border border-slate-200 dark:border-[#17364E] text-[11px] text-slate-500 dark:text-[#7F96AA] flex items-center justify-between">
+          <div className="flex items-center gap-1.5">
+            <Info className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+            <span>
+              <strong>Distributed Training Note:</strong> Raw regional sensor time-series data remains strictly local to simulated client partitions. Parameter state exchanges convey only model gradient weights. No formal cryptographic privacy guarantees are claimed.
+            </span>
+          </div>
+          <span className="hidden md:inline font-mono text-slate-400 shrink-0 ml-2">METR-LA Replay Protocol</span>
         </div>
+      </div>
+
+      {/* 11. Secondary Collapsible Section: Deployment Context & Smart-Mobility Relevance */}
+      <div className="border border-slate-200 dark:border-[#17364E] rounded-xl bg-white dark:bg-[#081827] overflow-hidden shadow-xs transition-colors">
+        <button
+          onClick={() => setShowDeploymentContext(prev => !prev)}
+          className="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-slate-50 dark:hover:bg-[#0c2236] transition-colors"
+          type="button"
+        >
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-500 border border-indigo-500/20">
+              <Compass className="w-4 h-4" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-slate-900 dark:text-[#F5F8FC] flex items-center gap-2">
+                Deployment Context & Smart-Mobility Relevance
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-500 border border-indigo-500/20 font-bold">
+                  Reference Case Studies
+                </span>
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-[#8295A8]">
+                Exploratory mapping to Indian smart-mobility corridors and municipal traffic networks
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 text-xs font-semibold text-indigo-600 dark:text-cyan-400">
+            <span>{showDeploymentContext ? 'Hide Context' : 'Expand Context'}</span>
+            <ChevronDown className={`w-4 h-4 transform transition-transform duration-200 ${showDeploymentContext ? 'rotate-180' : ''}`} />
+          </div>
+        </button>
+
+        {showDeploymentContext && (
+          <div className="p-5 border-t border-slate-200 dark:border-[#17364E] bg-slate-50/50 dark:bg-[#061422]">
+            <IndiaCaseStudiesCard />
+          </div>
+        )}
       </div>
     </div>
   );

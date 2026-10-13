@@ -389,4 +389,142 @@ export async function sendAssistantMessage(message, history = []) {
   return await res.json();
 }
 
+// 3-Seed Extension & IID vs Non-IID Experiment Endpoints
+export async function fetchExperimentStatus() {
+  const res = await apiFetch(`${API_BASE}/experiments/status`);
+  if (!res.ok) throw new Error(`Experiment Status Fetch Failed: ${res.status}`);
+  return await res.json();
+}
 
+export async function fetchDistributionComparison() {
+  const res = await apiFetch(`${API_BASE}/experiments/distribution-comparison`);
+  if (!res.ok) throw new Error(`Distribution Comparison Fetch Failed: ${res.status}`);
+  return await res.json();
+}
+
+export async function fetchSeedSummary() {
+  const res = await apiFetch(`${API_BASE}/experiments/seed-summary`);
+  if (!res.ok) throw new Error(`Seed Summary Fetch Failed: ${res.status}`);
+  return await res.json();
+}
+
+export async function fetchExperimentConvergence() {
+  const res = await apiFetch(`${API_BASE}/experiments/convergence`);
+  if (!res.ok) throw new Error(`Experiment Convergence Fetch Failed: ${res.status}`);
+  return await res.json();
+}
+
+export async function fetchIIDPartitions() {
+  const res = await apiFetch(`${API_BASE}/experiments/iid-partitions`);
+  if (!res.ok) throw new Error(`IID Partitions Fetch Failed: ${res.status}`);
+  return await res.json();
+}
+
+// Differential Privacy & Secure Aggregation Experiment Endpoints
+export async function fetchPrivacyStatus() {
+  const res = await apiFetch(`${API_BASE}/experiments/privacy/status`);
+  if (!res.ok) throw new Error(`Privacy Status Fetch Failed: ${res.status}`);
+  return await res.json();
+}
+
+export async function fetchPrivacyResults() {
+  const res = await apiFetch(`${API_BASE}/experiments/privacy/results`);
+  if (!res.ok) throw new Error(`Privacy Results Fetch Failed: ${res.status}`);
+  return await res.json();
+}
+
+export async function fetchSecureAggregationSimulation() {
+  const res = await apiFetch(`${API_BASE}/experiments/privacy/secure-aggregation`);
+  if (!res.ok) throw new Error(`Secure Aggregation Fetch Failed: ${res.status}`);
+  return await res.json();
+}
+
+// -------------------------------------------------------------
+// PeMS08 Traffic Flow Dataset Extension Endpoints
+// -------------------------------------------------------------
+
+export async function fetchFlowStatus() {
+  const res = await apiFetch(`${API_BASE}/experiments/flow/status`);
+  if (!res.ok) throw new Error(`Flow Status Fetch Failed: ${res.status}`);
+  return await res.json();
+}
+
+export async function fetchFlowMetadata() {
+  const res = await apiFetch(`${API_BASE}/experiments/flow/metadata`);
+  if (!res.ok) throw new Error(`Flow Metadata Fetch Failed: ${res.status}`);
+  return await res.json();
+}
+
+export async function fetchFlowResults() {
+  const res = await apiFetch(`${API_BASE}/experiments/flow/results`);
+  if (!res.ok) throw new Error(`Flow Results Fetch Failed: ${res.status}`);
+  return await res.json();
+}
+
+export async function fetchFlowSensors() {
+  const res = await apiFetch(`${API_BASE}/experiments/flow/sensors`);
+  if (!res.ok) throw new Error(`Flow Sensors Fetch Failed: ${res.status}`);
+  return await res.json();
+}
+
+export async function fetchFlowForecast(timeIndex = 100, sensorId = "PEMS08_009") {
+  const res = await apiFetch(`${API_BASE}/experiments/flow/forecast?step=${timeIndex}&sensorId=${sensorId}`);
+  if (!res.ok) throw new Error(`Flow Forecast Fetch Failed: ${res.status}`);
+  return await res.json();
+}
+
+// -------------------------------------------------------------
+// Controlled Network-Byte Accounting Endpoints
+// -------------------------------------------------------------
+
+export async function fetchNetworkAccountingStatus() {
+  const res = await apiFetch(`${API_BASE}/experiments/network-accounting/status`);
+  if (!res.ok) throw new Error(`Network Accounting Status Fetch Failed: ${res.status}`);
+  return await res.json();
+}
+
+export async function fetchNetworkAccountingReport() {
+  const res = await apiFetch(`${API_BASE}/experiments/network-accounting`);
+  if (!res.ok) throw new Error(`Network Accounting Report Fetch Failed: ${res.status}`);
+  return await res.json();
+}
+
+// -------------------------------------------------------------
+// Streaming Adapter Endpoints (Historical Replay + Live Adapter)
+// -------------------------------------------------------------
+
+export async function fetchStreamingStatus() {
+  const res = await apiFetch(`${API_BASE}/streaming/status`);
+  if (!res.ok) throw new Error(`Streaming Status Fetch Failed: ${res.status}`);
+  return await res.json();
+}
+
+export async function fetchStreamingConfig() {
+  const res = await apiFetch(`${API_BASE}/streaming/config`);
+  if (!res.ok) throw new Error(`Streaming Config Fetch Failed: ${res.status}`);
+  return await res.json();
+}
+
+export async function setStreamingProvider(provider) {
+  const res = await apiFetch(`${API_BASE}/streaming/provider`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ provider })
+  });
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.detail?.error || errData.detail || `Provider switch failed (${res.status})`);
+  }
+  return await res.json();
+}
+
+export async function fetchStreamingSnapshot(timeIndex = 0, regionId = "ALL", provider = null) {
+  let url = `${API_BASE}/streaming/snapshot?time_index=${timeIndex}&region_id=${regionId}`;
+  if (provider) url += `&provider=${encodeURIComponent(provider)}`;
+  const res = await apiFetch(url);
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.detail || `Streaming Snapshot Fetch Failed: ${res.status}`);
+  }
+  return await res.json();
+}

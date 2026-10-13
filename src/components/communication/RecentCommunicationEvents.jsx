@@ -45,7 +45,7 @@ export default function RecentCommunicationEvents() {
       title: 'Regional Client Deferred',
       target: 'Region A & Region D',
       payload: '0 B',
-      reason: '50% budget enforcement; Information debt incremented (τ = 1)',
+      reason: '50% budget enforcement; client transmission deferred to conserve payload',
       dotColor: 'bg-amber-500',
       badgeClass: 'text-amber-700 dark:text-amber-400 bg-amber-500/10 border-amber-500/30'
     },

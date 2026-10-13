@@ -9,7 +9,9 @@ import {
   fetchPhase9ClientValues,
   fetchPhase9Experiments,
   fetchPhase9Tradeoff,
-  fetchPhase9Rounds
+  fetchPhase9Rounds,
+  fetchNetworkAccountingStatus,
+  fetchNetworkAccountingReport
 } from '../../services/api';
 import CommunicationHeroFlow from '../../components/communication/CommunicationHeroFlow';
 import CommunicationSummaryKPIs from '../../components/communication/CommunicationSummaryKPIs';
@@ -85,9 +87,36 @@ export default function Communication() {
   const [activeHistoryPolicy, setActiveHistoryPolicy] = useState('POLICY_CCV_2_OF_4');
   const [roundsHistory, setRoundsHistory] = useState([]);
 
+  // Accounting View State: 'APPLICATION_PAYLOAD' (Default Authoritative) vs 'MEASURED_NETWORK_BYTES'
+  const [accountingView, setAccountingView] = useState('APPLICATION_PAYLOAD');
+  const [accountingStatus, setAccountingStatus] = useState(null);
+  const [accountingReport, setAccountingReport] = useState(null);
+
+  const isMeasuredMode = accountingView === 'MEASURED_NETWORK_BYTES' && Boolean(accountingReport?.policies);
+
   const activeStrategyObj = useMemo(() => {
-    return STRATEGIES_MAP[activeStrategy] || STRATEGIES_MAP.FIFTY;
-  }, [activeStrategy]);
+    const base = STRATEGIES_MAP[activeStrategy] || STRATEGIES_MAP.FIFTY;
+    if (isMeasuredMode && accountingReport?.policies?.[base.budgetKey]) {
+      const pol = accountingReport.policies[base.budgetKey];
+      return {
+        ...base,
+        totalBytes: pol.measuredNetworkBytes,
+        reductionPercent: pol.measuredReductionPercent,
+        isMeasured: true
+      };
+    }
+    return {
+      ...base,
+      isMeasured: false
+    };
+  }, [activeStrategy, isMeasuredMode, accountingReport]);
+
+  const effectiveBaselineTotalBytes = useMemo(() => {
+    if (isMeasuredMode && accountingReport?.policies?.['4/4']) {
+      return accountingReport.policies['4/4'].measuredNetworkBytes;
+    }
+    return 11468184;
+  }, [isMeasuredMode, accountingReport]);
 
   // Load baseline communication stats
   const loadData = async () => {
@@ -110,6 +139,12 @@ export default function Communication() {
       .catch(() => {});
     fetchPhase9ClientValues()
       .then(setClientValues)
+      .catch(() => {});
+    fetchNetworkAccountingStatus()
+      .then(setAccountingStatus)
+      .catch(() => {});
+    fetchNetworkAccountingReport()
+      .then(setAccountingReport)
       .catch(() => {});
   }, []);
 
@@ -152,6 +187,48 @@ export default function Communication() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
+            {/* Secondary Experimental Toggle: Accounting View */}
+            <div className="flex items-center gap-1 p-1 rounded-xl bg-slate-100 dark:bg-[#0E2438] border border-slate-200 dark:border-[#17364E] text-xs">
+              <span className="text-[10px] font-bold text-slate-500 dark:text-[#8295A8] uppercase tracking-wider px-2">
+                Accounting View:
+              </span>
+              <button
+                type="button"
+                onClick={() => setAccountingView('APPLICATION_PAYLOAD')}
+                className={`px-3 py-1 rounded-lg font-semibold transition-all cursor-pointer ${
+                  accountingView === 'APPLICATION_PAYLOAD'
+                    ? 'bg-white dark:bg-[#071727] text-cyan-700 dark:text-cyan-300 shadow-xs border border-slate-200 dark:border-cyan-500/30 font-bold'
+                    : 'text-slate-600 dark:text-[#BACCDA] hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                Application Payload
+              </button>
+              <button
+                type="button"
+                disabled={!accountingStatus?.artifactExists}
+                onClick={() => setAccountingView('MEASURED_NETWORK_BYTES')}
+                className={`px-3 py-1 rounded-lg font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+                  !accountingStatus?.artifactExists
+                    ? 'opacity-40 cursor-not-allowed text-slate-400'
+                    : accountingView === 'MEASURED_NETWORK_BYTES'
+                    ? 'bg-white dark:bg-[#071727] text-purple-700 dark:text-purple-300 shadow-xs border border-slate-200 dark:border-purple-500/30 font-bold'
+                    : 'text-slate-600 dark:text-[#BACCDA] hover:text-slate-900 dark:hover:text-white'
+                }`}
+                title={
+                  accountingStatus?.artifactExists
+                    ? "Controlled Network Transfer Bytes measured on localhost (127.0.0.1) TCP sockets"
+                    : "Benchmark artifact not available"
+                }
+              >
+                <span>Measured Network Bytes</span>
+                {accountingStatus?.artifactExists && (
+                  <span className="text-[9px] px-1.5 py-0.2 rounded bg-purple-500/10 text-purple-700 dark:text-purple-300 font-mono font-bold border border-purple-500/20">
+                    Local Test
+                  </span>
+                )}
+              </button>
+            </div>
+
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-mono font-semibold bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
               Selective Optimization Active
@@ -159,6 +236,24 @@ export default function Communication() {
           </div>
         </div>
       </div>
+
+      {/* Measured Network Bytes Notice Banner */}
+      {isMeasuredMode && (
+        <div className="p-3.5 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-900 dark:text-purple-200 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs shadow-xs">
+          <div className="flex items-center gap-2.5">
+            <span className="w-2 h-2 rounded-full bg-purple-500 animate-pulse shrink-0" />
+            <div>
+              <span className="font-bold">Controlled Network Transfer Bytes — Local Test Active:</span>{' '}
+              <span className="text-purple-700 dark:text-purple-300">
+                Measures total TCP stream wire bytes (HTTP request lines, headers, payload bodies, and connection framing) between simulated FL clients and server on 127.0.0.1 (+0.298% transport overhead).
+              </span>
+            </div>
+          </div>
+          <div className="text-[11px] font-mono text-purple-700 dark:text-purple-300 shrink-0 bg-white/70 dark:bg-purple-950/70 px-2.5 py-1 rounded-lg border border-purple-500/30">
+            Baseline: {(effectiveBaselineTotalBytes / 1000000).toFixed(2)} MB • {activeStrategyObj.shortName}: {(activeStrategyObj.totalBytes / 1000000).toFixed(2)} MB (-{activeStrategyObj.reductionPercent}%)
+          </div>
+        </div>
+      )}
 
       {error && (
         <div className="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 flex items-center gap-3 text-xs">
@@ -175,7 +270,7 @@ export default function Communication() {
       <CommunicationHeroFlow
         activeStrategy={activeStrategy}
         onSelectStrategy={setActiveStrategy}
-        baselineTotalBytes={11468184}
+        baselineTotalBytes={effectiveBaselineTotalBytes}
         selectedTotalBytes={activeStrategyObj.totalBytes}
         reductionPercent={activeStrategyObj.reductionPercent}
         selectedStrategyName={activeStrategyObj.name}

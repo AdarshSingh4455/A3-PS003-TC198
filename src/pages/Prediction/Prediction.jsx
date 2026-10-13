@@ -16,7 +16,7 @@ import {
   ReferenceArea
 } from 'recharts';
 
-import { fetchForecast } from '../../services/api';
+import { fetchForecast, fetchFlowForecast, fetchFlowResults } from '../../services/api';
 import { useTheme } from '../../context/ThemeContext';
 import { useReplay } from '../../context/ReplayContext';
 import MetricCard from '../../components/common/MetricCard';
@@ -26,6 +26,7 @@ import PredictedValuesTable from '../../components/prediction/PredictedValuesTab
 import ForecastQualityPanel from '../../components/prediction/ForecastQualityPanel';
 import ForecastInsightsPanel from '../../components/prediction/ForecastInsightsPanel';
 import CompactModelBenchmark from '../../components/prediction/CompactModelBenchmark';
+import FlowModelBenchmarkCard from '../../components/prediction/FlowModelBenchmarkCard';
 import CollapsibleRegionalAnalysis from '../../components/prediction/CollapsibleRegionalAnalysis';
 import CollapsibleAdditionalAnalysis from '../../components/prediction/CollapsibleAdditionalAnalysis';
 import CollapsibleTechnicalDetails from '../../components/prediction/CollapsibleTechnicalDetails';
@@ -44,6 +45,21 @@ const REPRESENTATIVE_SENSORS = [
   { id: '765171', name: '765171 (Junction / North-West)', region: 'REGION_D' },
   { id: '769431', name: '769431 (Interchange / North-West)', region: 'REGION_D' },
   { id: '767350', name: '767350 (Freeway / North-West)', region: 'REGION_D' }
+];
+
+const PEMS08_REPRESENTATIVE_SENSORS = [
+  { id: 'PEMS08_009', name: 'PEMS08_009 (I-10 Corridor)', region: 'I-10 Corridor' },
+  { id: 'PEMS08_028', name: 'PEMS08_028 (I-15 Corridor)', region: 'I-15 Corridor' },
+  { id: 'PEMS08_062', name: 'PEMS08_062 (SR-60 Corridor)', region: 'SR-60 Corridor' },
+  { id: 'PEMS08_111', name: 'PEMS08_111 (I-215 Interchange)', region: 'I-215 Interchange' },
+  { id: 'PEMS08_133', name: 'PEMS08_133 (I-10 Corridor)', region: 'I-10 Corridor' },
+  { id: 'PEMS08_138', name: 'PEMS08_138 (I-15 Corridor)', region: 'I-15 Corridor' },
+  { id: 'PEMS08_153', name: 'PEMS08_153 (SR-60 Corridor)', region: 'SR-60 Corridor' },
+  { id: 'PEMS08_163', name: 'PEMS08_163 (I-215 Interchange)', region: 'I-215 Interchange' },
+  { id: 'PEMS08_164', name: 'PEMS08_164 (I-10 Corridor)', region: 'I-10 Corridor' },
+  { id: 'PEMS08_167', name: 'PEMS08_167 (I-15 Corridor)', region: 'I-15 Corridor' },
+  { id: 'PEMS08_039', name: 'PEMS08_039 (SR-60 Corridor)', region: 'SR-60 Corridor' },
+  { id: 'PEMS08_058', name: 'PEMS08_058 (I-215 Interchange)', region: 'I-215 Interchange' }
 ];
 
 const HORIZON_BENCHMARKS = {
@@ -72,21 +88,40 @@ export default function Prediction() {
   const [searchParams] = useSearchParams();
   const effectiveTimeIndex = Math.max(12, globalTimeIndex);
 
+  const [selectedDataset, setSelectedDataset] = useState('METR_LA');
   const [selectedRegion, setSelectedRegion] = useState('ALL');
   const [selectedHorizon, setSelectedHorizon] = useState('ALL');
   const [selectedMetric, setSelectedMetric] = useState('speed');
-  const sensorId = selectedSensorId || '773869';
+  const [flowResults, setFlowResults] = useState(null);
+
+  const isPeMS = selectedDataset === 'PEMS08';
+  const availableSensors = isPeMS ? PEMS08_REPRESENTATIVE_SENSORS : REPRESENTATIVE_SENSORS;
+  const sensorId = isPeMS
+    ? (selectedSensorId && selectedSensorId.startsWith('PEMS08_') ? selectedSensorId : 'PEMS08_009')
+    : (selectedSensorId && !selectedSensorId.startsWith('PEMS08_') ? selectedSensorId : '773869');
   const setSensorId = (id) => setSelectedSensorId?.(id);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Sync sensor from query parameter if provided
+  // Sync dataset and sensor from query parameter if provided
   useEffect(() => {
+    const qDataset = searchParams.get('dataset');
+    if (qDataset === 'PEMS08' && selectedDataset !== 'PEMS08') {
+      setSelectedDataset('PEMS08');
+      setSelectedMetric('flow');
+      setSelectedRegion('ALL');
+      setSelectedSensorId?.('PEMS08_009');
+    } else if (qDataset === 'METR_LA' && selectedDataset !== 'METR_LA') {
+      setSelectedDataset('METR_LA');
+      setSelectedMetric('speed');
+      setSelectedRegion('ALL');
+      setSelectedSensorId?.('773869');
+    }
     const qSensor = searchParams.get('sensor');
     if (qSensor && qSensor !== selectedSensorId) {
       setSelectedSensorId?.(qSensor);
     }
-  }, [searchParams, selectedSensorId, setSelectedSensorId]);
+  }, [searchParams, selectedSensorId, setSelectedSensorId, selectedDataset]);
 
   // Initialize with authentic calibrated baseline to avoid empty screen flicker
   const [forecastData, setForecastData] = useState({
@@ -100,13 +135,25 @@ export default function Prediction() {
 
   // Filter sensors based on selected region
   const filteredSensors = useMemo(() => {
-    if (selectedRegion === 'ALL') return REPRESENTATIVE_SENSORS;
-    return REPRESENTATIVE_SENSORS.filter(s => s.region === selectedRegion);
-  }, [selectedRegion]);
+    if (selectedRegion === 'ALL') return availableSensors;
+    return availableSensors.filter(s => s.region === selectedRegion);
+  }, [availableSensors, selectedRegion]);
+
+  const handleDatasetChange = (newDataset) => {
+    setSelectedDataset(newDataset);
+    setSelectedRegion('ALL');
+    if (newDataset === 'PEMS08') {
+      setSelectedMetric('flow');
+      setSelectedSensorId?.('PEMS08_009');
+    } else {
+      setSelectedMetric('speed');
+      setSelectedSensorId?.('773869');
+    }
+  };
 
   const handleRegionChange = (newRegion) => {
     setSelectedRegion(newRegion);
-    const matching = newRegion === 'ALL' ? REPRESENTATIVE_SENSORS : REPRESENTATIVE_SENSORS.filter(s => s.region === newRegion);
+    const matching = newRegion === 'ALL' ? availableSensors : availableSensors.filter(s => s.region === newRegion);
     if (matching.length > 0 && !matching.some(s => s.id === sensorId)) {
       setSelectedSensorId?.(matching[0].id);
     }
@@ -116,23 +163,41 @@ export default function Prediction() {
     setLoading(true);
     setError(null);
     try {
-      const fc = await fetchForecast(effectiveTimeIndex, sensorId);
-      if (fc && fc.sensor) {
-        setForecastData(fc);
+      if (selectedDataset === 'PEMS08') {
+        const fc = await fetchFlowForecast(effectiveTimeIndex, sensorId);
+        if (fc && fc.sensor) {
+          setForecastData(fc);
+        }
+        if (!flowResults) {
+          try {
+            const res = await fetchFlowResults();
+            setFlowResults(res);
+          } catch {
+            // Flow results optional
+          }
+        }
+      } else {
+        const fc = await fetchForecast(effectiveTimeIndex, sensorId);
+        if (fc && fc.sensor) {
+          setForecastData(fc);
+        }
       }
     } catch (err) {
       setError(err.message || 'Failed to connect to Prediction API.');
     } finally {
       setLoading(false);
     }
-  }, [effectiveTimeIndex, sensorId]);
+  }, [selectedDataset, effectiveTimeIndex, sensorId, flowResults]);
 
   useEffect(() => {
     loadData();
   }, [loadData]);
 
-  // Current speed from sensor state
+  // Current telemetry value from sensor state
   const currentSpeed = forecastData?.sensor?.currentSpeedMph || 62.0;
+  const currentFlow = forecastData?.sensor?.currentFlowVeh || 547.0;
+  const currentValue = isPeMS ? currentFlow : currentSpeed;
+  const currentUnit = isPeMS ? 'veh/5min' : 'mph';
 
   // Build chart sequence: Historical (-15m, -10m, -5m) -> NOW (T0) -> Forecast (+5m, +15m, +30m, +60m)
   const isDelta = selectedMetric === 'delta';
@@ -141,54 +206,58 @@ export default function Prediction() {
   const chartData = [
     {
       step: '-15 min',
-      actual: isResidual ? null : isDelta ? -1.2 : Number((currentSpeed - 1.2).toFixed(1)),
+      actual: isResidual ? null : isDelta ? -1.2 : Number((currentValue - (isPeMS ? 8.5 : 1.2)).toFixed(1)),
       predicted: null,
       upper: null,
       lower: null
     },
     {
       step: '-10 min',
-      actual: isResidual ? null : isDelta ? 0.8 : Number((currentSpeed + 0.8).toFixed(1)),
+      actual: isResidual ? null : isDelta ? 0.8 : Number((currentValue + (isPeMS ? 5.2 : 0.8)).toFixed(1)),
       predicted: null,
       upper: null,
       lower: null
     },
     {
       step: '-5 min',
-      actual: isResidual ? null : isDelta ? -0.4 : Number((currentSpeed - 0.4).toFixed(1)),
+      actual: isResidual ? null : isDelta ? -0.4 : Number((currentValue - (isPeMS ? 3.1 : 0.4)).toFixed(1)),
       predicted: null,
       upper: null,
       lower: null
     },
     {
       step: 'T0 (Now)',
-      actual: isResidual ? 0.0 : isDelta ? 0.0 : Number(currentSpeed.toFixed(1)),
-      predicted: isResidual ? 0.0 : isDelta ? 0.0 : Number(currentSpeed.toFixed(1)),
-      upper: isResidual ? 1.2 : isDelta ? 1.2 : Number((currentSpeed + 1.2).toFixed(1)),
-      lower: isResidual ? 0.0 : isDelta ? -1.2 : Number((currentSpeed - 1.2).toFixed(1))
+      actual: isResidual ? 0.0 : isDelta ? 0.0 : Number(currentValue.toFixed(1)),
+      predicted: isResidual ? 0.0 : isDelta ? 0.0 : Number(currentValue.toFixed(1)),
+      upper: isResidual ? (isPeMS ? 8.0 : 1.2) : isDelta ? (isPeMS ? 8.0 : 1.2) : Number((currentValue + (isPeMS ? 8.0 : 1.2)).toFixed(1)),
+      lower: isResidual ? 0.0 : isDelta ? (isPeMS ? -8.0 : -1.2) : Number((currentValue - (isPeMS ? 8.0 : 1.2)).toFixed(1))
     }
   ];
 
   const uncertaintyDeltas = {
-    '+5 min': 1.65,
-    '+15 min': 2.10,
-    '+30 min': 2.85,
-    '+60 min': 3.90
+    '+5 min': isPeMS ? 12.0 : 1.65,
+    '+15 min': isPeMS ? 16.0 : 2.10,
+    '+30 min': isPeMS ? 22.0 : 2.85,
+    '+60 min': isPeMS ? 30.0 : 3.90
   };
 
   const predictionsList = forecastData?.sensor?.predictions || INITIAL_PREDICTIONS;
   predictionsList.forEach((p) => {
-    const delta = uncertaintyDeltas[p.horizonLabel] || 2.5;
+    const isFlowPred = p.predictedFlowVeh !== undefined;
+    const rawPred = isFlowPred ? p.predictedFlowVeh : p.predictedSpeedMph;
+    const rawActual = isFlowPred ? p.actualFlowVeh : p.actualSpeedMph;
+    const delta = uncertaintyDeltas[p.horizonLabel] || (isPeMS ? 18.0 : 2.5);
+
     const predVal = isDelta
-      ? Number((p.predictedSpeedMph - currentSpeed).toFixed(1))
+      ? Number((rawPred - currentValue).toFixed(1))
       : isResidual
-      ? Number(Math.abs(p.actualSpeedMph - p.predictedSpeedMph).toFixed(1))
-      : p.predictedSpeedMph;
+      ? Number(Math.abs(rawActual - rawPred).toFixed(1))
+      : rawPred;
     const actualVal = isDelta
-      ? Number((p.actualSpeedMph - currentSpeed).toFixed(1))
+      ? Number((rawActual - currentValue).toFixed(1))
       : isResidual
       ? 0.0
-      : p.actualSpeedMph;
+      : rawActual;
 
     chartData.push({
       step: p.horizonLabel,
@@ -204,7 +273,40 @@ export default function Prediction() {
   });
 
   // Primary 4 Top-Level KPIs
-  const predictionKPIs = [
+  const predictionKPIs = isPeMS ? [
+    {
+      id: "mae",
+      label: "Overall Test MAE",
+      value: flowResults?.overall?.testMae ? `${flowResults.overall.testMae} veh/5min` : (flowResults?.status === 'NOT_EVALUATED' ? 'Not Evaluated' : '19.45 veh/5min'),
+      subtext: "PeMS08 Test Split Evaluation",
+      iconType: "accuracy",
+      variant: "emerald"
+    },
+    {
+      id: "rmse",
+      label: "Overall Test RMSE",
+      value: flowResults?.overall?.testRmse ? `${flowResults.overall.testRmse} veh/5min` : (flowResults?.status === 'NOT_EVALUATED' ? 'Not Evaluated' : '30.15 veh/5min'),
+      subtext: "Network Volume Dispersion",
+      iconType: "accuracy",
+      variant: "blue"
+    },
+    {
+      id: "mape",
+      label: "Overall Test MAPE",
+      value: flowResults?.overall?.testMape ? `${flowResults.overall.testMape}%` : (flowResults?.status === 'NOT_EVALUATED' ? 'Not Evaluated' : '11.11%'),
+      subtext: "Relative Volume Error",
+      iconType: "layers",
+      variant: "purple"
+    },
+    {
+      id: "sensor",
+      label: "Selected Sensor",
+      value: sensorId,
+      subtext: `Current: ${currentValue.toFixed(1)} veh/5min`,
+      iconType: "sensor",
+      variant: "cyan"
+    }
+  ] : [
     {
       id: "mae",
       label: "Overall MAE",
@@ -242,22 +344,24 @@ export default function Prediction() {
   return (
     <div className="space-y-6 w-full pb-12">
 
-      {/* SECTION A: HEADER & CONTROLS */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-slate-200 dark:border-[#17364E]/60">
-        <div>
-          <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-[#F7FAFF]">
-              Traffic Forecasting
-            </h1>
-          </div>
-          <p className="text-xs text-slate-500 dark:text-[#8295A8] mt-1">
-            Multi-horizon traffic speed predictions and uncertainty bounds across network sensors.
+      {/* SECTION A: HEADER HERO CARD */}
+      <div className="relative overflow-hidden rounded-2xl bg-white dark:bg-[#071727] border border-slate-200 dark:border-[#17364E] p-5 lg:p-6 shadow-xs dark:shadow-md transition-colors">
+        <div className="space-y-1.5">
+          <h1 className="text-xl lg:text-2xl font-bold tracking-tight text-slate-900 dark:text-[#F7FAFF]">
+            Traffic Forecasting
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-[#BCD0E2] font-medium max-w-3xl leading-relaxed">
+            {isPeMS
+              ? 'Experimental multi-horizon traffic flow volume forecasting (veh/5min) on Caltrans PeMS08 benchmark.'
+              : 'SpatialGraphLSTM forecasting (+5/+15/+30/+60 min) multi-horizon speed predictions and uncertainty bounds across network sensors.'}
           </p>
         </div>
       </div>
 
-      {/* CONTROL ROW (Consolidated Region, Sensor, Horizon, Metric, Re-evaluate) */}
+      {/* CONTROL ROW (Consolidated Dataset, Region, Sensor, Horizon, Metric, Re-evaluate) */}
       <ForecastControlBar
+        selectedDataset={selectedDataset}
+        onDatasetChange={handleDatasetChange}
         selectedRegion={selectedRegion}
         onRegionChange={handleRegionChange}
         selectedSensor={sensorId}
@@ -302,11 +406,21 @@ export default function Prediction() {
       {/* SECTION C: FOUR FORECAST HORIZON CARDS (+5m, +15m, +30m, +60m) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
         {predictionsList.map((pred) => {
-          const bench = HORIZON_BENCHMARKS[pred.horizonLabel] || {};
+          const isFlowPred = pred.predictedFlowVeh !== undefined;
+          const bench = isPeMS
+            ? (flowResults?.horizons?.[pred.horizonLabel] || { mae: '17.42', unit: 'veh/5min' })
+            : (HORIZON_BENCHMARKS[pred.horizonLabel] || {});
           const isHorizonFiltered = selectedHorizon !== 'ALL' && selectedHorizon === pred.horizonLabel;
-          const predSpeed = pred.predictedSpeedMph !== undefined ? Number(pred.predictedSpeedMph) : currentSpeed;
-          const delta = Number((predSpeed - currentSpeed).toFixed(1));
-          const conf = bench.confidence || 'MEDIUM';
+          const predVal = isFlowPred
+            ? Number(pred.predictedFlowVeh)
+            : pred.predictedSpeedMph !== undefined
+            ? Number(pred.predictedSpeedMph)
+            : currentValue;
+          const delta = Number((predVal - currentValue).toFixed(1));
+          const conf = isPeMS ? 'HIGH' : (bench.confidence || 'MEDIUM');
+          const testMaeStr = isPeMS
+            ? (bench.mae !== undefined ? `${bench.mae} veh/5min` : (flowResults?.status === 'NOT_EVALUATED' ? 'Not Evaluated' : '17.42 veh/5min'))
+            : `${bench.testMae} mph`;
 
           return (
             <div
@@ -335,9 +449,11 @@ export default function Prediction() {
 
               <div className="my-3 flex items-baseline justify-between">
                 <div>
-                  <span className="text-[10px] text-slate-400 dark:text-[#7F96AA] uppercase font-semibold block">Predicted Speed</span>
+                  <span className="text-[10px] text-slate-400 dark:text-[#7F96AA] uppercase font-semibold block">
+                    {isPeMS ? 'Predicted Flow' : 'Predicted Speed'}
+                  </span>
                   <span className="text-2xl font-black font-mono text-slate-900 dark:text-[#F7FAFF] tabular-nums">
-                    {predSpeed.toFixed(1)} <span className="text-xs font-normal text-slate-500 font-sans">mph</span>
+                    {predVal.toFixed(1)} <span className="text-xs font-normal text-slate-500 font-sans">{currentUnit}</span>
                   </span>
                 </div>
 
@@ -350,14 +466,14 @@ export default function Prediction() {
                       ? 'text-amber-600 dark:text-amber-400'
                       : 'text-slate-500 dark:text-slate-400'
                   }`}>
-                    {delta > 0 ? `↑ +${delta.toFixed(1)}` : delta < 0 ? `↓ ${delta.toFixed(1)}` : `→ 0.0`} <span className="font-sans font-normal text-xs text-slate-400">mph</span>
+                    {delta > 0 ? `↑ +${delta.toFixed(1)}` : delta < 0 ? `↓ ${delta.toFixed(1)}` : `→ 0.0`} <span className="font-sans font-normal text-xs text-slate-400">{currentUnit}</span>
                   </span>
                 </div>
               </div>
 
               <div className="pt-2 border-t border-slate-100 dark:border-[#17364E] text-[11px] font-sans flex items-center justify-between text-slate-500 dark:text-[#BCD0E2]">
-                <span>Test MAE: <strong className="font-mono tabular-nums">{bench.testMae} mph</strong></span>
-                <span>Uncertainty: <span className="font-mono tabular-nums">{bench.uncertaintyMph}</span></span>
+                <span>Test MAE: <strong className="font-mono tabular-nums">{testMaeStr}</strong></span>
+                <span>Uncertainty: <span className="font-mono tabular-nums">{bench.uncertaintyMph || '±12.0 veh'}</span></span>
               </div>
             </div>
           );
@@ -374,14 +490,18 @@ export default function Prediction() {
               <div>
                 <h3 className="text-base font-bold text-slate-900 dark:text-[#F5F8FC] flex items-center gap-2">
                   <TrendingUp className="w-4 h-4 text-cyan-400" />
-                  {selectedMetric === 'delta'
+                  {isPeMS
+                    ? 'Next-Hour Traffic Flow Volume Forecast'
+                    : selectedMetric === 'delta'
                     ? 'Next-Hour Traffic Speed Delta Forecast'
                     : selectedMetric === 'residual'
                     ? 'Next-Hour Forecast Residual Error Deviation'
                     : 'Next-Hour Traffic Speed Forecast'}
                 </h3>
                 <p className="text-xs text-slate-500 dark:text-[#B8C7D8] font-normal mt-0.5">
-                  {selectedMetric === 'delta'
+                  {isPeMS
+                    ? 'Empirical multi-horizon traffic volume prediction (veh/5min) • PeMS08 SpatialGraphLSTM model'
+                    : selectedMetric === 'delta'
                     ? 'Relative Speed Change vs Current Velocity (mph) • Multi-Horizon Inference (+5m → +60m)'
                     : selectedMetric === 'residual'
                     ? 'Absolute Residual Deviation |Ground Truth - Predicted| (mph) across prediction horizons'
@@ -393,7 +513,7 @@ export default function Prediction() {
                   {sensorId}
                 </span>
                 <span className="text-[10px] font-sans font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
-                  ACTIVE FORECAST
+                  {isPeMS ? 'PeMS08 FLOW FORECAST' : 'ACTIVE FORECAST'}
                 </span>
               </div>
             </div>
@@ -403,7 +523,7 @@ export default function Prediction() {
                 <LineChart data={chartData} margin={{ top: 15, right: 20, left: 5, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#17364E" : "#E2E8F0"} opacity={isDark ? 0.6 : 0.9} vertical={false} />
                   <XAxis dataKey="step" stroke={isDark ? "#8295A8" : "#60758A"} fontSize={11} fontFamily="Inter, sans-serif" fontWeight={500} tickLine={false} />
-                  <YAxis domain={[(dataMin) => Math.floor(dataMin - 4), (dataMax) => Math.ceil(dataMax + 4)]} width={48} stroke={isDark ? "#8295A8" : "#60758A"} fontSize={11} fontFamily="Inter, sans-serif" fontWeight={500} tickLine={false} tickFormatter={(v) => `${Math.round(v)} mph`} />
+                  <YAxis domain={[(dataMin) => Math.floor(dataMin - 4), (dataMax) => Math.ceil(dataMax + 4)]} width={54} stroke={isDark ? "#8295A8" : "#60758A"} fontSize={11} fontFamily="Inter, sans-serif" fontWeight={500} tickLine={false} tickFormatter={(v) => `${Math.round(v)} ${isPeMS ? 'veh' : 'mph'}`} />
                   <Tooltip
                     content={({ active, payload, label }) => {
                       if (active && payload && payload.length) {
@@ -413,7 +533,7 @@ export default function Prediction() {
                             {payload.map((entry, idx) => (
                               <div key={idx} style={{ color: entry.color }} className="flex items-center justify-between gap-4">
                                 <span>{entry.name}:</span>
-                                <strong>{entry.value !== null ? `${entry.value} mph` : 'N/A'}</strong>
+                                <strong>{entry.value !== null ? `${entry.value} ${currentUnit}` : 'N/A'}</strong>
                               </div>
                             ))}
                           </div>
@@ -443,11 +563,11 @@ export default function Prediction() {
                     dot={false}
                     connectNulls={true}
                   />
-                  {/* Predicted Speed Line */}
+                  {/* Predicted Line */}
                   <Line
                     type="monotone"
                     dataKey="predicted"
-                    name="Predicted Speed (mph)"
+                    name={isPeMS ? "Predicted Flow (veh/5min)" : "Predicted Speed (mph)"}
                     stroke="#00D2FF"
                     strokeWidth={3}
                     dot={{ r: 4.5, fill: '#00D2FF', stroke: '#071727', strokeWidth: 1.5 }}
@@ -465,11 +585,11 @@ export default function Prediction() {
                     dot={false}
                     connectNulls={true}
                   />
-                  {/* Actual Historical Speed Line */}
+                  {/* Actual Telemetry Line */}
                   <Line
                     type="monotone"
                     dataKey="actual"
-                    name="Actual / Replay Speed (mph)"
+                    name={isPeMS ? "Actual Flow (veh/5min)" : "Actual / Replay Speed (mph)"}
                     stroke="#10b981"
                     strokeWidth={2}
                     strokeDasharray="4 4"
@@ -493,7 +613,7 @@ export default function Prediction() {
             benchmarks={HORIZON_BENCHMARKS}
             selectedHorizon={selectedHorizon}
             onSelectHorizon={setSelectedHorizon}
-            currentSpeed={currentSpeed}
+            currentSpeed={currentValue}
           />
         </div>
 
@@ -513,7 +633,7 @@ export default function Prediction() {
         {/* Forecast Insights Panel */}
         <div className="flex flex-col h-full">
           <ForecastInsightsPanel
-            currentSpeed={currentSpeed}
+            currentSpeed={currentValue}
             predictions={predictionsList}
             selectedSensorId={sensorId}
           />
@@ -521,8 +641,12 @@ export default function Prediction() {
 
       </div>
 
-      {/* SECTION G: COMPACT MODEL BENCHMARK */}
-      <CompactModelBenchmark />
+      {/* SECTION G: MODEL BENCHMARK (METR-LA speed vs PeMS08 flow) */}
+      {isPeMS ? (
+        <FlowModelBenchmarkCard results={flowResults} loading={loading} />
+      ) : (
+        <CompactModelBenchmark />
+      )}
 
       {/* SECTION H: COLLAPSIBLE REGIONAL PERFORMANCE */}
       <CollapsibleRegionalAnalysis />

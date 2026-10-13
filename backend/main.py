@@ -17,6 +17,32 @@ from backend.datasets.metr_la import (
 )
 from backend.communication_intelligence.service import get_comm_intel_service
 from backend.assistant import ChatRequest, ChatResponse, generate_chat_reply
+from backend.experiments.router import (
+    get_experiment_status,
+    get_distribution_comparison,
+    get_seed_summary,
+    get_convergence_trajectories,
+    get_iid_partitions,
+)
+from backend.privacy.router import (
+    get_privacy_status,
+    get_privacy_results,
+    get_secure_aggregation_simulation,
+)
+from backend.experiments.flow_router import (
+    get_flow_status,
+    get_flow_metadata,
+    get_flow_results,
+    get_flow_sensors,
+    get_flow_forecast,
+)
+from backend.experiments.network_accounting import (
+    get_network_accounting_status,
+    get_network_accounting_report,
+)
+from backend.data_sources.streaming_adapter import (
+    get_streaming_manager,
+)
 
 app = FastAPI(
     title="TrafficPulse-X API",
@@ -471,4 +497,164 @@ def chat_with_assistant(req: ChatRequest):
     return generate_chat_reply(req)
 
 
+# ============================================================================
+# EXPERIMENT EXTENSION ENDPOINTS (Read-Only 3-Seed Reproducibility & IID Comparison)
+# ============================================================================
 
+@app.get("/api/experiments/status")
+def api_get_experiment_status():
+    """Returns availability status of 3-seed extension experiments."""
+    return get_experiment_status()
+
+
+@app.get("/api/experiments/distribution-comparison")
+def api_get_distribution_comparison():
+    """Returns statistical comparison between Non-IID and IID client distributions."""
+    return get_distribution_comparison()
+
+
+@app.get("/api/experiments/seed-summary")
+def api_get_seed_summary():
+    """Returns granular per-seed evaluation results across all 3 seeds."""
+    return get_seed_summary()
+
+
+@app.get("/api/experiments/convergence")
+def api_get_convergence():
+    """Returns round-by-round validation trajectory means and error bands."""
+    return get_convergence_trajectories()
+
+
+@app.get("/api/experiments/iid-partitions")
+def api_get_iid_partitions():
+    """Returns IID client partition details and sensor membership."""
+    return get_iid_partitions()
+
+
+# ============================================================================
+# DIFFERENTIAL PRIVACY & SECURE AGGREGATION EXPERIMENT ENDPOINTS
+# ============================================================================
+
+@app.get("/api/experiments/privacy/status")
+def api_get_privacy_status():
+    """Returns availability status of the differential privacy experiment."""
+    return get_privacy_status()
+
+
+@app.get("/api/experiments/privacy/results")
+def api_get_privacy_results():
+    """Returns comparative evaluation between Standard FedAvg and DP-FedAvg."""
+    return get_privacy_results()
+
+
+@app.get("/api/experiments/privacy/secure-aggregation")
+def api_get_secure_aggregation_simulation():
+    """Returns verified Secure Aggregation simulation results and protocol overhead."""
+    return get_secure_aggregation_simulation()
+
+
+# ============================================================================
+# PEMS08 TRAFFIC FLOW EXPERIMENTAL EXTENSION ENDPOINTS
+# ============================================================================
+
+@app.get("/api/experiments/flow/status")
+def api_get_flow_status():
+    """Returns flow extension availability, sensor count, and evaluation status."""
+    return get_flow_status()
+
+
+@app.get("/api/experiments/flow/metadata")
+def api_get_flow_metadata():
+    """Returns official PeMS08 metadata, channels, splits, and provenance."""
+    return get_flow_metadata()
+
+
+@app.get("/api/experiments/flow/results")
+def api_get_flow_results():
+    """Returns empirical evaluation results on PeMS08 test set."""
+    return get_flow_results()
+
+
+@app.get("/api/experiments/flow/sensors")
+def api_get_flow_sensors():
+    """Returns representative and all 170 sensors for PeMS08."""
+    return get_flow_sensors()
+
+
+@app.get("/api/experiments/flow/forecast")
+def api_get_flow_forecast(step: int = 100, sensorId: str = "PEMS08_009"):
+    """Inference endpoint: generates multi-horizon traffic flow predictions for a selected PeMS08 sensor."""
+    return get_flow_forecast(step=step, sensorId=sensorId)
+
+
+# ============================================================================
+# CONTROLLED NETWORK ACCOUNTING ENDPOINTS
+# ============================================================================
+
+@app.get("/api/experiments/network-accounting/status")
+def api_get_network_accounting_status():
+    """Returns availability and accounting view modes for network byte measurement."""
+    return get_network_accounting_status()
+
+
+@app.get("/api/experiments/network-accounting")
+def api_get_network_accounting_report():
+    """Returns local transport benchmark report (Controlled Network Transfer Bytes)."""
+    return get_network_accounting_report()
+
+
+# ============================================================================
+# STREAMING ADAPTER ENDPOINTS (HISTORICAL REPLAY DEFAULT + OPTIONAL LIVE ADAPTER)
+# ============================================================================
+
+class ProviderSwitchPayload(BaseModel):
+    provider: str
+
+
+@app.get("/api/streaming/status")
+def api_get_streaming_status():
+    """Returns status of registered streaming providers and active data source."""
+    return get_streaming_manager().get_status_summary()
+
+
+@app.get("/api/streaming/config")
+def api_get_streaming_config():
+    """Returns streaming configurations and limits (no secrets exposed)."""
+    mgr = get_streaming_manager()
+    summary = mgr.get_status_summary()
+    return {
+        "activeProvider": summary["activeProvider"],
+        "defaultProvider": summary["defaultProvider"],
+        "notice": "Historical Replay remains the baseline. External live stream is an optional experiment requiring server-side API credentials."
+    }
+
+
+@app.post("/api/streaming/provider")
+def api_set_streaming_provider(payload: ProviderSwitchPayload):
+    """Switches active streaming provider. Refuses switch if external provider is unconfigured."""
+    res = get_streaming_manager().set_active_provider(payload.provider)
+    if not res.get("success"):
+        raise HTTPException(status_code=400, detail=res)
+    return res
+
+
+@app.get("/api/streaming/snapshot")
+def api_get_streaming_snapshot(time_index: int = 0, region_id: str = "ALL", provider: Optional[str] = None):
+    """
+    Returns snapshot from requested or active provider.
+    Never silently falls back to fabricated data if external stream fails.
+    """
+    mgr = get_streaming_manager()
+    p_id = provider or mgr.active_provider_id
+    prov = mgr.get_provider(p_id)
+    if not prov:
+        raise HTTPException(status_code=400, detail=f"Unknown streaming provider '{p_id}'. Must be 'historical' or 'external_live'.")
+    if not prov.is_available():
+        raise HTTPException(
+            status_code=503,
+            detail="Live source unavailable: External streaming experiment is not configured. Historical Replay remains available."
+        )
+    try:
+        return prov.get_snapshot(time_index=time_index, region_id=region_id)
+    except Exception as err:
+        raise HTTPException(status_code=503, detail=f"Live source unavailable: {str(err)}")

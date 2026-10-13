@@ -177,7 +177,7 @@ export default function Next60MinutesForecastCard({
           Horizons: Now to +60 min
         </span>
         <Link
-          to="/predictions"
+          to={`/predictions?sensor=${sensorId}`}
           className="inline-flex items-center gap-1.5 text-xs font-bold text-cyan-600 dark:text-cyan-400 hover:underline"
         >
           <span>View Forecast Details</span>

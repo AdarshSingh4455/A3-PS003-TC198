@@ -38,7 +38,7 @@ export default function PredictedValuesTable({
           <thead className="bg-slate-50 dark:bg-[#04101A] text-slate-500 dark:text-[#7F96AA] uppercase text-[10px] border-b border-slate-200 dark:border-[#17364E]">
             <tr>
               <th className="py-2.5 px-2.5">Horizon</th>
-              <th className="py-2.5 px-2.5 text-right">Predicted Speed</th>
+              <th className="py-2.5 px-2.5 text-right">Predicted Value</th>
               <th className="py-2.5 px-2.5 text-right">Change</th>
               <th className="py-2.5 px-2.5 text-center">Confidence</th>
             </tr>
@@ -48,8 +48,11 @@ export default function PredictedValuesTable({
               const bench = benchmarks[p.horizonLabel] || {};
               const isSelected = selectedHorizon === p.horizonLabel;
               const conf = bench.confidence || 'MEDIUM';
-              const predSpeed = p.predictedSpeedMph !== undefined ? Number(p.predictedSpeedMph) : null;
-              const delta = predSpeed !== null ? Number((predSpeed - currentSpeed).toFixed(1)) : null;
+              const isFlow = p.predictedFlowVeh !== undefined;
+              const predVal = isFlow ? Number(p.predictedFlowVeh) : p.predictedSpeedMph !== undefined ? Number(p.predictedSpeedMph) : null;
+              const currentVal = isFlow && p.currentFlowVeh !== undefined ? Number(p.currentFlowVeh) : currentSpeed;
+              const delta = predVal !== null ? Number((predVal - currentVal).toFixed(1)) : null;
+              const unit = isFlow ? (p.unit || 'veh/5min') : 'mph';
 
               return (
                 <tr
@@ -70,12 +73,12 @@ export default function PredictedValuesTable({
                     </span>
                   </td>
 
-                  {/* Predicted Speed */}
+                  {/* Predicted Value */}
                   <td className="py-3 px-2.5 text-right">
                     <span className="font-bold text-slate-900 dark:text-white tabular-nums text-sm">
-                      {predSpeed !== null ? predSpeed.toFixed(1) : '--'}
+                      {predVal !== null ? predVal.toFixed(1) : '--'}
                     </span>
-                    <span className="text-[10px] text-slate-400 font-sans ml-1">mph</span>
+                    <span className="text-[10px] text-slate-400 font-sans ml-1">{unit}</span>
                   </td>
 
                   {/* Change vs Current */}
@@ -104,7 +107,7 @@ export default function PredictedValuesTable({
                             0.0
                           </>
                         )}
-                        <span className="text-[10px] font-normal ml-0.5">mph</span>
+                        <span className="text-[10px] font-normal ml-0.5">{unit}</span>
                       </span>
                     ) : (
                       <span className="text-slate-400">--</span>

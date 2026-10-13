@@ -1,9 +1,9 @@
 import React from 'react';
-import { ArrowDown, Activity, Radio, Cpu, Server, CheckCircle2 } from 'lucide-react';
+import { ArrowDown, Activity } from 'lucide-react';
 
 export default function CommunicationHeroFlow({
-  activeStrategy = 'FIFTY',
-  onSelectStrategy,
+  _activeStrategy = 'FIFTY',
+  _onSelectStrategy,
   baselineTotalBytes = 11468184,
   selectedTotalBytes = 5734092,
   reductionPercent = 50.0,
@@ -282,7 +282,7 @@ export default function CommunicationHeroFlow({
             <div className="space-y-1">
               <div className="flex items-center justify-between text-[11px]">
                 <span className="text-slate-500 dark:text-slate-400">Full Participation Baseline</span>
-                <span className="font-mono font-bold text-slate-700 dark:text-slate-300">11.47 MB</span>
+                <span className="font-mono font-bold text-slate-700 dark:text-slate-300">{formattedBaseline}</span>
               </div>
               <div className="w-full h-2.5 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
                 <div className="h-full bg-slate-400 dark:bg-slate-500 rounded-full w-full" />

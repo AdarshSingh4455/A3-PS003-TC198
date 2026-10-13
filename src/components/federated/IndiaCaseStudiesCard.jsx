@@ -3,15 +3,11 @@ import {
   Building2,
   MapPin,
   Cpu,
-  Layers,
   ArrowRight,
-  ShieldCheck,
   Info,
   CheckCircle2,
-  ExternalLink,
   Camera,
-  Activity,
-  Network
+  Activity
 } from 'lucide-react';
 
 const INDIA_CASE_STUDIES = [

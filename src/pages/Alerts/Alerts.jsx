@@ -400,7 +400,7 @@ export default function Alerts() {
               </h1>
             </div>
             <p className="text-xs sm:text-sm text-slate-600 dark:text-[#B8C7D8] font-medium max-w-2xl">
-              Derived traffic anomalies, uncertainty boundaries, and evidence actions across the network.
+              Replay-aware incident triggers, uncertainty boundaries, and evidence actions across the network.
             </p>
           </div>
 

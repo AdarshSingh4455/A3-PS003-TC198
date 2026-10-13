@@ -57,15 +57,11 @@ The React User Interface will be accessible at `http://localhost:5173`.
 ## 4. Testing & Verification
 
 ### Running Backend Unit & Regression Tests
-Run the full 300-test backend pytest suite:
+Run the full 343-test backend pytest suite:
 ```bash
-# On Windows PowerShell
-$env:PYTHONPATH="." ; pytest backend -v
-
-# On Linux/macOS
-PYTHONPATH=. pytest backend -v
+python -m pytest backend -q
 ```
-All **300 tests** must pass.
+All **343 tests** must pass.
 
 ### Frontend Linting & Production Build
 Verify ESLint and the Vite production build succeed:

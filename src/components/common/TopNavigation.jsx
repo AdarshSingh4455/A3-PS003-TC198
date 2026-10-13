@@ -20,8 +20,8 @@ const NAV_ITEMS = [
   { path: '/network', label: 'Traffic Network', icon: Map },
   { path: '/predictions', label: 'Predictions', icon: TrendingUp },
   { path: '/decision', label: 'Decision Intelligence', icon: Cpu },
-  { path: '/communication', label: 'Communication', icon: Radio },
   { path: '/federated', label: 'Federated Learning', icon: Network },
+  { path: '/communication', label: 'Communication', icon: Radio },
   { path: '/alerts', label: 'Alerts', icon: Bell }
 ];
 

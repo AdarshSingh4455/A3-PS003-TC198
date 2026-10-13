@@ -9,10 +9,13 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronDown,
-  Check
+  Check,
+  Database
 } from 'lucide-react';
 
 export default function ForecastControlBar({
+  selectedDataset = 'METR_LA',
+  onDatasetChange,
   selectedRegion = 'ALL',
   onRegionChange,
   selectedSensor = '773869',
@@ -60,13 +63,23 @@ export default function ForecastControlBar({
     };
   }, []);
 
-  const regions = [
+  const metrRegions = [
     { id: 'ALL', label: 'All Regions' },
     { id: 'REGION_A', label: 'Region A (North-East)' },
     { id: 'REGION_B', label: 'Region B (South-East)' },
     { id: 'REGION_C', label: 'Region C (Central-West)' },
     { id: 'REGION_D', label: 'Region D (North-West)' }
   ];
+
+  const pemsCorridors = [
+    { id: 'ALL', label: 'All Corridors' },
+    { id: 'I-10 Corridor', label: 'I-10 Corridor' },
+    { id: 'I-15 Corridor', label: 'I-15 Corridor' },
+    { id: 'SR-60 Corridor', label: 'SR-60 Corridor' },
+    { id: 'I-215 Interchange', label: 'I-215 Interchange' }
+  ];
+
+  const regions = selectedDataset === 'PEMS08' ? pemsCorridors : metrRegions;
 
   const horizons = [
     { id: 'ALL', label: 'All Horizons' },
@@ -76,27 +89,49 @@ export default function ForecastControlBar({
     { id: '+60 min', label: '+60 min' }
   ];
 
-  const metrics = [
+  const metrMetrics = [
     { id: 'speed', label: 'Speed (mph)', description: 'Primary Traffic Velocity Forecast' },
     { id: 'delta', label: 'Speed Delta (mph)', description: 'Relative Speed Change vs Current' },
     { id: 'residual', label: 'Residual Error (mph)', description: 'Absolute Deviation (|Target - Prediction|)' }
   ];
 
+  const pemsMetrics = [
+    { id: 'flow', label: 'Traffic Flow (veh/5min)', description: 'Freeway Vehicle Volume Forecast' }
+  ];
+
+  const metrics = selectedDataset === 'PEMS08' ? pemsMetrics : metrMetrics;
   const currentMetricObj = metrics.find(m => m.id === selectedMetric) || metrics[0];
 
   return (
     <div className="relative z-30 rounded-2xl bg-white dark:bg-[#071727] border border-slate-200 dark:border-[#17364E] p-2.5 sm:p-3 shadow-xs transition-colors">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-2.5">
 
-        {/* Main Controls: Region, Sensor, Horizon, Metric */}
+        {/* Main Controls: Dataset, Region, Sensor, Horizon, Metric */}
         <div className="flex flex-wrap items-center gap-2 flex-1 min-w-0">
+
+          {/* Group 0: Dataset Selector */}
+          <div className="h-9 flex items-center gap-1.5 bg-slate-50 dark:bg-[#0B2033] px-2.5 rounded-xl border border-slate-200 dark:border-[#17364E] text-xs transition-colors hover:border-slate-300 dark:hover:border-slate-700">
+            <Database className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+            <span className="text-slate-500 dark:text-[#7F96AA] font-medium hidden sm:inline">Dataset:</span>
+            <div className="relative flex items-center">
+              <select
+                value={selectedDataset}
+                onChange={(e) => onDatasetChange?.(e.target.value)}
+                className="bg-transparent text-slate-900 dark:text-[#F7FAFF] font-bold focus:outline-hidden cursor-pointer appearance-none pr-4.5 py-1 text-xs"
+              >
+                <option value="METR_LA" className="dark:bg-[#081827]">METR-LA</option>
+                <option value="PEMS08" className="dark:bg-[#081827]">PeMS08 (Experimental)</option>
+              </select>
+              <ChevronDown className="w-3 h-3 text-slate-400 pointer-events-none absolute right-0" />
+            </div>
+          </div>
 
           {/* Group 1: Region & Sensor */}
           <div className="flex items-center gap-2">
             {/* 1. Region Selector */}
             <div className="h-9 flex items-center gap-1.5 bg-slate-50 dark:bg-[#0B2033] px-2.5 rounded-xl border border-slate-200 dark:border-[#17364E] text-xs transition-colors hover:border-slate-300 dark:hover:border-slate-700">
               <Filter className="w-3.5 h-3.5 text-cyan-500 shrink-0" />
-              <span className="text-slate-500 dark:text-[#7F96AA] font-medium hidden sm:inline">Region:</span>
+              <span className="text-slate-500 dark:text-[#7F96AA] font-medium hidden sm:inline">{selectedDataset === 'PEMS08' ? 'Corridor:' : 'Region:'}</span>
               <div className="relative flex items-center">
                 <select
                   value={selectedRegion}
@@ -221,8 +256,23 @@ export default function ForecastControlBar({
 
         </div>
 
-        {/* Right: Group 3: Replay Step & Re-evaluate Action */}
+        {/* Right: Group 3: Dataset Badge, Replay Step & Re-evaluate Action */}
         <div className="flex items-center gap-2 self-start lg:self-auto shrink-0 pt-1 lg:pt-0 border-t lg:border-t-0 border-slate-100 dark:border-[#17364E]/60">
+          {/* Requirement 7: Clearly display which dataset is active */}
+          <div className="h-9 hidden sm:flex items-center gap-1.5 px-2.5 rounded-xl border text-xs font-bold tabular-nums shrink-0 bg-slate-50 dark:bg-[#0B2033] border-slate-200 dark:border-[#17364E]" id="active-dataset-badge">
+            {selectedDataset === 'PEMS08' ? (
+              <span className="inline-flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                PeMS08 • Flow Volume
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 text-cyan-600 dark:text-cyan-400">
+                <span className="w-2 h-2 rounded-full bg-cyan-500" />
+                METR-LA • Speed
+              </span>
+            )}
+          </div>
+
           <div className="h-9 flex items-center gap-1.5 bg-slate-50 dark:bg-[#0B2033] px-2.5 rounded-xl border border-slate-200 dark:border-[#17364E] text-xs">
             <Clock className="w-3.5 h-3.5 text-amber-500 shrink-0" />
             <span className="text-slate-500 dark:text-[#7F96AA] font-medium hidden sm:inline">Step:</span>

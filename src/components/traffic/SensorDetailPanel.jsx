@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import {
-  Radio, Zap, HelpCircle, Activity,
-  MapPin, ExternalLink, ChevronRight
+  Radio, Zap, Activity,
+  MapPin, ExternalLink, ChevronRight, ArrowRight
 } from 'lucide-react';
 import StatusBadge from '../common/StatusBadge';
 
@@ -41,7 +42,6 @@ export default function SensorDetailPanel({
   allSensors = [],
   neighborsMap = {},
   onSelectSensor,
-  onWhySelected,
   onEvaluateQuery,
   onQuerySensor
 }) {
@@ -327,6 +327,15 @@ export default function SensorDetailPanel({
                 <ExternalLink className="w-3 h-3" />
               </a>
             </div>
+
+            {/* Inspect Decision Logic CTA */}
+            <Link
+              to={`/decision?sensor=${sensorId}`}
+              className="w-full h-9 px-3 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-cyan-400 border border-blue-500/20 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all group"
+            >
+              <span>Inspect Decision Logic</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+            </Link>
           </div>
         )}
 
@@ -418,14 +427,13 @@ export default function SensorDetailPanel({
             </div>
 
             <div className="grid grid-cols-2 gap-2 pt-1">
-              <button
-                onClick={onWhySelected}
-                className="h-9 px-3 rounded-lg bg-slate-100 dark:bg-[#0A1F33] hover:bg-slate-200 dark:hover:bg-[#0F2D4A] text-slate-800 dark:text-[#F5F8FC] border border-slate-300 dark:border-[#17364E] text-xs font-semibold flex items-center justify-center gap-1.5 transition-all"
-                type="button"
+              <Link
+                to={`/decision?sensor=${sensorId}`}
+                className="h-9 px-3 rounded-lg bg-slate-100 dark:bg-[#0A1F33] hover:bg-slate-200 dark:hover:bg-[#0F2D4A] text-slate-800 dark:text-[#F5F8FC] border border-slate-300 dark:border-[#17364E] text-xs font-semibold flex items-center justify-center gap-1.5 transition-all group"
               >
-                <HelpCircle className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
-                <span>Why Selected?</span>
-              </button>
+                <span>Decision Logic</span>
+                <ArrowRight className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 group-hover:translate-x-0.5 transition-transform" />
+              </Link>
 
               <button
                 onClick={onQuerySensor ? () => onQuerySensor(activeSensor) : onEvaluateQuery}

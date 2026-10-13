@@ -17,7 +17,7 @@ import {
 } from 'recharts';
 import { useTheme } from '../../context/ThemeContext';
 
-export const BENCHMARK_MODELS = [
+const BENCHMARK_MODELS = [
   {
     name: 'Graph+LSTM',
     shortName: 'Graph+LSTM',

@@ -19,17 +19,17 @@ export default function MultiSensorForecastComparison({
   onSelectSensor
 }) {
   const { isDark } = useTheme();
-  const [horizonWindow, setHorizonWindow] = useState('15m'); // '15m' | '30m' | '60m'
+  const [horizonWindow, setHorizonWindow] = useState('15m'); // '5m' | '15m' | '30m' | '60m'
 
   // Canonical contextual representative sensors & telemetry
   const sensorDataMap = {
-    '773869': { id: '773869', label: '773869 (Selected)', region: 'REGION_C', current: 61.1, f15: 62.9, f30: 62.8, f60: 62.5 },
-    '773906': { id: '773906', label: '773906 (Corridor)', region: 'REGION_C', current: 68.5, f15: 67.2, f30: 66.8, f60: 65.4 },
-    '718204': { id: '718204', label: '718204 (Arterial)', region: 'REGION_C', current: 60.8, f15: 61.4, f30: 62.0, f60: 61.8 },
-    '767541': { id: '767541', label: '767541 (Corridor)', region: 'REGION_B', current: 67.6, f15: 66.8, f30: 66.1, f60: 65.2 },
-    '717447': { id: '717447', label: '717447 (Highway)', region: 'REGION_C', current: 61.5, f15: 62.1, f30: 61.9, f60: 61.0 },
-    '765171': { id: '765171', label: '765171 (Junction)', region: 'REGION_D', current: 64.2, f15: 65.0, f30: 64.8, f60: 64.1 },
-    '773975': { id: '773975', label: '773975 (Loop)', region: 'REGION_A', current: 65.4, f15: 66.0, f30: 65.8, f60: 65.0 }
+    '773869': { id: '773869', label: '773869 (Selected)', region: 'REGION_C', current: 61.1, f5: 61.8, f15: 62.9, f30: 62.8, f60: 62.5 },
+    '773906': { id: '773906', label: '773906 (Corridor)', region: 'REGION_C', current: 68.5, f5: 68.0, f15: 67.2, f30: 66.8, f60: 65.4 },
+    '718204': { id: '718204', label: '718204 (Arterial)', region: 'REGION_C', current: 60.8, f5: 61.0, f15: 61.4, f30: 62.0, f60: 61.8 },
+    '767541': { id: '767541', label: '767541 (Corridor)', region: 'REGION_B', current: 67.6, f5: 67.2, f15: 66.8, f30: 66.1, f60: 65.2 },
+    '717447': { id: '717447', label: '717447 (Highway)', region: 'REGION_C', current: 61.5, f5: 61.8, f15: 62.1, f30: 61.9, f60: 61.0 },
+    '765171': { id: '765171', label: '765171 (Junction)', region: 'REGION_D', current: 64.2, f5: 64.6, f15: 65.0, f30: 64.8, f60: 64.1 },
+    '773975': { id: '773975', label: '773975 (Loop)', region: 'REGION_A', current: 65.4, f5: 65.8, f15: 66.0, f30: 65.8, f60: 65.0 }
   };
 
   // 5 Representative sensors
@@ -50,8 +50,8 @@ export default function MultiSensorForecastComparison({
   }
 
   const chartData = rawSensors.map(id => {
-    const s = sensorDataMap[id] || { id, label: id, region: 'CORRIDOR', current: 63.5, f15: 64.2, f30: 64.0, f60: 63.1 };
-    const forecast = horizonWindow === '15m' ? s.f15 : horizonWindow === '30m' ? s.f30 : s.f60;
+    const s = sensorDataMap[id] || { id, label: id, region: 'CORRIDOR', current: 63.5, f5: 63.8, f15: 64.2, f30: 64.0, f60: 63.1 };
+    const forecast = horizonWindow === '5m' ? (s.f5 ?? s.f15) : horizonWindow === '15m' ? s.f15 : horizonWindow === '30m' ? s.f30 : s.f60;
     const delta = Number((forecast - s.current).toFixed(1));
     return {
       id: s.id,
@@ -88,6 +88,7 @@ export default function MultiSensorForecastComparison({
           {/* Horizon Toggle */}
           <div className="flex items-center gap-1 p-0.5 rounded-lg bg-slate-100 dark:bg-[#0B2033] border border-slate-200 dark:border-[#17364E]">
             {[
+              { id: '5m', label: '+5 Min' },
               { id: '15m', label: '+15 Min' },
               { id: '30m', label: '+30 Min' },
               { id: '60m', label: '+60 Min' }

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
-import { fetchHealth } from '../services/api';
+import { fetchHealth, fetchStreamingStatus, setStreamingProvider } from '../services/api';
 
 const ReplayContext = createContext(null);
 
@@ -21,6 +21,9 @@ export function ReplayProvider({ children }) {
     }
   }, []);
   const [backendStatus, setBackendStatus] = useState('CONNECTED'); // CONNECTED or UNAVAILABLE
+  const [dataSourceMode, setDataSourceModeState] = useState('historical'); // 'historical' (DEFAULT) or 'external_live'
+  const [streamingStatus, setStreamingStatus] = useState(null);
+  const [liveSourceNotice, setLiveSourceNotice] = useState(null);
   const [timeSemantics, setTimeSemantics] = useState({
     dayName: 'Thursday',
     timeOfDay: 'Midnight',
@@ -54,7 +57,7 @@ export function ReplayProvider({ children }) {
     });
   }, [timeIndex, currentTimestampMs]);
 
-  // Periodic health check
+  // Periodic health & streaming check
   const checkHealth = useCallback(async () => {
     try {
       await fetchHealth();
@@ -62,7 +65,45 @@ export function ReplayProvider({ children }) {
     } catch {
       setBackendStatus('UNAVAILABLE');
     }
+
+    try {
+      const s = await fetchStreamingStatus();
+      setStreamingStatus(s);
+    } catch {
+      // streaming status fallback
+    }
   }, []);
+
+  const switchDataSource = useCallback(async (providerId) => {
+    setLiveSourceNotice(null);
+    if (providerId === 'historical') {
+      try {
+        await setStreamingProvider('historical');
+      } catch {
+        // ignore
+      }
+      setDataSourceModeState('historical');
+      return { success: true };
+    }
+
+    if (providerId === 'external_live') {
+      const isConfigured = streamingStatus?.providers?.external_live?.configured;
+      if (!isConfigured) {
+        setLiveSourceNotice('Live source unavailable: External streaming experiment is not configured. Server-side LIVE_TRAFFIC_API_KEY is required. Historical Replay remains the baseline.');
+        setDataSourceModeState('historical');
+        return { success: false, reason: 'unconfigured' };
+      }
+      try {
+        await setStreamingProvider('external_live');
+        setDataSourceModeState('external_live');
+        return { success: true };
+      } catch (err) {
+        setLiveSourceNotice(`Live source unavailable: ${err.message || 'Connection failed'}. Historical Replay remains the active baseline.`);
+        setDataSourceModeState('historical');
+        return { success: false, reason: 'error' };
+      }
+    }
+  }, [streamingStatus]);
 
   useEffect(() => {
     checkHealth();
@@ -125,6 +166,11 @@ export function ReplayProvider({ children }) {
         replaySpeed,
         setReplaySpeed,
         backendStatus,
+        dataSourceMode,
+        switchDataSource,
+        streamingStatus,
+        liveSourceNotice,
+        clearLiveNotice: () => setLiveSourceNotice(null),
         togglePlay,
         stepForward,
         stepBackward,

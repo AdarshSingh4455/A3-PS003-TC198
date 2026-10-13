@@ -16,26 +16,29 @@ export default function ForecastInsightsPanel({
   selectedSensorId = '773869'
 }) {
   const p15 = predictions.find(p => p.horizonLabel === '+15 min') || predictions[1];
-  const predSpeed15 = p15 ? p15.predictedSpeedMph : currentSpeed;
-  const delta15 = Number((predSpeed15 - currentSpeed).toFixed(1));
+  const isFlow = p15?.predictedFlowVeh !== undefined;
+  const predVal15 = p15 ? (isFlow ? p15.predictedFlowVeh : p15.predictedSpeedMph) : currentSpeed;
+  const delta15 = Number((predVal15 - currentSpeed).toFixed(1));
+  const unit = isFlow ? 'veh/5min' : 'mph';
+  const metricName = isFlow ? 'Volume' : 'Speed';
 
   // Dynamic trajectory determination
-  let trendTitle = 'Stable Traffic Speed';
-  let trendText = `Speed remains steady within ±1.0 mph of baseline (${currentSpeed.toFixed(1)} mph) across immediate horizons.`;
+  let trendTitle = `Stable Traffic ${metricName}`;
+  let trendText = `${metricName} remains steady within baseline (${currentSpeed.toFixed(1)} ${unit}) across immediate horizons.`;
   let trendStatus = 'NOMINAL';
   let trendIcon = Minus;
   let trendColor = 'cyan';
 
-  if (delta15 >= 1.0) {
-    trendTitle = 'Accelerating Traffic Corridor';
-    trendText = `Speed is forecast to increase by +${delta15} mph over the next 15 minutes on detector ${selectedSensorId}.`;
-    trendStatus = 'ACCELERATING';
+  if (delta15 >= (isFlow ? 10.0 : 1.0)) {
+    trendTitle = isFlow ? 'Surging Traffic Volume' : 'Accelerating Traffic Corridor';
+    trendText = `${metricName} is forecast to increase by +${delta15} ${unit} over the next 15 minutes on detector ${selectedSensorId}.`;
+    trendStatus = isFlow ? 'INCREASING FLOW' : 'ACCELERATING';
     trendIcon = TrendingUp;
     trendColor = 'emerald';
-  } else if (delta15 <= -1.0) {
-    trendTitle = 'Decelerating Traffic Corridor';
-    trendText = `Speed is forecast to contract by ${Math.abs(delta15)} mph over the next 15 minutes on detector ${selectedSensorId}.`;
-    trendStatus = 'DECELERATING';
+  } else if (delta15 <= (isFlow ? -10.0 : -1.0)) {
+    trendTitle = isFlow ? 'Receding Traffic Volume' : 'Decelerating Traffic Corridor';
+    trendText = `${metricName} is forecast to contract by ${Math.abs(delta15)} ${unit} over the next 15 minutes on detector ${selectedSensorId}.`;
+    trendStatus = isFlow ? 'DECREASING FLOW' : 'DECELERATING';
     trendIcon = TrendingDown;
     trendColor = 'amber';
   }

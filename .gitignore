@@ -7,11 +7,14 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 coverage/
+.coverage
+htmlcov/
 
 # Dependencies and Build Output
 node_modules/
 dist/
 dist-ssr/
+.vite/
 
 # Environment Variables
 .env
@@ -20,8 +23,7 @@ dist-ssr/
 
 # Python
 __pycache__/
-*.pyc
-*.pyo
+*.py[cod]
 venv/
 .venv/
 env/
@@ -39,13 +41,17 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
+*.swp
 
 # Scratch & Temporary Audit Files
 scratch/
 scratch_*
+*.tmp
+*.bak
 
 # Data & Large Benchmark Artifacts (Raw & ML-Ready Binaries)
 data/raw/metr-la/metr-la.h5
 data/raw/metr-la/*.h5
 data/raw/metr-la/*.npz
 data/processed/metr-la/ml_ready/*.npz
+data/raw/pems08/*.zip

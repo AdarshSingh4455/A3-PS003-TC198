@@ -28,8 +28,8 @@ TrafficPulse-X is an **Evidence-on-Demand Federated Traffic-Flow Prediction Plat
 ## 2. Dataset, Splits & Input Tensor Contract
 
 ### Dataset Contract
-- **Authoritative Raw Dataset Source Path**: [data/raw/metr-la/metr-la.h5](data/raw/metr-la/metr-la.h5) (57,038,056 bytes). Note: `df_in_sine.h5` was an intermediate/original dataset artifact during initial extraction.
-- **ML-Ready Artifact Location**: [data/processed/metr-la/ml_ready/](data/processed/metr-la/ml_ready/) (`train.npz`, `val.npz`, `test.npz`).
+- **Authoritative Raw Dataset Source Path**: `data/raw/metr-la/metr-la.h5` (57,038,056 bytes). Note: `df_in_sine.h5` was an intermediate/original dataset artifact during initial extraction.
+- **ML-Ready Artifact Location**: `data/processed/metr-la/ml_ready/` (`train.npz`, `val.npz`, `test.npz`).
 - **Raw Matrix Shape**: **34,272 × 207** (34,272 time steps across 207 traffic sensors).
 - **Sampling Interval**: 5 minutes.
 - **Authoritative Date Bounds**: `2012-03-01 00:00:00` to `2012-06-27 23:55:00`.
@@ -66,7 +66,7 @@ TrafficPulse-X is an **Evidence-on-Demand Federated Traffic-Flow Prediction Plat
 ## 3. Geospatial Subgraphs & Regional FL Client Distribution
 
 ### Canonical Client Partitioning
-Sensors are mapped across 4 geographical subgraphs defined in [ml/federated/client_partitions.json](ml/federated/client_partitions.json):
+Sensors are mapped across 4 geographical subgraphs defined in `data/processed/metr-la/regions.json`:
 
 | Client ID | Region Name | Sector | Sensor Count | Valid Target Cells ($n_i$) | Authoritative FedAvg Weight |
 |---|---|---|---|---|---|
@@ -85,7 +85,7 @@ Sensors are mapped across 4 geographical subgraphs defined in [ml/federated/clie
 ## 4. Phase-6 Model Benchmark & Frozen Checkpoints
 
 ### Spatial Graph Normalization
-Adjacency formulation in [ml/graph/model.py](ml/graph/model.py):
+Adjacency formulation in `ml/spatiotemporal/model.py`:
 $$\tilde{A} = A + I_{207}$$
 $$\tilde{D}_{ii} = \sum_j \tilde{A}_{ij}$$
 $$A_{norm} = \tilde{D}^{-1/2} \tilde{A} \tilde{D}^{-1/2}$$
@@ -109,10 +109,10 @@ Termed: **weighted symmetrically normalized adjacency with self-loops**.
 - **+60 min** (`step 12`): **4.7158 mph** *(Historical Average wins +60m at 4.1934 mph due to long-horizon variance smoothing)*
 
 ### Model Checkpoints Verification
-- **Centralized Checkpoint**: [data/processed/metr-la/models/spatiotemporal/graph_lstm_best.pt](data/processed/metr-la/models/spatiotemporal/graph_lstm_best.pt)
-  - Raw File Size: **111,119 bytes**
-  - Raw File SHA-256: `702cb2bb9406aa36ec25639121377bf939acdb1906370997ccd792f70cf1f384`
-- **Federated Checkpoint**: [data/processed/metr-la/federated/checkpoints/global_best.pt](data/processed/metr-la/federated/checkpoints/global_best.pt)
+- **Centralized Checkpoint**: `data/processed/metr-la/models/graph_lstm_best.pt`
+  - Raw File Size: **111,047 bytes**
+  - Raw File SHA-256: `ca1030e527d7fc57a2e8c2ec1f440536413240212f4ea7c897669d27f80db71c`
+- **Federated Checkpoint**: `data/processed/metr-la/checkpoints/global_best.pt`
   - Raw File Size: **111,047 bytes**
   - Raw File SHA-256: `24710dae0fe0554ca8111ad21e05de03b69a282f0b8d8868a1433ba6fd9c2930`
 

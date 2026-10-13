@@ -4,18 +4,17 @@ import RealTrafficMap from '../../components/traffic/RealTrafficMap';
 import SensorDetailPanel from '../../components/traffic/SensorDetailPanel';
 import SensorTable from '../../components/traffic/SensorTable';
 import SpatialSpeedConsistencyPanel from '../../components/decision/SpatialSpeedConsistencyPanel';
-import NeedScoreBreakdown from '../../components/decision/NeedScoreBreakdown';
 import CounterfactualQueryCard from '../../components/decision/CounterfactualQueryCard';
 import EvidenceChain from '../../components/decision/EvidenceChain';
 import MetricCard from '../../components/common/MetricCard';
 import TrafficSpeedHeatmap from '../../components/traffic/TrafficSpeedHeatmap';
 import CoverageBlindSpotsPanel from '../../components/traffic/CoverageBlindSpotsPanel';
 import {
-  fetchNeedScore,
   fetchCounterfactual,
   fetchEvidenceChain,
   executeQuery,
   fetchMetrSnapshot,
+  fetchStreamingSnapshot,
   fetchSpatialSpeedConsistency,
   fetchNetworkTopology
 } from '../../services/api';
@@ -23,7 +22,7 @@ import { useReplay } from '../../context/ReplayContext';
 import { AlertTriangle, Map as MapIcon, Search, X, Check } from 'lucide-react';
 
 export default function TrafficNetwork() {
-  const { timeIndex, timestampStr, selectedSensorId, setSelectedSensorId } = useReplay();
+  const { timeIndex, timestampStr, selectedSensorId, setSelectedSensorId, dataSourceMode } = useReplay();
   const [searchParams] = useSearchParams();
   const [activeRegion, setActiveRegion] = useState('ALL');
   const [showGraphEdges] = useState(true);
@@ -35,7 +34,6 @@ export default function TrafficNetwork() {
   const [selectedSensor, setSelectedSensor] = useState(null);
   const [activeModal, setActiveModal] = useState(null);
 
-  const [needScoreData, setNeedScoreData] = useState(null);
   const [counterfactualData, setCounterfactualData] = useState(null);
   const [evidenceData, setEvidenceData] = useState(null);
   const [spatialConsistencyData, setSpatialConsistencyData] = useState(null);
@@ -68,7 +66,12 @@ export default function TrafficNetwork() {
 
   const loadRealSnapshot = useCallback(async (tIndex, rId) => {
     try {
-      const snap = await fetchMetrSnapshot(tIndex, rId, false);
+      let snap;
+      if (dataSourceMode === 'external_live') {
+        snap = await fetchStreamingSnapshot(tIndex, rId, 'external_live');
+      } else {
+        snap = await fetchMetrSnapshot(tIndex, rId, false);
+      }
       if (snap && snap.sensors) {
         setRealSensors(snap.sensors);
         setSelectedSensor(prev => {
@@ -83,9 +86,13 @@ export default function TrafficNetwork() {
         setFetchError(null);
       }
     } catch (err) {
-      setFetchError(`Backend API connection failed: ${err.message}. Ensure FastAPI server is running at http://127.0.0.1:8000`);
+      if (dataSourceMode === 'external_live') {
+        setFetchError(`Live source unavailable: ${err.message || 'External streaming experiment is not configured.'} Historical Replay remains the baseline.`);
+      } else {
+        setFetchError(`Backend API connection failed: ${err.message}. Ensure FastAPI server is running at http://127.0.0.1:8000`);
+      }
     }
-  }, [searchParams, selectedSensorId]);
+  }, [searchParams, selectedSensorId, dataSourceMode]);
 
   useEffect(() => {
     loadRealSnapshot(timeIndex, activeRegion);
@@ -157,17 +164,6 @@ export default function TrafficNetwork() {
 
   const handleToggleFullscreen = () => {
     setIsFullscreen(prev => !prev);
-  };
-
-  const handleWhySelected = async () => {
-    const sid = selectedSensor?.sensorId || selectedSensor?.id || "773869";
-    try {
-      const data = await fetchNeedScore(sid);
-      setNeedScoreData(data);
-      setActiveModal('why-selected');
-    } catch (e) {
-      alert(`Could not fetch Need Score for ${sid}: ${e.message}`);
-    }
   };
 
   const handleEvaluateQuery = async () => {
@@ -434,7 +430,6 @@ export default function TrafficNetwork() {
             allSensors={realSensors}
             neighborsMap={neighborsMap}
             onSelectSensor={handleSelectSensor}
-            onWhySelected={handleWhySelected}
             onEvaluateQuery={handleEvaluateQuery}
             onViewEvidence={handleViewEvidence}
             onQuerySensor={handleQuerySensor}
@@ -493,12 +488,6 @@ export default function TrafficNetwork() {
       {/* Decision Intelligence Inspection Modals */}
       {activeModal && (
         <div className="p-4 rounded-xl bg-white dark:bg-[#081827] border border-blue-500/40 shadow-2xl relative transition-colors">
-          {activeModal === 'why-selected' && (
-            <NeedScoreBreakdown
-              data={needScoreData}
-              onClose={() => setActiveModal(null)}
-            />
-          )}
           {activeModal === 'counterfactual' && (
             <CounterfactualQueryCard
               data={counterfactualData}
