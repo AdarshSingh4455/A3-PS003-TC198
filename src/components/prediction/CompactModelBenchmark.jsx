@@ -94,7 +94,7 @@ const BENCHMARK_MODELS = [
 
 export default function CompactModelBenchmark() {
   const { isDark } = useTheme();
-  const [showDetails, setShowDetails] = useState(false);
+  const [showDetails, setShowDetails] = useState(true);
   const [activeMetric, setActiveMetric] = useState('both'); // 'both' | 'overall' | 'long'
   const [hoveredModel, setHoveredModel] = useState(null);
 
@@ -378,7 +378,7 @@ export default function CompactModelBenchmark() {
         </button>
 
         {showDetails && (
-          <div className="mt-3 overflow-x-auto pt-2 space-y-3 animate-fade-in">
+          <div className="mt-3 overflow-x-auto max-h-[300px] overflow-y-auto custom-scrollbar pt-2 space-y-3 animate-fade-in">
             <table className="w-full text-left text-xs font-mono">
               <thead>
                 <tr className="border-b border-slate-200 dark:border-[#17364E] text-slate-400 text-[10px] uppercase">

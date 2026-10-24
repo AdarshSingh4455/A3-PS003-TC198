@@ -12,7 +12,7 @@ import {
 import { fetchPrivacyResults } from '../../services/api';
 
 export default function PrivacyExperimentSection() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [_error, setError] = useState(null);
@@ -92,7 +92,7 @@ export default function PrivacyExperimentSection() {
 
       {/* Collapsible Content */}
       {isOpen && (
-        <div className="p-5 border-t border-slate-100 dark:border-[#17364E] space-y-5 bg-slate-50/30 dark:bg-[#061422]/50">
+        <div className="p-5 border-t border-slate-100 dark:border-[#17364E] space-y-5 bg-slate-50/30 dark:bg-[#061422]/50 max-h-[520px] overflow-y-auto custom-scrollbar">
           {!isEvaluated ? (
             /* Not Evaluated State */
             <div className="py-8 text-center space-y-3">

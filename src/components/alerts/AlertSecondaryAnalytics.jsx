@@ -18,7 +18,7 @@ const TOP_ALERT_SENSORS = [
 ];
 
 export default function AlertSecondaryAnalytics({ alerts = [] }) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   // Compute stats
   const queriesCount = alerts.filter(a => (a.actionState || '').toLowerCase().includes('query')).length;
@@ -58,7 +58,7 @@ export default function AlertSecondaryAnalytics({ alerts = [] }) {
 
       {/* Expanded Analytics Drawer */}
       {isOpen && (
-        <div className="p-5 lg:p-6 border-t border-slate-200 dark:border-[#17364E] space-y-6 text-xs animate-fade-in font-mono">
+        <div className="p-5 lg:p-6 border-t border-slate-200 dark:border-[#17364E] space-y-6 text-xs animate-fade-in font-mono max-h-[500px] overflow-y-auto custom-scrollbar">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* 1. Alerts by Region */}
             <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#071624] border border-slate-200 dark:border-[#17364E] space-y-2.5">

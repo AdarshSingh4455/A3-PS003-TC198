@@ -319,7 +319,7 @@ const REPLAY_ALERTS_DATA = [
 ];
 
 export default function Alerts() {
-  const { timestampStr, timeIndex } = useReplay();
+  const { timestampStr } = useReplay();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedSeverity, setSelectedSeverity] = useState('All');

@@ -15,7 +15,7 @@ const FACTOR_WEIGHT_TABLE = [
 ];
 
 export default function DecisionTechnicalDetails() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   return (
     <div className="rounded-2xl bg-white dark:bg-[#071727] border border-slate-200 dark:border-[#17364E] shadow-xs dark:shadow-md transition-colors overflow-hidden">
@@ -49,7 +49,7 @@ export default function DecisionTechnicalDetails() {
 
       {/* Collapsible Content */}
       {isOpen && (
-        <div className="p-5 lg:p-6 border-t border-slate-200 dark:border-[#17364E] space-y-6 text-xs animate-fade-in">
+        <div className="p-5 lg:p-6 border-t border-slate-200 dark:border-[#17364E] space-y-6 text-xs animate-fade-in max-h-[500px] overflow-y-auto custom-scrollbar">
           {/* Formula Section */}
           <div className="space-y-2">
             <div className="flex items-center gap-2 font-bold text-slate-900 dark:text-white uppercase tracking-wider text-[11px]">

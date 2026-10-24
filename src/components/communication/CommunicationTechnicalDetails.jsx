@@ -19,7 +19,7 @@ export default function CommunicationTechnicalDetails({
   _commData,
   _phase9Experiments
 }) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const [activeTab, setActiveTab] = useState('ccv');
 
   return (
@@ -61,7 +61,7 @@ export default function CommunicationTechnicalDetails({
 
       {/* Collapsed Content Body */}
       {isOpen && (
-        <div className="p-5 pt-0 border-t border-slate-200 dark:border-[#17364E]/80 space-y-5">
+        <div className="p-5 pt-0 border-t border-slate-200 dark:border-[#17364E]/80 space-y-5 max-h-[520px] overflow-y-auto custom-scrollbar">
           {/* Sub-tab Navigation */}
           <div className="flex items-center gap-1.5 pt-4 overflow-x-auto no-scrollbar border-b border-slate-200 dark:border-[#17364E]/60 pb-3">
             {[

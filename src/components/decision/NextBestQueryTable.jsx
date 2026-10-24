@@ -5,7 +5,7 @@ import ScientificBadge from '../common/ScientificBadge';
 import Button from '../common/Button';
 
 export default function NextBestQueryTable({ onQuery, onSelectSensor, data }) {
-  const [showFullRanking, setShowFullRanking] = useState(false);
+  const [showFullRanking, setShowFullRanking] = useState(true);
   const [hoveredCandidate, setHoveredCandidate] = useState(null);
 
   // Normalize candidate list from live backend

@@ -9,7 +9,6 @@ import {
   ShieldCheck,
   ArrowDown,
   Info,
-  ChevronDown,
   Compass
 } from 'lucide-react';
 import {

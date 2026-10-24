@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Cpu, ChevronDown, ChevronUp, CheckCircle, Shield } from 'lucide-react';
 
 export default function CollapsibleTechnicalDetails() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   return (
     <div className="bg-white dark:bg-[#081827] border border-slate-200 dark:border-[#17364E] rounded-2xl overflow-hidden shadow-sm transition-colors">
@@ -24,7 +24,7 @@ export default function CollapsibleTechnicalDetails() {
       </button>
 
       {isOpen && (
-        <div className="p-5 border-t border-slate-200 dark:border-[#17364E] bg-slate-50/50 dark:bg-[#04101A] space-y-4 text-xs font-mono">
+        <div className="p-5 border-t border-slate-200 dark:border-[#17364E] bg-slate-50/50 dark:bg-[#04101A] space-y-4 text-xs font-mono max-h-[460px] overflow-y-auto custom-scrollbar">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {/* Box 1: Weights & Checkpoint */}
             <div className="p-3.5 rounded-xl bg-white dark:bg-[#081827] border border-slate-200 dark:border-[#17364E] space-y-1">
