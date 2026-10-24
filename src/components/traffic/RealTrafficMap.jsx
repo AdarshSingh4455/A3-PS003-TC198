@@ -501,7 +501,7 @@ function UnifiedMapControls({
             {/* Step & Time Display */}
             <div className="flex items-center gap-1.5 px-1.5 font-mono text-xs text-slate-800 dark:text-[#F5F8FC]">
               <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse shrink-0" />
-              <span className="font-bold text-cyan-600 dark:text-cyan-400">LIVE</span>
+              <span className="font-bold text-cyan-600 dark:text-cyan-400">REPLAY</span>
               <span className="text-slate-400 dark:text-[#8295A8] font-normal hidden sm:inline">•</span>
               <span className="text-slate-700 dark:text-[#BACCDA] font-bold hidden sm:inline">
                 {timestampStr ? timestampStr.substring(11, 16) : '00:00'}

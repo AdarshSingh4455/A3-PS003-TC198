@@ -88,13 +88,13 @@ export default function RecentCommunicationEvents() {
                 Recent Communication Events
               </h3>
               <p className="text-[11px] text-slate-500 dark:text-[#CBDDF0] mt-1 font-medium">
-                Live telemetry evidence queries &amp; federated exchange log
+                Historical telemetry evidence queries &amp; federated exchange log
               </p>
             </div>
           </div>
 
           <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-cyan-400 border border-blue-500/20">
-            Live Stream &bull; Active
+            Historical Stream &bull; Active
           </span>
         </div>
       </div>

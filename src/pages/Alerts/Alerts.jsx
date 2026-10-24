@@ -406,10 +406,10 @@ export default function Alerts() {
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            {/* Live Telemetry Context */}
+            {/* Historical Telemetry Context */}
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-[#0B2033] border border-slate-200 dark:border-[#17364E] font-mono text-xs text-slate-700 dark:text-[#BCD0E2]">
-              <Clock className="w-3.5 h-3.5 text-emerald-500" />
-              <span>Live Telemetry &bull; Active &bull; {timestampStr ? timestampStr.substring(0, 16) : '2012-03-01 00:00'}</span>
+              <Clock className="w-3.5 h-3.5 text-cyan-500" />
+              <span>Historical Replay &bull; Active &bull; {timestampStr ? timestampStr.substring(0, 16) : '2012-03-01 00:00'}</span>
             </div>
           </div>
         </div>
