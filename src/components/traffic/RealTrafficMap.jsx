@@ -1011,13 +1011,52 @@ export default function RealTrafficMap({
     return valid.filter(s => s.regionId === activeRegion);
   }, [sensors, activeRegion]);
 
-  // Control edge connection visibility: connect lines immediately when sensors load
-  const [linesReady, setLinesReady] = useState(true);
+  // Control edge connection visibility:
+  // Lines remain hidden on initial page load and during sector/sensor transitions,
+  // connecting smoothly only after the map viewport and sensor nodes have fully settled.
+  const [linesReady, setLinesReady] = useState(false);
+  const isFirstMountRef = useRef(true);
+  const lastRegionRef = useRef(activeRegion);
+  const lastSensorIdRef = useRef(activeSelectedId);
 
   useEffect(() => {
     if (!sensors || sensors.length === 0 || !selectedSensor) {
+      setLinesReady(false);
       return;
     }
+
+    const isInitialMount = isFirstMountRef.current;
+    const isRegionSwitch = lastRegionRef.current !== activeRegion;
+    const isSensorSwitch = lastSensorIdRef.current !== activeSelectedId;
+
+    lastRegionRef.current = activeRegion;
+    lastSensorIdRef.current = activeSelectedId;
+
+    if (isInitialMount) {
+      isFirstMountRef.current = false;
+      setLinesReady(false);
+      const timer = setTimeout(() => {
+        setLinesReady(true);
+      }, 750);
+      return () => clearTimeout(timer);
+    }
+
+    if (isRegionSwitch) {
+      setLinesReady(false);
+      const timer = setTimeout(() => {
+        setLinesReady(true);
+      }, 750);
+      return () => clearTimeout(timer);
+    }
+
+    if (isSensorSwitch) {
+      setLinesReady(false);
+      const timer = setTimeout(() => {
+        setLinesReady(true);
+      }, 600);
+      return () => clearTimeout(timer);
+    }
+
     setLinesReady(true);
   }, [activeSelectedId, activeRegion, sensors, selectedSensor]);
 
