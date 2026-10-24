@@ -98,8 +98,8 @@
   body,
   #root {
     font-family: var(--font-ui);
-    -webkit-font-smoothing: auto;
-    -moz-osx-font-smoothing: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     font-synthesis: none;
   }
