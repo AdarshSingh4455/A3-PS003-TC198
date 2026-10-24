@@ -1012,53 +1012,36 @@ export default function RealTrafficMap({
   }, [sensors, activeRegion]);
 
   // Control edge connection visibility:
-  // Lines remain hidden on initial page load and during sector/sensor transitions,
-  // connecting smoothly only after the map viewport and sensor nodes have fully settled.
+  // Lines are kept strictly hidden on initial page load and during sector/sensor switching.
+  // Lines connect smoothly only AFTER the map camera flight has fully settled.
   const [linesReady, setLinesReady] = useState(false);
-  const isFirstMountRef = useRef(true);
-  const lastRegionRef = useRef(activeRegion);
-  const lastSensorIdRef = useRef(activeSelectedId);
+  const [prevRegion, setPrevRegion] = useState(activeRegion);
+  const [prevSensorId, setPrevSensorId] = useState(activeSelectedId);
 
+  // Synchronously hide lines during render when sector or selected sensor changes
+  if (activeRegion !== prevRegion) {
+    setPrevRegion(activeRegion);
+    setLinesReady(false);
+  }
+  if (activeSelectedId !== prevSensorId) {
+    setPrevSensorId(activeSelectedId);
+    setLinesReady(false);
+  }
+
+  // Once the map view and sensors have settled, connect the lines
   useEffect(() => {
     if (!sensors || sensors.length === 0 || !selectedSensor) {
       setLinesReady(false);
       return;
     }
 
-    const isInitialMount = isFirstMountRef.current;
-    const isRegionSwitch = lastRegionRef.current !== activeRegion;
-    const isSensorSwitch = lastSensorIdRef.current !== activeSelectedId;
-
-    lastRegionRef.current = activeRegion;
-    lastSensorIdRef.current = activeSelectedId;
-
-    if (isInitialMount) {
-      isFirstMountRef.current = false;
-      setLinesReady(false);
+    if (!linesReady) {
       const timer = setTimeout(() => {
         setLinesReady(true);
-      }, 750);
+      }, 850);
       return () => clearTimeout(timer);
     }
-
-    if (isRegionSwitch) {
-      setLinesReady(false);
-      const timer = setTimeout(() => {
-        setLinesReady(true);
-      }, 750);
-      return () => clearTimeout(timer);
-    }
-
-    if (isSensorSwitch) {
-      setLinesReady(false);
-      const timer = setTimeout(() => {
-        setLinesReady(true);
-      }, 600);
-      return () => clearTimeout(timer);
-    }
-
-    setLinesReady(true);
-  }, [activeSelectedId, activeRegion, sensors, selectedSensor]);
+  }, [linesReady, sensors, selectedSensor, activeRegion, activeSelectedId]);
 
   // Compute graph edges to render with multi-tier hierarchy & layering
   const edgesToRender = useMemo(() => {
@@ -1157,7 +1140,6 @@ export default function RealTrafficMap({
           zoomControl={false}
           attributionControl={false}
           scrollWheelZoom={true}
-          preferCanvas={true}
           style={{ height: '100%', width: '100%', minHeight: '580px' }}
           className="w-full h-full"
         >
@@ -1236,7 +1218,7 @@ export default function RealTrafficMap({
                     positions={[[edge.fromLat, edge.fromLon], [edge.toLat, edge.toLon]]}
                     pathOptions={{
                       color: edge.glowColor,
-                      weight: edge.isDirectSelected ? 8 : 5,
+                      weight: edge.isDirectSelected ? 5 : 3.5,
                       opacity: edge.isDirectSelected ? 0.35 : 0.25,
                       lineCap: 'round',
                       lineJoin: 'round'
@@ -1248,7 +1230,7 @@ export default function RealTrafficMap({
                   positions={[[edge.fromLat, edge.fromLon], [edge.toLat, edge.toLon]]}
                   pathOptions={{
                     color: edge.color,
-                    weight: edge.weight,
+                    weight: edge.isDirectSelected ? 2.2 : edge.weight,
                     opacity: edge.opacity,
                     lineCap: 'round',
                     lineJoin: 'round'
