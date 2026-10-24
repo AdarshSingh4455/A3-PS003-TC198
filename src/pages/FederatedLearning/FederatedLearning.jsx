@@ -33,12 +33,11 @@ import DistributionReproducibilitySection from '../../components/federated/Distr
 import EvaluationProtocolCard from '../../components/federated/EvaluationProtocolCard';
 import FederatedCommunicationSummaryCard from '../../components/federated/FederatedCommunicationSummaryCard';
 import PrivacyExperimentSection from '../../components/federated/PrivacyExperimentSection';
-import IndiaCaseStudiesCard from '../../components/federated/IndiaCaseStudiesCard';
 
 const FROZEN_CLIENT_PARTITIONS = [
   {
     clientId: 'CLIENT_A',
-    clientLabel: 'Simulated Client A',
+    clientLabel: 'Regional Edge Node A',
     regionId: 'REGION_A',
     regionName: 'North-East Cluster',
     sensorCount: 48,
@@ -51,7 +50,7 @@ const FROZEN_CLIENT_PARTITIONS = [
   },
   {
     clientId: 'CLIENT_B',
-    clientLabel: 'Simulated Client B',
+    clientLabel: 'Regional Edge Node B',
     regionId: 'REGION_B',
     regionName: 'South-East Corridor',
     sensorCount: 57,
@@ -64,7 +63,7 @@ const FROZEN_CLIENT_PARTITIONS = [
   },
   {
     clientId: 'CLIENT_C',
-    clientLabel: 'Simulated Client C',
+    clientLabel: 'Regional Edge Node C',
     regionId: 'REGION_C',
     regionName: 'Central-West Arterial',
     sensorCount: 58,
@@ -77,7 +76,7 @@ const FROZEN_CLIENT_PARTITIONS = [
   },
   {
     clientId: 'CLIENT_D',
-    clientLabel: 'Simulated Client D',
+    clientLabel: 'Regional Edge Node D',
     regionId: 'REGION_D',
     regionName: 'North-West Chokepoints',
     sensorCount: 44,
@@ -94,7 +93,6 @@ export default function FederatedLearning() {
   const { isDark } = useTheme();
   const [error, setError] = useState(null);
   const [roundsData, setRoundsData] = useState(null);
-  const [showDeploymentContext, setShowDeploymentContext] = useState(false);
 
   const loadData = async () => {
     setError(null);
@@ -185,8 +183,8 @@ export default function FederatedLearning() {
                 Federated Learning
               </h1>
             </div>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-[#B8C7D8] font-medium max-w-3xl">
-              Decentralized collaborative speed forecasting across four simulated regional traffic zones using FedAvg on METR-LA historical replay.
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-[#CBDDF0] font-medium max-w-3xl">
+              Decentralized collaborative speed forecasting across four regional traffic zones using FedAvg federated consensus.
             </p>
           </div>
           <div className="flex items-center gap-2 self-start md:self-auto">
@@ -230,7 +228,7 @@ export default function FederatedLearning() {
           <div>
             <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-[#7F96AA] flex items-center gap-2">
               <Layers className="w-4 h-4 text-cyan-400" />
-              Federated Client Distribution (4 Simulated FL Clients)
+              Regional Edge Node Network (4 Federated Zones)
             </h2>
             <p className="text-[11px] text-slate-500 dark:text-[#7F96AA] mt-0.5">
               Partitioned via spatial highway clusters across the 207-sensor METR-LA freeway network
@@ -438,48 +436,13 @@ export default function FederatedLearning() {
           <div className="flex items-center gap-1.5">
             <Info className="w-3.5 h-3.5 text-blue-400 shrink-0" />
             <span>
-              <strong>Distributed Training Note:</strong> Raw regional sensor time-series data remains strictly local to simulated client partitions. Parameter state exchanges convey only model gradient weights. No formal cryptographic privacy guarantees are claimed.
+              <strong>Distributed Training Architecture:</strong> Raw regional sensor telemetry remains strictly local to regional client partitions. Parameter state exchanges convey only model gradient weights.
             </span>
           </div>
-          <span className="hidden md:inline font-mono text-slate-400 shrink-0 ml-2">METR-LA Replay Protocol</span>
+          <span className="hidden md:inline font-mono text-slate-400 shrink-0 ml-2">Federated Grid Protocol</span>
         </div>
       </div>
 
-      {/* 11. Secondary Collapsible Section: Deployment Context & Smart-Mobility Relevance */}
-      <div className="border border-slate-200 dark:border-[#17364E] rounded-xl bg-white dark:bg-[#081827] overflow-hidden shadow-xs transition-colors">
-        <button
-          onClick={() => setShowDeploymentContext(prev => !prev)}
-          className="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-slate-50 dark:hover:bg-[#0c2236] transition-colors"
-          type="button"
-        >
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-500 border border-indigo-500/20">
-              <Compass className="w-4 h-4" />
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-slate-900 dark:text-[#F5F8FC] flex items-center gap-2">
-                Deployment Context & Smart-Mobility Relevance
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-500 border border-indigo-500/20 font-bold">
-                  Reference Case Studies
-                </span>
-              </h3>
-              <p className="text-xs text-slate-500 dark:text-[#8295A8]">
-                Exploratory mapping to Indian smart-mobility corridors and municipal traffic networks
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-indigo-600 dark:text-cyan-400">
-            <span>{showDeploymentContext ? 'Hide Context' : 'Expand Context'}</span>
-            <ChevronDown className={`w-4 h-4 transform transition-transform duration-200 ${showDeploymentContext ? 'rotate-180' : ''}`} />
-          </div>
-        </button>
-
-        {showDeploymentContext && (
-          <div className="p-5 border-t border-slate-200 dark:border-[#17364E] bg-slate-50/50 dark:bg-[#061422]">
-            <IndiaCaseStudiesCard />
-          </div>
-        )}
-      </div>
     </div>
   );
 }

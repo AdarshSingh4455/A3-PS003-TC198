@@ -30,10 +30,19 @@ export default function TopNavigation() {
   const { backendStatus } = useReplay();
   const location = useLocation();
 
-  // Close mobile navigation drawer whenever route changes
+  // Close mobile navigation drawer and scroll to top whenever route changes
   useEffect(() => {
     setMobileMenuOpen(false);
   }, [location.pathname]);
+
+  const handleNavClick = () => {
+    setMobileMenuOpen(false);
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    if (document.documentElement) document.documentElement.scrollTop = 0;
+    if (document.body) document.body.scrollTop = 0;
+    const rootEl = document.getElementById('root');
+    if (rootEl) rootEl.scrollTop = 0;
+  };
 
   const isItemActive = (itemPath) => {
     const current = (location.pathname || '').toLowerCase().replace(/\/+$/, '') || '/';
@@ -73,7 +82,7 @@ export default function TopNavigation() {
         <div className="flex items-center justify-between h-14 gap-3">
           {/* Left Brand Identity */}
           <div className="flex items-center gap-3 shrink-0">
-            <NavLink to="/overview" className="flex items-center gap-2.5 group">
+            <NavLink to="/overview" onClick={handleNavClick} className="flex items-center gap-2.5 group">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-400 p-0.5 shadow-md shadow-blue-500/20 group-hover:shadow-blue-500/40 transition-shadow flex items-center justify-center">
                 <div className="w-full h-full bg-white dark:bg-[#06111D] rounded-[7px] flex items-center justify-center">
                   <Activity className="w-4 h-4 text-cyan-600 dark:text-cyan-400 animate-pulse" />
@@ -104,6 +113,7 @@ export default function TopNavigation() {
                 <NavLink
                   key={item.path}
                   to={item.path}
+                  onClick={handleNavClick}
                   className={`flex items-center gap-1 2xl:gap-1.5 px-2 2xl:px-3 py-1 2xl:py-1.5 rounded-lg text-xs 2xl:text-[13px] font-semibold transition-all duration-150 whitespace-nowrap leading-normal ${
                     isActive
                       ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 border border-blue-400/40'
@@ -122,7 +132,7 @@ export default function TopNavigation() {
             {/* Dataset Pill (visible only on wide screens) */}
             <div className="hidden 2xl:flex items-center gap-1.5 h-8 px-2.5 rounded-lg text-xs font-mono font-medium bg-slate-100 dark:bg-[#0B2033] border border-slate-200 dark:border-[#17364E] text-slate-700 dark:text-[#B8C7D8] whitespace-nowrap shrink-0">
               <Database className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-              <span>METR-LA Network</span>
+              <span>Metro Traffic Grid</span>
             </div>
 
             {/* Backend Connectivity Status */}
@@ -165,7 +175,7 @@ export default function TopNavigation() {
                   <NavLink
                     key={item.path}
                     to={item.path}
-                    onClick={() => setMobileMenuOpen(false)}
+                    onClick={handleNavClick}
                     className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
                       isActive
                         ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-xs'

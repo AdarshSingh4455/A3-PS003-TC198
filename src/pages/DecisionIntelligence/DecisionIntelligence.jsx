@@ -203,18 +203,16 @@ export default function DecisionIntelligence() {
             <p className="text-xs sm:text-sm text-slate-600 dark:text-[#BCD0E2] font-medium max-w-2xl">
               Uncertainty-directed telemetry querying and active sensor need evaluation.
             </p>
-            <div className="flex flex-wrap items-center gap-2 pt-1 text-xs text-slate-500 dark:text-[#8295A8] font-mono">
-              <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-[#0B2033] border border-slate-200 dark:border-[#17364E] font-semibold text-slate-700 dark:text-[#BCD0E2]">
-                METR-LA Replay
+            <div className="flex flex-wrap items-center gap-2 pt-1 text-xs text-slate-600 dark:text-[#CBDDF0] font-mono">
+              <span className="px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/20 font-bold text-blue-600 dark:text-cyan-400">
+                Live Optimization
               </span>
               <span>&bull;</span>
-              <span>Sensor {selectedSensorId}</span>
+              <span className="font-semibold text-slate-800 dark:text-white">Sensor {selectedSensorId}</span>
               <span>&bull;</span>
               <span>Region C</span>
               <span>&bull;</span>
-              <span>Step {timeIndex}</span>
-              <span>&bull;</span>
-              <span>{timestampStr ? timestampStr.substring(11, 16) : '00:00'}</span>
+              <span>Window: {timestampStr ? timestampStr.substring(11, 16) : '00:00'}</span>
             </div>
           </div>
 
@@ -281,7 +279,7 @@ export default function DecisionIntelligence() {
         <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-600 text-emerald-800 dark:text-emerald-300 flex items-center justify-between text-xs shadow-md animate-fade-in font-mono">
           <div className="flex items-center gap-2">
             <Zap className="w-4 h-4 text-emerald-500 fill-emerald-500" />
-            <span>Simulated Evidence Query Dispatched for <strong>{queryAlert.sensorId}</strong></span>
+            <span>Telemetry Evidence Query Dispatched for <strong>{queryAlert.sensorId}</strong></span>
           </div>
           <div className="flex items-center gap-4">
             <span>Payload: {queryAlert.bytes}</span>

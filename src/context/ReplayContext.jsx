@@ -8,7 +8,7 @@ const BASE_TIMESTAMP = new Date('2012-03-01T00:00:00Z').getTime();
 
 export function ReplayProvider({ children }) {
   const [timeIndex, setTimeIndex] = useState(0);
-  const [selectedSensorId, setSelectedSensorId] = useState('773869');
+  const [selectedSensorId, setSelectedSensorId] = useState('767620');
   const [isPlaying, setIsPlaying] = useState(false);
   const [replaySpeed, setReplaySpeedState] = useState(1); // Default 1x (Normal)
 

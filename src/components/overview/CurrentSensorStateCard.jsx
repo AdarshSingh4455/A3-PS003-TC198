@@ -144,6 +144,7 @@ export default function CurrentSensorStateCard({
       <div className="pt-3 mt-4 border-t border-slate-100 dark:border-[#17364E]/80">
         <Link
           to="/network"
+          onClick={() => { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }); if (document.documentElement) document.documentElement.scrollTop = 0; if (document.body) document.body.scrollTop = 0; }}
           className="inline-flex items-center gap-1.5 text-xs font-bold text-cyan-600 dark:text-cyan-400 hover:underline"
         >
           <span>View Sensor on Network</span>

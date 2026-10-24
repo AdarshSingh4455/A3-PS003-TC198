@@ -39,7 +39,7 @@ const JURY_STYLES = {
 export default function ValidationLayer({ juryData, physicsData, spatialData, selectedSensorId }) {
   // --- 1. JURY NORMALIZATION ---
   const jury = juryData || {
-    sensorId: selectedSensorId || '773869',
+    sensorId: selectedSensorId || '767620',
     juryDecision: 'CONFIRM_NOMINAL',
     juryConfidence: '75%',
     reason: 'Consensus agreement across prediction, graph, and telemetry signals.',
@@ -57,8 +57,8 @@ export default function ValidationLayer({ juryData, physicsData, spatialData, se
 
   // --- 2. PLAUSIBILITY GATE NORMALIZATION ---
   const physics = physicsData || {
-    sensorId: selectedSensorId || '773869',
-    currentSpeedMph: 64.38,
+    sensorId: selectedSensorId || '767620',
+    currentSpeedMph: 67.12,
     passed: true,
     checksPassed: {
       validBoundsCheck: true,
@@ -76,11 +76,11 @@ export default function ValidationLayer({ juryData, physicsData, spatialData, se
 
   // --- 3. SPATIAL CONSISTENCY NORMALIZATION ---
   const spatial = spatialData || {
-    fromSensor: selectedSensorId || "773869",
-    toSensor: "767541",
-    fromSpeedMph: 64.38,
-    toSpeedMph: 67.62,
-    speedDifferenceMph: 3.25,
+    fromSensor: selectedSensorId || "767620",
+    toSensor: "767471",
+    fromSpeedMph: 67.12,
+    toSpeedMph: 66.50,
+    speedDifferenceMph: 0.62,
     consistencyScore: 91.9,
     isDisagreement: false,
     severity: "normal",

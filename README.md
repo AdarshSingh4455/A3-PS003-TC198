@@ -246,61 +246,114 @@ Measured over local loopback sockets (`127.0.0.1:8000`) over HTTP/1.1 to quantif
 
 ## Installation
 
+Follow these steps to set up TrafficPulse-X on your local machine.
+
 ### Prerequisites
-- Python 3.10 or higher
-- Node.js 18 or higher (with npm)
+- **Python 3.10+** (tested up to Python 3.14)
+- **Node.js 18+** with `npm` (tested on Node 20+)
+- **Git**
 
-### Backend Setup
-```bash
-# 1. Create and activate a Python virtual environment
+---
+
+### Step 1: Environment Setup
+
+#### Option A: Windows (PowerShell)
+```powershell
+# 1. Create a dedicated Python virtual environment
 python -m venv .venv
-# On Windows (PowerShell):
-.\.venv\Scripts\Activate.ps1
-# On Linux/macOS:
-source .venv/bin/activate
+# Explanation: Creates an isolated Python environment inside the folder '.venv' so dependencies don't conflict with system packages.
 
-# 2. Install backend dependencies
+# 2. Activate the virtual environment
+.\.venv\Scripts\Activate.ps1
+# Explanation: Activates the virtual environment for your current PowerShell session.
+# Note: If PowerShell shows a script execution policy error, run:
+# Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+
+# 3. Upgrade pip and install backend dependencies
+python -m pip install --upgrade pip
 python -m pip install -r backend/requirements.txt
+# Explanation: Installs PyTorch, FastAPI, Uvicorn, and required ML libraries into your virtual environment.
+
+# 4. Install frontend JavaScript dependencies
+npm install
+# Explanation: Downloads all required React, Vite, Tailwind CSS, Leaflet, and Recharts packages into 'node_modules'.
 ```
 
-### Frontend Setup
+#### Option B: Linux / macOS (Bash)
 ```bash
-# Install frontend dependencies
+# 1. Create a dedicated Python virtual environment
+python3 -m venv .venv
+# Explanation: Creates an isolated virtual environment directory named '.venv'.
+
+# 2. Activate the virtual environment
+source .venv/bin/activate
+# Explanation: Points your shell's Python binary to the local virtual environment.
+
+# 3. Upgrade pip and install backend dependencies
+python -m pip install --upgrade pip
+python -m pip install -r backend/requirements.txt
+# Explanation: Installs FastAPI, PyTorch, and supporting scientific packages.
+
+# 4. Install frontend JavaScript dependencies
 npm install
+# Explanation: Installs React and frontend build tools.
 ```
 
 ---
 
 ## Running Locally
 
-### 1. Start Backend API Server
-```bash
+To run TrafficPulse-X, open two terminal windows from the project root:
+
+### Terminal 1: Backend API Server (FastAPI)
+Activate your virtual environment and launch the backend server:
+
+```powershell
+# On Windows (PowerShell):
+.\.venv\Scripts\Activate.ps1
 python -m uvicorn backend.main:app --host 127.0.0.1 --port 8000
 ```
-- API Documentation (Swagger): `http://127.0.0.1:8000/docs`
-- Health Endpoint: `http://127.0.0.1:8000/api/health`
 
-### 2. Start Frontend Development Server
 ```bash
-npm run dev -- --host 127.0.0.1 --port 5173
+# On Linux / macOS (Bash):
+source .venv/bin/activate
+python -m uvicorn backend.main:app --host 127.0.0.1 --port 8000
 ```
-- User Interface: `http://127.0.0.1:5173/`
+- **What this does**: Starts the FastAPI backend on `http://127.0.0.1:8000`.
+- **API Documentation (Swagger UI)**: `http://127.0.0.1:8000/docs`
+- **Health Check Endpoint**: `http://127.0.0.1:8000/api/health`
+- **To stop the server**: Press `Ctrl + C` in the terminal.
 
 ---
 
-## Testing
-
-Verify the complete repository with the following commands:
+### Terminal 2: Frontend Development Server (React + Vite)
+In a second terminal window from the project root, run:
 
 ```bash
-# 1. Backend Pytest Suite (343 passed)
+npm run dev -- --host 127.0.0.1 --port 5173
+```
+- **What this does**: Compiles and serves the React single-page application at `http://127.0.0.1:5173`.
+- **Interactive Web App**: Open `http://127.0.0.1:5173/` in your browser.
+- **To stop the server**: Press `Ctrl + C` in the terminal.
+
+---
+
+## Testing & Verification
+
+Run these verification commands to ensure everything is working properly:
+
+```bash
+# 1. Run all backend tests (Pytest)
 python -m pytest backend -q
+# Explanation: Executes the full 343-test suite covering predictions, FL simulation, API contracts, and decision intelligence.
 
-# 2. Frontend Linting (0 errors, 21 warnings)
+# 2. Check frontend code quality (Oxlint)
 npm run lint
+# Explanation: Lints the entire JavaScript/JSX codebase for syntax errors and unused variables.
 
-# 3. Frontend Production Build (clean bundle in ~7.3s)
+# 3. Create a production build (Vite)
 npm run build
+# Explanation: Bundles and tree-shakes all React components into the 'dist/' folder to verify production readiness.
 ```
 
 ---

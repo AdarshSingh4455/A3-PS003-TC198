@@ -54,7 +54,7 @@ export default function MetricCard({
                 return (
                   <span className="inline-flex items-baseline gap-1.5 whitespace-nowrap">
                     <span className="font-bold">{parts[0]}</span>
-                    <span className="text-[16px] sm:text-[18px] font-medium text-slate-500 dark:text-[#8295A8]">
+                    <span className="text-[16px] sm:text-[18px] font-medium text-slate-500 dark:text-[#A3B8CC]">
                       {parts[1]}
                     </span>
                   </span>
@@ -65,7 +65,7 @@ export default function MetricCard({
           })()}
         </div>
         {subtext && (
-          <div className="flex items-center gap-1.5 text-[13px] text-slate-600 dark:text-[#8295A8] font-medium leading-normal">
+          <div className="flex items-center gap-1.5 text-[13px] text-slate-600 dark:text-[#A3B8CC] font-medium leading-normal">
             {isTrendUp && (
               <span className={`inline-flex items-center font-semibold ${
                 variant === 'rose' ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'

@@ -162,7 +162,7 @@ export default function SensorTable({ sensors, selectedSensorId, onSelectSensor 
         columns={columns}
         data={filteredSensors}
         onRowClick={onSelectSensor}
-        maxHeight={520}
+        maxHeight={320}
       />
     </SectionCard>
   );

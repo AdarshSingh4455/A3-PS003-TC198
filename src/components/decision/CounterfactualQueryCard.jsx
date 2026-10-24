@@ -4,7 +4,7 @@ import SectionCard from '../common/SectionCard';
 import ScientificBadge from '../common/ScientificBadge';
 
 const DEFAULT_COUNTERFACTUAL = {
-  sensorId: "773869",
+  sensorId: "767620",
   decision: "QUERY",
   expectedBenefit: "45%",
   uncertaintyReduction: "-22%",
@@ -27,7 +27,7 @@ const DEFAULT_COUNTERFACTUAL = {
 export default function CounterfactualQueryCard({ data, _onClose, onExecuteQuery }) {
   const activeData = data || DEFAULT_COUNTERFACTUAL;
   const {
-    sensorId = "773869",
+    sensorId = "767620",
     withoutQuery = {},
     withQuery = {},
     expectedBenefit = "45%",

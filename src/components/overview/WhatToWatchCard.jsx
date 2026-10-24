@@ -118,6 +118,7 @@ export default function WhatToWatchCard({
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs font-semibold">
           <Link
             to="/predictions"
+            onClick={() => { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }); if (document.documentElement) document.documentElement.scrollTop = 0; if (document.body) document.body.scrollTop = 0; }}
             className="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-[#0B2033] border border-slate-200/80 dark:border-[#17364E] text-slate-700 dark:text-[#BCD0E2] hover:text-cyan-600 dark:hover:text-cyan-400 hover:border-cyan-500/40 transition-colors"
           >
             <span>Forecast Details</span>
@@ -125,6 +126,7 @@ export default function WhatToWatchCard({
           </Link>
           <Link
             to="/network"
+            onClick={() => { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }); if (document.documentElement) document.documentElement.scrollTop = 0; if (document.body) document.body.scrollTop = 0; }}
             className="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-[#0B2033] border border-slate-200/80 dark:border-[#17364E] text-slate-700 dark:text-[#BCD0E2] hover:text-cyan-600 dark:hover:text-cyan-400 hover:border-cyan-500/40 transition-colors"
           >
             <span>Sensor on Map</span>
@@ -132,6 +134,7 @@ export default function WhatToWatchCard({
           </Link>
           <Link
             to="/decision"
+            onClick={() => { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }); if (document.documentElement) document.documentElement.scrollTop = 0; if (document.body) document.body.scrollTop = 0; }}
             className="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-[#0B2033] border border-slate-200/80 dark:border-[#17364E] text-slate-700 dark:text-[#BCD0E2] hover:text-cyan-600 dark:hover:text-cyan-400 hover:border-cyan-500/40 transition-colors"
           >
             <span>Decision Context</span>

@@ -1044,42 +1044,65 @@ class METRLADatasetInspector:
             raise FileNotFoundError(f"METR-LA measurement file '{self.h5_path}' not found.")
 
         import h5py
-        with h5py.File(self.h5_path, "r") as hf:
-            df_grp = hf["df"]
-            values = df_grp["block0_values"]
-            n_steps, n_sensors = values.shape
-            items = [x.decode("utf-8") if isinstance(x, bytes) else str(x) for x in df_grp["block0_items"][:]]
-            raw_ts = df_grp["axis1"][:]
+
+        # Cache invariant static metadata across snapshot queries to maximize replay & map responsiveness
+        if not hasattr(METRLADatasetInspector, "_cached_static_meta"):
+            with h5py.File(self.h5_path, "r") as hf:
+                df_grp = hf["df"]
+                items = [x.decode("utf-8") if isinstance(x, bytes) else str(x) for x in df_grp["block0_items"][:]]
+                raw_ts = df_grp["axis1"][:]
+                n_steps, _ = df_grp["block0_values"].shape
+
+            loc_info, coords_map = self.inspect_locations()
+            graph_info, sensor_ids, nbr_map = self.inspect_graph()
+
+            rep_path = os.path.join(self.processed_dir, "representative_sensors.json")
+            reg_path = os.path.join(self.processed_dir, "regions.json")
+
+            all_reps_map: Dict[str, Dict[str, Any]] = {}
+            if os.path.exists(rep_path):
+                with open(rep_path, "r", encoding="utf-8") as f:
+                    rep_data = json.load(f)
+                    for r_code, r_list in rep_data.items():
+                        for item in r_list:
+                            all_reps_map[item["sensorId"]] = item
+
+            sensor_region_map: Dict[str, str] = {}
+            if os.path.exists(reg_path):
+                with open(reg_path, "r", encoding="utf-8") as f:
+                    reg_data = json.load(f)
+                    for r_code, r_obj in reg_data.items():
+                        for sid in r_obj.get("sensorIds", []):
+                            sensor_region_map[sid] = r_code
+
+            item_indices = {sid: idx for idx, sid in enumerate(items)}
+
+            METRLADatasetInspector._cached_static_meta = {
+                "items": items,
+                "raw_ts": raw_ts,
+                "n_steps": n_steps,
+                "coords_map": coords_map,
+                "nbr_map": nbr_map,
+                "all_reps_map": all_reps_map,
+                "sensor_region_map": sensor_region_map,
+                "item_indices": item_indices
+            }
+
+        meta = METRLADatasetInspector._cached_static_meta
+        items = meta["items"]
+        raw_ts = meta["raw_ts"]
+        n_steps = meta["n_steps"]
+        coords_map = meta["coords_map"]
+        nbr_map = meta["nbr_map"]
+        all_reps_map = meta["all_reps_map"]
+        sensor_region_map = meta["sensor_region_map"]
+        item_indices = meta["item_indices"]
 
         if time_index < 0 or time_index >= n_steps:
             raise ValueError(f"time_index {time_index} is out of bounds (0 to {n_steps - 1})")
 
         current_ts = pd.to_datetime(raw_ts[time_index]).isoformat()
         time_meta = derive_time_semantics(current_ts)
-
-        # Load locations & graph info
-        loc_info, coords_map = self.inspect_locations()
-        graph_info, sensor_ids, nbr_map = self.inspect_graph()
-
-        # Load representative mapping
-        rep_path = os.path.join(self.processed_dir, "representative_sensors.json")
-        reg_path = os.path.join(self.processed_dir, "regions.json")
-
-        all_reps_map: Dict[str, Dict[str, Any]] = {}
-        if os.path.exists(rep_path):
-            with open(rep_path, "r", encoding="utf-8") as f:
-                rep_data = json.load(f)
-                for r_code, r_list in rep_data.items():
-                    for item in r_list:
-                        all_reps_map[item["sensorId"]] = item
-
-        sensor_region_map: Dict[str, str] = {}
-        if os.path.exists(reg_path):
-            with open(reg_path, "r", encoding="utf-8") as f:
-                reg_data = json.load(f)
-                for r_code, r_obj in reg_data.items():
-                    for sid in r_obj.get("sensorIds", []):
-                        sensor_region_map[sid] = r_code
 
         # Determine target sensors to include in snapshot
         target_sids = []
@@ -1100,16 +1123,16 @@ class METRLADatasetInspector:
             else:
                 target_sids = items
 
-        # Load snapshot frame speed array for instant calculation
+        # Load snapshot frame speed array in single fast access
         with h5py.File(self.h5_path, "r") as hf:
             step_values = hf["df"]["block0_values"][time_index, :]
 
         # Calculate baselines & snapshot sensor records
         snapshot_sensors = []
         for sid in target_sids:
-            if sid not in items:
+            s_idx = item_indices.get(sid)
+            if s_idx is None:
                 continue
-            s_idx = items.index(sid)
             val = float(step_values[s_idx])
 
             rep_info = all_reps_map.get(sid, {})

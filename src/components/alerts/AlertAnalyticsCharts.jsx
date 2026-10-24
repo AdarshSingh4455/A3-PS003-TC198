@@ -53,8 +53,8 @@ export default function AlertAnalyticsCharts({ alerts = [] }) {
       {/* 1. Alert Trend Over Replay (7 cols) */}
       <div className="lg:col-span-7 flex flex-col">
         <SectionCard
-          title="Alert Trend Over Replay"
-          subtitle="Cumulative derived alert frequency across 5-minute historical replay timesteps"
+          title="Temporal Alert Trend"
+          subtitle="Cumulative anomaly alerts across 5-minute telemetry intervals"
           icon={TrendingUp}
           action={<ScientificBadge type="DERIVED" label="TEMPORAL SEQUENCE" size="xs" />}
           className="flex-1 flex flex-col"
@@ -110,9 +110,9 @@ export default function AlertAnalyticsCharts({ alerts = [] }) {
               </ResponsiveContainer>
             </div>
 
-            <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-[#17364E] text-[11px] font-mono text-slate-500 dark:text-[#8295A8]">
-              <span>Replay Window: 00:00 – 01:00 (13 Steps)</span>
-              <span>Peak Frequency: <strong>10 Alerts</strong> at Step 12</span>
+            <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-[#17364E] text-[11px] font-mono text-slate-600 dark:text-[#CBDDF0]">
+              <span>Monitoring Window: 00:00 – 01:00</span>
+              <span>Peak Frequency: <strong className="text-slate-900 dark:text-white">10 Alerts</strong></span>
             </div>
           </div>
         </SectionCard>

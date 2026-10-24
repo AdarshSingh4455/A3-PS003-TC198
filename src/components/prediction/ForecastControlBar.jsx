@@ -120,7 +120,7 @@ export default function ForecastControlBar({
                 className="bg-transparent text-slate-900 dark:text-[#F7FAFF] font-bold focus:outline-hidden cursor-pointer appearance-none pr-4.5 py-1 text-xs"
               >
                 <option value="METR_LA" className="dark:bg-[#081827]">METR-LA</option>
-                <option value="PEMS08" className="dark:bg-[#081827]">PeMS08 (Experimental)</option>
+                <option value="PEMS08" className="dark:bg-[#081827]">PeMS08 Freeway Flow</option>
               </select>
               <ChevronDown className="w-3 h-3 text-slate-400 pointer-events-none absolute right-0" />
             </div>
@@ -275,13 +275,13 @@ export default function ForecastControlBar({
 
           <div className="h-9 flex items-center gap-1.5 bg-slate-50 dark:bg-[#0B2033] px-2.5 rounded-xl border border-slate-200 dark:border-[#17364E] text-xs">
             <Clock className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-            <span className="text-slate-500 dark:text-[#7F96AA] font-medium hidden sm:inline">Step:</span>
-            <span className="font-mono font-bold text-slate-900 dark:text-[#F7FAFF] px-1">{effectiveTimeIndex}</span>
+            <span className="text-slate-500 dark:text-[#7F96AA] font-medium hidden sm:inline">Interval:</span>
+            <span className="font-mono font-bold text-slate-900 dark:text-[#F7FAFF] px-1">T+{effectiveTimeIndex * 5}m</span>
             {onStepBackward && (
               <button
                 onClick={onStepBackward}
                 className="w-5 h-5 flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-[#17364E]/50 rounded transition-colors cursor-pointer"
-                title="Previous Replay Step (-5m)"
+                title="Previous Interval (-5m)"
                 type="button"
                 aria-label="Previous step"
               >
@@ -292,7 +292,7 @@ export default function ForecastControlBar({
               <button
                 onClick={onStepForward}
                 className="w-5 h-5 flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-[#17364E]/50 rounded transition-colors cursor-pointer"
-                title="Next Replay Step (+5m)"
+                title="Next Interval (+5m)"
                 type="button"
                 aria-label="Next step"
               >

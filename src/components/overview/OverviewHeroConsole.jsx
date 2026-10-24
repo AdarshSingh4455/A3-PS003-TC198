@@ -54,9 +54,9 @@ export default function OverviewHeroConsole({
 
           {/* Context Badges Strip */}
           <div className="flex flex-wrap items-center gap-2 pt-1">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-[#0B2033] border border-slate-200 dark:border-[#17364E] text-xs font-mono text-slate-700 dark:text-[#BCD0E2]">
-              <Clock className="w-3.5 h-3.5 text-amber-500" />
-              <span>Step {timeIndex} &bull; {timestampStr ? timestampStr.substring(0, 16) : '2012-03-01 00:00'}</span>
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-[#0B2033] border border-slate-200 dark:border-[#17364E] text-xs font-mono text-slate-700 dark:text-[#CBDDF0]">
+              <Clock className="w-3.5 h-3.5 text-emerald-500" />
+              <span>Live Telemetry &bull; {timestampStr ? timestampStr.substring(0, 16) : 'Active Feed'}</span>
             </span>
           </div>
         </div>

@@ -67,13 +67,13 @@ export async function fetchNetworkTopology() {
   return await res.json();
 }
 
-export async function fetchSpatialSpeedConsistency(fromId = "773869", toId = "767541") {
+export async function fetchSpatialSpeedConsistency(fromId = "767620", toId = "767471") {
   const res = await apiFetch(`${API_BASE}/network/spatial-consistency?from_id=${fromId}&to_id=${toId}`);
   if (!res.ok) throw new Error(`Spatial Speed Consistency Fetch Failed: ${res.status} ${res.statusText}`);
   return await res.json();
 }
 
-export async function fetchFlowConservation(fromId = "773869", toId = "767541") {
+export async function fetchFlowConservation(fromId = "767620", toId = "767471") {
   // Alias for backward compatibility
   return fetchSpatialSpeedConsistency(fromId, toId);
 }
@@ -88,7 +88,7 @@ export async function fetchEvents() {
 // Decision Intelligence Endpoints
 // -------------------------------------------------------------
 
-export async function fetchNeedScore(sensorId = "773869") {
+export async function fetchNeedScore(sensorId = "767620") {
   const res = await apiFetch(`${API_BASE}/decision/sensors/${sensorId}/need-score`);
   if (!res.ok) throw new Error(`Need Score Fetch Failed for '${sensorId}': ${res.status} ${res.statusText}`);
   const data = await res.json();
@@ -148,7 +148,7 @@ export async function fetchQueryCandidates() {
   return Array.isArray(data) ? data : (data.candidates || []);
 }
 
-export async function fetchCounterfactual(sensorId = "773869") {
+export async function fetchCounterfactual(sensorId = "767620") {
   const res = await apiFetch(`${API_BASE}/decision/counterfactual/${sensorId}`);
   if (!res.ok) throw new Error(`Counterfactual Fetch Failed for '${sensorId}': ${res.status} ${res.statusText}`);
   return await res.json();
@@ -168,7 +168,7 @@ export async function fetchBlindSpots() {
   };
 }
 
-export async function fetchEvidenceChain(sensorId = "773869") {
+export async function fetchEvidenceChain(sensorId = "767620") {
   const res = await apiFetch(`${API_BASE}/decision/evidence/${sensorId}`);
   if (!res.ok) throw new Error(`Evidence Chain Fetch Failed for '${sensorId}': ${res.status} ${res.statusText}`);
   return await res.json();
@@ -199,13 +199,13 @@ export async function fetchCoverageCertificate(regionId = "REGION_A") {
   return await res.json();
 }
 
-export async function fetchSensorJury(sensorId = "773869", timeIndex = 0) {
+export async function fetchSensorJury(sensorId = "767620", timeIndex = 0) {
   const res = await apiFetch(`${API_BASE}/decision/jury/${sensorId}?time_index=${timeIndex}`);
   if (!res.ok) throw new Error(`Sensor Jury Fetch Failed for '${sensorId}': ${res.status} ${res.statusText}`);
   return await res.json();
 }
 
-export async function fetchPhysicsGate(sensorId = "773869", timeIndex = 0) {
+export async function fetchPhysicsGate(sensorId = "767620", timeIndex = 0) {
   const res = await apiFetch(`${API_BASE}/decision/physics-gate/${sensorId}?time_index=${timeIndex}`);
   if (!res.ok) throw new Error(`Physics Gate Fetch Failed for '${sensorId}': ${res.status} ${res.statusText}`);
   return await res.json();

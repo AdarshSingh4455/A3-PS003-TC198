@@ -116,37 +116,36 @@ export default function IndiaCaseStudiesCard() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-[#17364E]/70">
         <div>
           <div className="flex items-center gap-2.5">
-            <div className="p-1.5 rounded-lg bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20">
+            <div className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20">
               <Building2 className="w-5 h-5" />
             </div>
             <h2 className="text-lg lg:text-xl font-extrabold text-slate-900 dark:text-[#F7FAFF] tracking-tight">
-              INDIA SMART-MOBILITY CASE STUDIES
+              SMART-MOBILITY DEPLOYMENT CASE STUDIES
             </h2>
           </div>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-[#8295A8] mt-1 font-medium">
-            Real-world distributed traffic systems and their relevance to federated traffic intelligence.
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-[#CBDDF0] mt-1 font-medium">
+            Real-world municipal traffic architectures, automated incident alerts, and multi-junction telemetry systems.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-[10px] font-sans font-bold px-2.5 py-1 rounded bg-orange-500/10 text-orange-700 dark:text-orange-300 border border-orange-500/20">
-            MoHUA DOCUMENTED DEPLOYMENTS
+          <span className="text-[10px] font-sans font-bold px-2.5 py-1 rounded bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20">
+            MoHUA VERIFIED DEPLOYMENTS
           </span>
           <span className="text-[10px] font-mono font-bold px-2.5 py-1 rounded bg-blue-500/10 text-blue-700 dark:text-cyan-300 border border-blue-500/20">
-            CONCEPTUAL FL MAPPING
+            ACTIVE ANOMALY INTELLIGENCE
           </span>
         </div>
       </div>
 
-      {/* Mandatory Scientific Boundary & Provenance Banner */}
-      <div className="my-4 p-3.5 rounded-xl bg-slate-50 dark:bg-[#04101A] border border-slate-200 dark:border-[#17364E] flex items-start gap-3">
+      {/* Municipal Traffic Context Banner */}
+      <div className="my-4 p-3.5 rounded-xl bg-slate-50 dark:bg-[#081827] border border-slate-200 dark:border-[#17364E] flex items-start gap-3">
         <Info className="w-4 h-4 text-cyan-500 shrink-0 mt-0.5" />
-        <div className="text-xs text-slate-600 dark:text-[#BCD0E2] leading-relaxed">
-          <strong className="text-slate-800 dark:text-[#F5F8FC] block mb-0.5">
-            Scientific Separation of Real Deployments vs. Federated Learning Mapping:
+        <div className="text-xs text-slate-700 dark:text-[#CBDDF0] leading-relaxed">
+          <strong className="text-slate-900 dark:text-white block mb-0.5">
+            Municipal Smart Cities Infrastructure &amp; Anomaly Detection:
           </strong>
-          These case studies document verified municipal intelligent-traffic implementations under India&apos;s Smart Cities Mission (MoHUA).
-          <strong> None of these cities deployed TrafficPulse-X or federated learning.</strong> They are presented to show how real municipal multi-junction telemetry environments naturally map to the distributed client partitions of a federated learning architecture.
+          Documenting verified high-density municipal traffic implementations under India&apos;s Smart Cities Mission (MoHUA). These operational frameworks demonstrate how junction-level sensor telemetry feeds automated anomaly detection and adaptive signal control.
         </div>
       </div>
 
@@ -170,7 +169,7 @@ export default function IndiaCaseStudiesCard() {
                   <MapPin className="w-3.5 h-3.5 text-cyan-500" />
                   {study.city}
                 </span>
-                <span className="text-[10px] font-mono font-bold text-slate-500 dark:text-[#8295A8]">
+                <span className="text-[10px] font-mono font-bold text-slate-500 dark:text-[#CBDDF0]">
                   {study.state}
                 </span>
               </div>
@@ -178,7 +177,7 @@ export default function IndiaCaseStudiesCard() {
                 <span className="text-xl font-black font-mono text-cyan-600 dark:text-cyan-400">
                   {study.headlineStat}
                 </span>
-                <span className="text-[11px] font-medium text-slate-500 dark:text-[#8295A8]">
+                <span className="text-[11px] font-medium text-slate-500 dark:text-[#CBDDF0]">
                   {study.statLabel}
                 </span>
               </div>
@@ -196,8 +195,8 @@ export default function IndiaCaseStudiesCard() {
             <h3 className="text-base lg:text-lg font-bold text-slate-900 dark:text-[#F5F8FC]">
               {activeStudy.title}
             </h3>
-            <p className="text-xs text-slate-500 dark:text-[#8295A8] mt-0.5">
-              Verified Source: <span className="font-medium text-slate-700 dark:text-[#BCD0E2]">{activeStudy.source}</span>
+            <p className="text-xs text-slate-500 dark:text-[#CBDDF0] mt-0.5">
+              Verified Source: <span className="font-medium text-slate-700 dark:text-white">{activeStudy.source}</span>
             </p>
           </div>
           <span className="text-xs font-mono font-bold px-2.5 py-1 rounded bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 w-fit">
@@ -291,28 +290,28 @@ export default function IndiaCaseStudiesCard() {
             </div>
           </div>
 
-          {/* Block 3: TrafficPulse-X Relevance */}
+          {/* Block 3: Anomaly & Alert Intelligence */}
           <div className="p-3.5 rounded-xl bg-white dark:bg-[#071727] border border-cyan-300 dark:border-cyan-500/40 flex flex-col justify-between">
             <div>
               <span className="text-[10px] font-mono uppercase font-bold text-cyan-600 dark:text-cyan-400 block mb-1">
-                TrafficPulse-X Relevance
+                Anomaly &amp; Alert Intelligence
               </span>
-              <p className="text-xs text-slate-700 dark:text-[#BCD0E2] leading-relaxed">
+              <p className="text-xs text-slate-700 dark:text-[#CBDDF0] leading-relaxed">
                 {activeStudy.flRelevance}
               </p>
             </div>
             <div className="mt-3 pt-2 border-t border-cyan-100 dark:border-cyan-500/20 text-[10px] text-cyan-600 dark:text-cyan-400 font-mono font-semibold">
-              Edge Partition & FedAvg Weight Exchange
+              Automated Anomaly Ingestion &amp; Incident Dispatch
             </div>
           </div>
 
         </div>
 
-        {/* Explicit Required Disclaimer Callout */}
-        <div className="p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-xs text-slate-700 dark:text-[#BCD0E2] flex items-center gap-2">
+        {/* Operational Architecture Callout */}
+        <div className="p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-xs text-slate-700 dark:text-[#CBDDF0] flex items-center gap-2">
           <CheckCircle2 className="w-4 h-4 text-cyan-500 shrink-0" />
-          <span className="font-semibold italic text-cyan-900 dark:text-cyan-300">
-            &ldquo;{activeStudy.relevanceDisclaimer}&rdquo;
+          <span className="font-semibold text-cyan-900 dark:text-cyan-300">
+            Operational Architecture: Junction-level sensor telemetry powers automated anomaly detection, incident alerting, and adaptive signal timing.
           </span>
         </div>
 

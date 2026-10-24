@@ -13,60 +13,84 @@ This guide outlines setup, execution, testing, and repository development conven
 
 ## 2. Installation & Setup
 
-### Backend Setup
-1. Create and activate a Python virtual environment:
-   ```bash
-   python -m venv .venv
-   # Windows (PowerShell)
-   .\.venv\Scripts\Activate.ps1
-   # Linux/macOS
-   source .venv/bin/activate
-   ```
-2. Install direct Python dependencies:
-   ```bash
-   python -m pip install -r backend/requirements.txt
-   ```
+### Step 1: Environment Setup
 
-### Frontend Setup
-1. Install Node dependencies:
-   ```bash
-   npm install
-   ```
+#### Option A: Windows (PowerShell)
+```powershell
+# 1. Create a dedicated virtual environment
+python -m venv .venv
+
+# 2. Activate the virtual environment
+.\.venv\Scripts\Activate.ps1
+# If PowerShell blocks script execution, run:
+# Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+
+# 3. Install backend Python dependencies
+python -m pip install --upgrade pip
+python -m pip install -r backend/requirements.txt
+
+# 4. Install frontend JavaScript dependencies
+npm install
+```
+
+#### Option B: Linux / macOS (Bash)
+```bash
+# 1. Create a dedicated virtual environment
+python3 -m venv .venv
+
+# 2. Activate the virtual environment
+source .venv/bin/activate
+
+# 3. Install backend Python dependencies
+python -m pip install --upgrade pip
+python -m pip install -r backend/requirements.txt
+
+# 4. Install frontend JavaScript dependencies
+npm install
+```
 
 ---
 
-## 3. Running TrafficPulse-X
+## 3. Running TrafficPulse-X Locally
 
-### Starting the Backend API Server
-Start the single FastAPI web application instance on port 8000:
-```bash
-# From workspace root
-python -m uvicorn backend.main:app --reload --port 8000
-```
-API Documentation will be accessible at `http://localhost:8000/docs`.
+Open two separate terminal windows from the project root:
 
-### Starting the Frontend Development Server
-Start the React Vite development server on port 5173:
-```bash
-npm run dev
+### Terminal 1: Backend API Server (FastAPI)
+```powershell
+# Windows (PowerShell):
+.\.venv\Scripts\Activate.ps1
+python -m uvicorn backend.main:app --host 127.0.0.1 --port 8000
 ```
-The React User Interface will be accessible at `http://localhost:5173`.
+```bash
+# Linux / macOS (Bash):
+source .venv/bin/activate
+python -m uvicorn backend.main:app --host 127.0.0.1 --port 8000
+```
+- **FastAPI Documentation (Swagger)**: `http://127.0.0.1:8000/docs`
+- **Health Check**: `http://127.0.0.1:8000/api/health`
+- **Stop Server**: Press `Ctrl + C`
+
+### Terminal 2: Frontend Development Server (React + Vite)
+```bash
+npm run dev -- --host 127.0.0.1 --port 5173
+```
+- **Web Interface**: `http://127.0.0.1:5173/`
+- **Stop Server**: Press `Ctrl + C`
 
 ---
 
 ## 4. Testing & Verification
 
-### Running Backend Unit & Regression Tests
-Run the full 343-test backend pytest suite:
-```bash
-python -m pytest backend -q
-```
-All **343 tests** must pass.
+Run the verification test suite:
 
-### Frontend Linting & Production Build
-Verify ESLint and the Vite production build succeed:
 ```bash
+# 1. Run all backend tests (Pytest - 343 tests)
+python -m pytest backend -q
+
+# 2. Verify frontend code quality (Oxlint)
 npm run lint
+
+# 3. Verify production build bundle (Vite)
 npm run build
 ```
 
@@ -79,7 +103,7 @@ npm run build
 3. **Pull Request Requirements**:
    - Clean lint (`npm run lint` with 0 errors).
    - Successful production bundle (`npm run build`).
-   - 100% backend test pass (`pytest backend -v` passing all 300 tests).
+   - 100% backend test pass (`pytest backend -v` passing all 343 tests).
    - Zero hardcoded secrets or environment dumps.
    - Preserved scientific provenance and model checkpoints.
 

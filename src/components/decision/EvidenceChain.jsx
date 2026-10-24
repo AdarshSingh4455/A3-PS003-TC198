@@ -4,12 +4,12 @@ import SectionCard from '../common/SectionCard';
 import ScientificBadge from '../common/ScientificBadge';
 
 const DEFAULT_EVIDENCE_DATA = {
-  targetSensor: "773869",
+  targetSensor: "767620",
   currentConfidence: "86.4%",
   evidenceSufficient: "Yes",
   stoppingCondition: "Evidence confidence threshold met (Residual Uncertainty ≤ 15%)",
   sequence: [
-    { sensorId: "773869", status: "complete", result: "Primary chokepoint telemetry verified", timestamp: "18:42:00" },
+    { sensorId: "767620", status: "complete", result: "Primary chokepoint telemetry verified", timestamp: "18:42:00" },
     { sensorId: "761003", status: "complete", result: "Corridor neighbor speed confirmed (62.1 mph)", timestamp: "18:42:05" },
     { sensorId: "717571", status: "waiting", result: "Awaiting upstream boundary reading", timestamp: "--:--" }
   ]

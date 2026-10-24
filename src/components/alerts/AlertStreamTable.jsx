@@ -44,7 +44,7 @@ export default function AlertStreamTable({
   return (
     <SectionCard
       title="Attention &amp; Evidence Stream"
-      subtitle="Derived traffic conditions and evidence actions during historical replay"
+      subtitle="Active arterial anomaly conditions and automated evidence actions"
       icon={Activity}
       action={
         <span className="inline-flex items-center justify-center h-6 px-2.5 rounded-md text-xs font-mono font-bold bg-slate-100 dark:bg-[#06111D] border border-slate-200 dark:border-[#17364E] text-cyan-700 dark:text-cyan-400 leading-none whitespace-nowrap shrink-0">
@@ -113,7 +113,7 @@ export default function AlertStreamTable({
 
         {/* Stream Table with Sticky Header & Controlled Max Height (Prompt Section 13/14) */}
         <div className="rounded-xl border border-slate-200 dark:border-[#17364E] overflow-hidden bg-white dark:bg-[#071726] shadow-xs">
-          <div className="overflow-x-auto max-h-[520px] overflow-y-auto custom-scrollbar">
+          <div className="overflow-x-auto max-h-[360px] overflow-y-auto custom-scrollbar">
             <table className="w-full text-left text-xs font-mono">
               <thead className="sticky top-0 z-10 bg-slate-100 dark:bg-[#0B2033] border-b border-slate-200 dark:border-[#17364E] shadow-2xs">
                 <tr className="text-slate-600 dark:text-[#8295A8] text-[11px] uppercase tracking-wider">

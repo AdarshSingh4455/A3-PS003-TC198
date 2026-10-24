@@ -62,8 +62,8 @@ Intelligent Transportation Systems (ITS) in large metropolitan areas face three 
 
 1. **Prediction Accuracy**: Optimize multi-horizon speed forecasting accuracy across the road network using a hybrid Spatial Graph Convolution + LSTM recurrent architecture (`SpatialGraphLSTM`), beating standard statistical baselines across all horizons.
 2. **Communication Cost Minimization**: Formulate and evaluate total network communication cost:
-   $$\mathcal{C}_{	ext{total}} = \mathcal{C}_{	ext{sensor}	o	ext{edge}} + \mathcal{C}_{	ext{edge}	o	ext{server}}$$
-   where $\mathcal{C}_{	ext{sensor}	o	ext{edge}}$ is minimized via active Need-Score query gating, and $\mathcal{C}_{	ext{edge}	o	ext{server}}$ is minimized via selective federated participation policies.
+   $$\mathcal{C}_{\text{total}} = \mathcal{C}_{\text{sensor}\to\text{edge}} + \mathcal{C}_{\text{edge}\to\text{server}}$$
+   where $\mathcal{C}_{\text{sensor}\to\text{edge}}$ is minimized via active Need-Score query gating, and $\mathcal{C}_{\text{edge}\to\text{server}}$ is minimized via selective federated participation policies.
 
 ---
 
@@ -80,7 +80,7 @@ TrafficPulse-X is evaluated strictly on the real **METR-LA** dataset:
   - **Training Set**: Indices 0 to 23,989 (70%, 23,990 steps)
   - **Validation Set**: Indices 23,990 to 27,416 (10%, 3,427 steps)
   - **Test Set**: Indices 27,417 to 34,271 (20%, 6,855 steps)
-  - *No chronological leakage: scaler statistics ($\mu = 53.72	ext{ mph}, \sigma = 20.30	ext{ mph}$) were computed strictly on the training set.*
+  - *No chronological leakage: scaler statistics ($\mu = 53.72\text{ mph}, \sigma = 20.30\text{ mph}$) were computed strictly on the training set.*
 
 ---
 
@@ -88,9 +88,8 @@ TrafficPulse-X is evaluated strictly on the real **METR-LA** dataset:
 
 1. **Sliding Window Construction**: Sequential sliding window of 12 input historical steps (past 60 minutes) to predict 12 future steps (next 60 minutes).
 2. **Missing Value Masking**: Zero-valued detector anomalies are masked during loss calculation using boolean valid target matrices.
-3. **Spatial Adjacency Construction**: Pairwise road network distances are transformed into a weighted graph adjacency matrix $\mathbf{A} \in \mathbb{R}^{207 	imes 207}$ using a thresholded Gaussian kernel:
-   $$A_{ij} = \exp\left(-rac{	ext{dist}(v_i, v_j)^2}{\sigma^2}
-ight) \quad 	ext{for } 	ext{dist}(v_i, v_j) \le \kappa$$
+3. **Spatial Adjacency Construction**: Pairwise road network distances are transformed into a weighted graph adjacency matrix $\mathbf{A} \in \mathbb{R}^{207 \times 207}$ using a thresholded Gaussian kernel:
+   $$A_{ij} = \exp\left(-\frac{\text{dist}(v_i, v_j)^2}{\sigma^2}\right) \quad \text{for } \text{dist}(v_i, v_j) \le \kappa$$
 4. **Graph Partitioning**: The 207-node network is partitioned into 4 geographic regions using K-Means spatial clustering on detector coordinates:
    - **Region A (North-East)**: 48 sensors
    - **Region B (South-East)**: 57 sensors
@@ -121,20 +120,19 @@ All models were evaluated on the exact 6,855 test timesteps using Mean Absolute 
 
 The primary forecasting engine integrates spatial graph convolution with recurrent temporal modeling:
 
-1. **Input Tensor**: $\mathbf{X} \in \mathbb{R}^{B 	imes 12 	imes 207 	imes 1}$.
+1. **Input Tensor**: $\mathbf{X} \in \mathbb{R}^{B \times 12 \times 207 \times 1}$.
 2. **Spatially Normalized Graph Convolution**: Evaluates spatial dependencies across the highway topology:
-   $$\hat{\mathbf{A}} = 	ilde{\mathbf{D}}^{-1/2} 	ilde{\mathbf{A}} 	ilde{\mathbf{D}}^{-1/2}, \quad \mathbf{H}^{(t)} = 	ext{ReLU}\left(\hat{\mathbf{A}} \mathbf{X}^{(t)} \mathbf{W}_g + \mathbf{b}_g
-ight)$$
+   $$\hat{\mathbf{A}} = \tilde{\mathbf{D}}^{-1/2} \tilde{\mathbf{A}} \tilde{\mathbf{D}}^{-1/2}, \quad \mathbf{H}^{(t)} = \text{ReLU}\left(\hat{\mathbf{A}} \mathbf{X}^{(t)} \mathbf{W}_g + \mathbf{b}_g\right)$$
 3. **Temporal Recurrent Memory**: A 2-layer LSTM ($hidden\_dim = 64$) processes sequential graph embeddings $\{\mathbf{H}^{(1)}, \dots, \mathbf{H}^{(12)}\}$ to retain velocity momentum and deceleration curves.
-4. **Multi-Horizon Linear Projection**: Final dense projection layer mapping hidden states to 12 future timesteps $\hat{\mathbf{Y}} \in \mathbb{R}^{B 	imes 12 	imes 207 	imes 1}$.
+4. **Multi-Horizon Linear Projection**: Final dense projection layer mapping hidden states to 12 future timesteps $\hat{\mathbf{Y}} \in \mathbb{R}^{B \times 12 \times 207 \times 1}$.
 5. **Loss Function**: Masked Mean Absolute Error (MAE) excluding missing zero entries:
-   $$\mathcal{L}_{	ext{masked}} = rac{\sum_{b,t,n} |\hat{y}_{b,t,n} - y_{b,t,n}| \cdot m_{b,t,n}}{\sum_{b,t,n} m_{b,t,n} + \epsilon}$$
+   $$\mathcal{L}_{\text{masked}} = \frac{\sum_{b,t,n} |\hat{y}_{b,t,n} - y_{b,t,n}| \cdot m_{b,t,n}}{\sum_{b,t,n} m_{b,t,n} + \epsilon}$$
 
 ---
 
 ## 8. DECISION INTELLIGENCE & ACTIVE SENSING
 
-The Decision Intelligence layer schedules telemetry acquisition dynamically using an empirical **Need Score** $S_{	ext{need}} \in [0.05, 1.0]$ evaluated across 9 weighted factors:
+The Decision Intelligence layer schedules telemetry acquisition dynamically using an empirical **Need Score** $S_{\text{need}} \in [0.05, 1.0]$ evaluated across 9 weighted factors:
 
 1. **Uncertainty Proxy (0.20)**: Calibrated residual prediction error variance.
 2. **Spatial Speed Disagreement (0.20)**: Absolute velocity divergence from topological graph neighbors.
@@ -148,7 +146,7 @@ The Decision Intelligence layer schedules telemetry acquisition dynamically usin
 
 **Validation Subsystems**:
 - **Sensor Jury**: Queries 3 topological nearest neighbors to vote on localized speed anomalies before raising critical alerts.
-- **Heuristic Plausibility Gate**: Verifies kinematic continuity ($|\Delta v| \le 25	ext{ mph}$ in 5 minutes) to distinguish sensor hardware glitches from genuine traffic slowdowns.
+- **Heuristic Plausibility Gate**: Verifies kinematic continuity ($|\Delta v| \le 25\text{ mph}$ in 5 minutes) to distinguish sensor hardware glitches from genuine traffic slowdowns.
 
 ---
 
@@ -156,7 +154,7 @@ The Decision Intelligence layer schedules telemetry acquisition dynamically usin
 
 - **Level 1 Baseline (Continuous Polling)**: Transmitting full 4.2 KB telemetry frames from all 207 sensors every 5 minutes produces ~250.3 MB of transmission per day.
 - **Compact Query Gating**: Steady-state nodes transmit an ultra-lightweight **187-byte serialized compact status heartbeat** containing only speed state and error bounds.
-- **Detailed Telemetry on Demand**: The full 4.2 KB frame is requested only when a detector's Need Score crosses the critical sensing threshold ($S_{	ext{need}} \ge 0.65$), yielding an 82% reduction in Level 1 edge bandwidth.
+- **Detailed Telemetry on Demand**: The full 4.2 KB frame is requested only when a detector's Need Score crosses the critical sensing threshold ($S_{\text{need}} \ge 0.65$), yielding an 82% reduction in Level 1 edge bandwidth.
 
 ---
 
@@ -168,7 +166,7 @@ TrafficPulse-X implements a decentralized regional federated learning pipeline:
 - **Data Partitions**: Local training datasets containing only regional sensor observations.
 - **Model Payload**: Exactly 26,596 FP32 parameters (~104 KB) per upload/download.
 - **FedAvg Aggregation**:
-  $$\mathbf{W}_{g}^{(r+1)} = \sum_{k=1}^{4} w_k \mathbf{W}_k^{(r)}, \quad w_k = rac{|\mathcal{D}_k|}{\sum_{j=1}^4 |\mathcal{D}_j|}$$
+  $$\mathbf{W}_{g}^{(r+1)} = \sum_{k=1}^{4} w_k \mathbf{W}_k^{(r)}, \quad w_k = \frac{|\mathcal{D}_k|}{\sum_{j=1}^4 |\mathcal{D}_j|}$$
   - $w_A = 0.229069$ (Region A: 48 sensors)
   - $w_B = 0.277117$ (Region B: 57 sensors)
   - $w_C = 0.279458$ (Region C: 58 sensors)
@@ -181,12 +179,12 @@ TrafficPulse-X implements a decentralized regional federated learning pipeline:
 
 To prevent transmitting full model weights from every client in every training round, TrafficPulse-X schedules clients using the **Client Contribution Value (CCV)** metric:
 
-$$	ext{CCV}_k = lpha \cdot s_k + eta \cdot d_k + \lambda \cdot 	au_k$$
+$$\text{CCV}_k = \alpha \cdot s_k + \beta \cdot d_k + \lambda \cdot \tau_k$$
 
 - $s_k$: Sensor population fraction ($|\mathcal{V}_k| / 207$)
 - $d_k$: Regional speed variance/drift proxy
-- $	au_k$: Communication staleness penalty (rounds since client last participated)
-- Parameter Weights: $lpha = 1.0, eta = 0.5, \lambda = 0.15$
+- $\tau_k$: Communication staleness penalty (rounds since client last participated)
+- Parameter Weights: $\alpha = 1.0, \beta = 0.5, \lambda = 0.15$
 
 ---
 
@@ -343,8 +341,8 @@ The client is built on **React 19**, **Vite 8**, and **Tailwind CSS 4**:
 
 ```bash
 # Clone the repository
-git clone https://github.com/AdarshSingh4455/TrafficPulse_X.git
-cd TrafficPulse_X
+git clone https://github.com/AdarshSingh4455/A3-PS003-TC198.git
+cd A3-PS003-TC198
 
 # Setup Python environment
 python -m venv venv
@@ -438,14 +436,13 @@ npm run build # Success (built in ~1.3s)
 ### Mathematical Equations Summary
 
 - **Normalized Graph Adjacency**:
-  $$	ilde{\mathbf{A}} = \mathbf{A} + \mathbf{I}_N, \quad 	ilde{\mathbf{D}}_{ii} = \sum_j 	ilde{A}_{ij}, \quad \hat{\mathbf{A}} = 	ilde{\mathbf{D}}^{-1/2} 	ilde{\mathbf{A}} 	ilde{\mathbf{D}}^{-1/2}$$
+  $$\tilde{\mathbf{A}} = \mathbf{A} + \mathbf{I}_N, \quad \tilde{\mathbf{D}}_{ii} = \sum_j \tilde{A}_{ij}, \quad \hat{\mathbf{A}} = \tilde{\mathbf{D}}^{-1/2} \tilde{\mathbf{A}} \tilde{\mathbf{D}}^{-1/2}$$
 
 - **FedAvg Aggregation**:
-  $$\mathbf{W}_{	ext{global}}^{(r+1)} = \sum_{k=1}^K rac{|\mathcal{D}_k|}{|\mathcal{D}|} \mathbf{W}_k^{(r)}$$
+  $$\mathbf{W}_{\text{global}}^{(r+1)} = \sum_{k=1}^K \frac{|\mathcal{D}_k|}{|\mathcal{D}|} \mathbf{W}_k^{(r)}$$
 
 - **Client Contribution Value (CCV)**:
-  $$	ext{CCV}_k = 1.0 \cdot \left(rac{N_k}{N}
-ight) + 0.5 \cdot d_k + 0.15 \cdot 	au_k$$
+  $$\text{CCV}_k = 1.0 \cdot \left(\frac{N_k}{N}\right) + 0.5 \cdot d_k + 0.15 \cdot \tau_k$$
 
 ---
 *TrafficPulse-X Team A3-PS003-TC198 — Final Submission Documentation*

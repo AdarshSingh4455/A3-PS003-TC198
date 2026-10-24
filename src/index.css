@@ -78,10 +78,10 @@
     --table-bg: #071522;
     --table-header-bg: #0B1B2A;
     --input-bg: #0B1B2A;
-    --text-primary: #F5F8FC;
-    --text-secondary: #B8C7D8;
-    --text-muted: #8295A8;
-    --text-disabled: #607386;
+    --text-primary: #F7FAFF;
+    --text-secondary: #CBDDF0;
+    --text-muted: #A3B8CC;
+    --text-disabled: #7E95AB;
     --border-primary: #1D3A52;
     --border-subtle: #173047;
     --border-soft: #17364E;
@@ -98,9 +98,10 @@
   body,
   #root {
     font-family: var(--font-ui);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: auto;
+    -moz-osx-font-smoothing: auto;
     text-rendering: optimizeLegibility;
+    font-synthesis: none;
   }
 
   body {
@@ -178,6 +179,14 @@
 }
 .dark .custom-scrollbar {
   scrollbar-color: #1e293b #0b1120;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 /* Tactical Map Marker & Radar Animations */

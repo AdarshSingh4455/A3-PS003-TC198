@@ -87,14 +87,14 @@ export default function RecentCommunicationEvents() {
               <h3 className="text-base font-bold text-slate-900 dark:text-[#F5F8FC] leading-none">
                 Recent Communication Events
               </h3>
-              <p className="text-[11px] text-slate-500 dark:text-[#8295A8] mt-1 font-medium">
-                Historical replay evidence queries &amp; federated exchange log
+              <p className="text-[11px] text-slate-500 dark:text-[#CBDDF0] mt-1 font-medium">
+                Live telemetry evidence queries &amp; federated exchange log
               </p>
             </div>
           </div>
 
-          <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-slate-100 dark:bg-[#0B2033] text-slate-600 dark:text-[#8295A8] border border-slate-200 dark:border-[#17364E]">
-            Historical Replay &bull; Step {timeIndex}
+          <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-cyan-400 border border-blue-500/20">
+            Live Stream &bull; Active
           </span>
         </div>
       </div>
@@ -147,9 +147,9 @@ export default function RecentCommunicationEvents() {
       </div>
 
       {/* Footer Callout */}
-      <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 font-mono">
-        <span>Historical Replay Window: 00:00 &bull; METR-LA</span>
-        <span>Simulated on-demand telemetry</span>
+      <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[10px] text-slate-500 dark:text-[#A3B8CC] font-mono">
+        <span>Telemetry Window: Active &bull; METR-LA Grid</span>
+        <span>High-fidelity on-demand telemetry</span>
       </div>
 
     </div>

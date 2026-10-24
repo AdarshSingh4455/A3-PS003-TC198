@@ -205,15 +205,22 @@ function getSensorColorByMode(sensor, overlayMode) {
 }
 
 // ============================================================================
-// CUSTOM LEAFLET DIV-ICONS FOR REAL SENSOR NODES
+// CUSTOM LEAFLET DIV-ICONS FOR REAL SENSOR NODES (WITH MEMOIZATION CACHE)
 // Multi-tier hierarchy: Red Selected Radar Beacon, Glowing Neighbor, Crisp Node
 // ============================================================================
+const sensorIconCache = new Map();
+
 function createRealSensorIcon({
   sensorId,
   color,
   isSelected,
   isNeighbor
 }) {
+  const cacheKey = `${sensorId}_${color}_${isSelected ? 1 : 0}_${isNeighbor ? 1 : 0}`;
+  const cached = sensorIconCache.get(cacheKey);
+  if (cached) return cached;
+
+  let icon;
   // 1. SELECTED SENSOR: Prominent RED tactical radar beacon with animated expanding ripple rings
   if (isSelected) {
     const html = `
@@ -239,57 +246,66 @@ function createRealSensorIcon({
         </div>
       </div>
     `;
-    return L.divIcon({
+    icon = L.divIcon({
       html,
       className: 'custom-leaflet-marker',
       iconSize: [115, 36],
       iconAnchor: [11, 18]
     });
-  }
-
-  // 2. CONNECTED NEIGHBOR SENSOR: Glowing ring with electric cyan accent and speed-coded core
-  if (isNeighbor) {
+  } else if (isNeighbor) {
+    // 2. CONNECTED NEIGHBOR SENSOR: Glowing ring with electric cyan accent and speed-coded core
     const html = `
       <div style="position: relative; display: flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 9999px; background: radial-gradient(circle, #06b6d445 0%, transparent 72%); border: 1.5px solid #00D2FF; box-shadow: 0 0 10px rgba(0, 210, 255, 0.65); cursor: pointer;">
         <div style="width: 13px; height: 13px; border-radius: 9999px; background-color: ${color}; border: 2px solid #ffffff; box-shadow: 0 1px 4px rgba(0,0,0,0.45);"></div>
       </div>
     `;
-    return L.divIcon({
+    icon = L.divIcon({
       html,
       className: 'custom-leaflet-marker',
       iconSize: [26, 26],
       iconAnchor: [13, 13]
     });
+  } else {
+    // 3. STANDARD SENSOR: Crisp 10px circular node with high-contrast white border and ambient speed aura
+    const html = `
+      <div style="position: relative; display: flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 9999px; background: radial-gradient(circle, ${color}35 0%, transparent 70%); cursor: pointer;">
+        <div style="width: 10px; height: 10px; border-radius: 9999px; background-color: ${color}; border: 1.5px solid #ffffff; box-shadow: 0 0 6px ${color}90; transition: transform 0.15s ease;"></div>
+      </div>
+    `;
+    icon = L.divIcon({
+      html,
+      className: 'custom-leaflet-marker',
+      iconSize: [16, 16],
+      iconAnchor: [8, 8]
+    });
   }
 
-  // 3. STANDARD SENSOR: Crisp 10px circular node with high-contrast white border and ambient speed aura
-  const html = `
-    <div style="position: relative; display: flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 9999px; background: radial-gradient(circle, ${color}35 0%, transparent 70%); cursor: pointer;">
-      <div style="width: 10px; height: 10px; border-radius: 9999px; background-color: ${color}; border: 1.5px solid #ffffff; box-shadow: 0 0 6px ${color}90; transition: transform 0.15s ease;"></div>
-    </div>
-  `;
-  return L.divIcon({
-    html,
-    className: 'custom-leaflet-marker',
-    iconSize: [16, 16],
-    iconAnchor: [8, 8]
-  });
+  sensorIconCache.set(cacheKey, icon);
+  return icon;
 }
 
-// Region Floating Centroid Pill Label
+// Region Floating Centroid Pill Label (with memoization)
+const pillIconCache = new Map();
+
 function createRegionFloatingPillIcon(region) {
+  const cacheKey = `${region.id}_${region.color}`;
+  const cached = pillIconCache.get(cacheKey);
+  if (cached) return cached;
+
   const html = `
     <div style="padding: 4px 10px; border-radius: 9999px; background-color: rgba(7, 23, 39, 0.90); border: 1.5px solid ${region.color}; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55); color: #ffffff; font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; font-weight: 700; font-size: 11px; letter-spacing: 0.03em; user-select: none; pointer-events: none; display: flex; align-items: center; gap: 6px; white-space: nowrap; backdrop-filter: blur(4px);">
       <span style="width: 7px; height: 7px; border-radius: 9999px; background-color: ${region.color}; box-shadow: 0 0 6px ${region.color};"></span>
       <span>${region.label}</span>
     </div>
   `;
-  return L.divIcon({
+  const icon = L.divIcon({
     html,
     className: 'custom-leaflet-marker',
     iconSize: [110, 26],
     iconAnchor: [55, 13]
   });
+  pillIconCache.set(cacheKey, icon);
+  return icon;
 }
 
 // ============================================================================
@@ -310,12 +326,12 @@ function ViewportController({ targetCenter, targetZoom, targetBounds, triggerCou
       if (targetBounds) {
         map.flyToBounds(targetBounds, {
           padding: [45, 45],
-          duration: 1.2,
+          duration: 0.75,
           easeLinearity: 0.25
         });
       } else if (targetCenter) {
         map.flyTo(targetCenter, targetZoom || 13.5, {
-          duration: 1.2,
+          duration: 0.75,
           easeLinearity: 0.25
         });
       }
@@ -346,7 +362,6 @@ function UnifiedMapControls({
 }) {
   const map = useMap();
   const {
-    timeIndex,
     timestampStr,
     isPlaying,
     replaySpeed,
@@ -486,20 +501,20 @@ function UnifiedMapControls({
             {/* Step & Time Display */}
             <div className="flex items-center gap-1.5 px-1.5 font-mono text-xs text-slate-800 dark:text-[#F5F8FC]">
               <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse shrink-0" />
-              <span className="font-bold">Step {timeIndex}</span>
+              <span className="font-bold text-cyan-600 dark:text-cyan-400">LIVE</span>
               <span className="text-slate-400 dark:text-[#8295A8] font-normal hidden sm:inline">•</span>
-              <span className="text-slate-500 dark:text-[#BACCDA] font-medium hidden sm:inline">
+              <span className="text-slate-700 dark:text-[#BACCDA] font-bold hidden sm:inline">
                 {timestampStr ? timestampStr.substring(11, 16) : '00:00'}
               </span>
             </div>
 
             <div className="w-px h-4 bg-slate-200 dark:bg-[#17364E] mx-0.5" />
 
-            {/* Previous Step */}
+            {/* Previous Interval */}
             <button
               onClick={stepBackward}
               className="w-7 h-7 flex items-center justify-center text-slate-600 dark:text-[#BACCDA] hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#0E2438] rounded-md transition-colors cursor-pointer"
-              title="Previous Step"
+              title="Previous Interval (-5m)"
               type="button"
             >
               <ChevronLeft className="w-3.5 h-3.5" />
@@ -519,11 +534,11 @@ function UnifiedMapControls({
               {isPlaying ? <Pause className="w-3.5 h-3.5 fill-current" /> : <Play className="w-3.5 h-3.5 fill-current" />}
             </button>
 
-            {/* Next Step */}
+            {/* Next Interval */}
             <button
               onClick={stepForward}
               className="w-7 h-7 flex items-center justify-center text-slate-600 dark:text-[#BACCDA] hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#0E2438] rounded-md transition-colors cursor-pointer"
-              title="Next Step"
+              title="Next Interval (+5m)"
               type="button"
             >
               <ChevronRight className="w-3.5 h-3.5" />
@@ -823,45 +838,45 @@ function UnifiedMapControls({
         </div>
 
         {/* Row 2: Bottom Speed Legend Bar (Screenshot 7 clean integration) */}
-        <div className="pointer-events-auto w-full max-w-2xl bg-white/95 dark:bg-[#071727]/95 backdrop-blur-md border border-slate-200 dark:border-[#17364E] rounded-xl px-3.5 py-1.5 shadow-xl flex items-center justify-between gap-3 overflow-x-auto no-scrollbar select-none">
-          <div className="flex items-center gap-2 whitespace-nowrap">
+        <div className="pointer-events-auto bg-white/95 dark:bg-[#071727]/95 backdrop-blur-md border border-slate-200 dark:border-[#17364E] rounded-xl px-3 sm:px-4 py-1.5 shadow-xl flex items-center justify-center gap-2.5 sm:gap-3.5 select-none text-xs max-w-full">
+          <div className="flex items-center gap-1.5 shrink-0 whitespace-nowrap">
             <span className="w-2.5 h-2.5 rounded-full bg-[#10b981] ring-2 ring-[#10b981]/30 inline-block" />
-            <span className="text-xs text-slate-900 dark:text-[#F5F8FC] font-semibold flex items-center gap-1">
+            <span className="text-slate-900 dark:text-[#F5F8FC] font-semibold flex items-center gap-1">
               Free Flow
-              <span className="text-slate-500 dark:text-[#8295A8] font-normal text-[11px]">(&ge; 50 mph)</span>
+              <span className="text-slate-500 dark:text-[#CBDDF0] font-normal text-[11px]">(&ge; 50 mph)</span>
             </span>
           </div>
 
-          <div className="flex items-center gap-2 whitespace-nowrap">
+          <div className="flex items-center gap-1.5 shrink-0 whitespace-nowrap">
             <span className="w-2.5 h-2.5 rounded-full bg-[#f59e0b] ring-2 ring-[#f59e0b]/30 inline-block" />
-            <span className="text-xs text-slate-900 dark:text-[#F5F8FC] font-semibold flex items-center gap-1">
+            <span className="text-slate-900 dark:text-[#F5F8FC] font-semibold flex items-center gap-1">
               Moderate
-              <span className="text-slate-500 dark:text-[#8295A8] font-normal text-[11px]">(35 - 50 mph)</span>
+              <span className="text-slate-500 dark:text-[#CBDDF0] font-normal text-[11px]">(35 - 50 mph)</span>
             </span>
           </div>
 
-          <div className="flex items-center gap-2 whitespace-nowrap">
+          <div className="flex items-center gap-1.5 shrink-0 whitespace-nowrap">
             <span className="w-2.5 h-2.5 rounded-full bg-[#ef4444] ring-2 ring-[#ef4444]/30 inline-block" />
-            <span className="text-xs text-slate-900 dark:text-[#F5F8FC] font-semibold flex items-center gap-1">
+            <span className="text-slate-900 dark:text-[#F5F8FC] font-semibold flex items-center gap-1">
               Congestion
-              <span className="text-slate-500 dark:text-[#8295A8] font-normal text-[11px]">(&lt; 35 mph)</span>
+              <span className="text-slate-500 dark:text-[#CBDDF0] font-normal text-[11px]">(&lt; 35 mph)</span>
             </span>
           </div>
 
-          <div className="flex items-center gap-2 whitespace-nowrap">
+          <div className="flex items-center gap-1.5 shrink-0 whitespace-nowrap">
             <span className="w-2.5 h-2.5 rounded-full bg-[#94a3b8] inline-block" />
-            <span className="text-xs text-slate-600 dark:text-[#8295A8]">
+            <span className="text-slate-600 dark:text-[#CBDDF0]">
               Unavailable
             </span>
           </div>
 
           {/* Selected Target Beacon (Red Radar Pulse Style) */}
-          <div className="flex items-center gap-2 whitespace-nowrap border-l border-slate-200 dark:border-[#17364E] pl-3">
+          <div className="flex items-center gap-1.5 shrink-0 whitespace-nowrap border-l border-slate-200 dark:border-[#17364E] pl-2.5 sm:pl-3">
             <div className="relative flex items-center justify-center w-4 h-4">
               <span className="absolute w-4 h-4 rounded-full border border-red-500 opacity-80 animate-ping" />
               <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
             </div>
-            <span className="text-xs text-red-600 dark:text-red-400 font-bold">
+            <span className="text-red-600 dark:text-red-400 font-bold whitespace-nowrap">
               Selected Target
             </span>
           </div>
@@ -920,7 +935,7 @@ export default function RealTrafficMap({
   const showRegionBoundaries = true;
 
   // Selected sensor ID & neighbor set
-  const activeSelectedId = String(selectedSensor?.sensorId || selectedSensor?.id || "773869");
+  const activeSelectedId = String(selectedSensor?.sensorId || selectedSensor?.id || "767620");
 
   const neighborIdSet = useMemo(() => {
     const list = neighborsMap[activeSelectedId] || selectedSensor?.graphNeighbors || [];
@@ -996,11 +1011,23 @@ export default function RealTrafficMap({
     return valid.filter(s => s.regionId === activeRegion);
   }, [sensors, activeRegion]);
 
+  // Control edge connection visibility: connect lines immediately when sensors load
+  const [linesReady, setLinesReady] = useState(true);
+
+  useEffect(() => {
+    if (!sensors || sensors.length === 0 || !selectedSensor) {
+      return;
+    }
+    setLinesReady(true);
+  }, [activeSelectedId, activeRegion, sensors, selectedSensor]);
+
   // Compute graph edges to render with multi-tier hierarchy & layering
   const edgesToRender = useMemo(() => {
-    if (!showGraphEdges || edgeMode === 'none' || !graphEdges || graphEdges.length === 0) {
+    if (!linesReady || !showGraphEdges || edgeMode === 'none' || !graphEdges || graphEdges.length === 0) {
       return [];
     }
+
+    const visibleSensorIdSet = new Set(visibleSensors.map(s => String(s.sensorId || s.id)));
 
     let candidateEdges = [];
     if (edgeMode === 'neighborhood') {
@@ -1012,6 +1039,14 @@ export default function RealTrafficMap({
     } else {
       // ALL EDGES mode: take up to 250 connections
       candidateEdges = graphEdges.slice(0, 250);
+    }
+
+    // When a specific region/sector is active, only draw edges between visible sensors in that sector
+    if (activeRegion !== 'ALL') {
+      candidateEdges = candidateEdges.filter(e =>
+        visibleSensorIdSet.has(String(e.fromSensorId)) &&
+        visibleSensorIdSet.has(String(e.toSensorId))
+      );
     }
 
     const styled = candidateEdges.map(edge => {
@@ -1062,7 +1097,7 @@ export default function RealTrafficMap({
 
     // Sort by tier ascending so direct selected links are rendered on top
     return styled.sort((a, b) => a.tier - b.tier);
-  }, [showGraphEdges, edgeMode, graphEdges, activeSelectedId, neighborIdSet]);
+  }, [linesReady, showGraphEdges, edgeMode, graphEdges, activeSelectedId, neighborIdSet, visibleSensors, activeRegion]);
 
   const activeTileConfig = BASEMAP_TILES[basemapId] || BASEMAP_TILES.street;
 
@@ -1083,6 +1118,7 @@ export default function RealTrafficMap({
           zoomControl={false}
           attributionControl={false}
           scrollWheelZoom={true}
+          preferCanvas={true}
           style={{ height: '100%', width: '100%', minHeight: '580px' }}
           className="w-full h-full"
         >
@@ -1154,7 +1190,7 @@ export default function RealTrafficMap({
           {/* 3. Multi-tier Layered Connection Graph Edges */}
           {edgesToRender.map((edge, idx) => {
             return (
-              <React.Fragment key={`real-edge-${idx}`}>
+              <React.Fragment key={`real-edge-${idx}-${activeSelectedId}-${activeRegion}`}>
                 {/* Glowing Outer Tube for selected local & neighbor edges */}
                 {edge.glow && (
                   <Polyline

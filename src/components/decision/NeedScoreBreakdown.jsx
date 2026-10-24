@@ -61,7 +61,7 @@ export default function NeedScoreBreakdown({ data, onClose, sensorId: propSensor
   const rawScore = data?.needScore ?? data?.finalNeedScore;
   const scoreNum = typeof rawScore === 'number' ? rawScore : (parseFloat(rawScore) || 0.58);
   const clampedScore = Math.min(1.0, Math.max(0.05, scoreNum));
-  const sensorId = propSensorId || data?.sensorId || "773869";
+  const sensorId = propSensorId || data?.sensorId || "767620";
 
   // Priority classification
   let priorityLabel = 'LOW QUERY PRIORITY';

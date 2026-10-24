@@ -16,7 +16,7 @@ from backend.datasets.metr_la import METRLADatasetInspector
 
 def main():
     print("=" * 70)
-    print("TrafficPulse-X — METR-LA ML-Ready Data Preprocessing Pipeline")
+    print("TrafficPulse-X - METR-LA ML-Ready Data Preprocessing Pipeline")
     print("=" * 70)
 
     inspector = METRLADatasetInspector(

@@ -7,18 +7,18 @@ import {
 import StatusBadge from '../common/StatusBadge';
 
 const DEFAULT_SENSOR = {
-  sensorId: "773869",
-  displayAlias: "773869",
-  regionId: "REGION_C",
-  latitude: 34.1427,
-  longitude: -118.3456,
-  speed: 64.2,
+  sensorId: "767620",
+  displayAlias: "767620",
+  regionId: "REGION_A",
+  latitude: 34.13486,
+  longitude: -118.22932,
+  speed: 67.1,
   speedCondition: "normal",
-  dataQuality: 0.942,
-  uncertainty: 2.14,
-  trafficDrift: 0.18,
-  needScore: 0.87,
-  graphDegree: 11
+  dataQuality: 0.98,
+  uncertainty: 1.85,
+  trafficDrift: 0.12,
+  needScore: 0.82,
+  graphDegree: 4
 };
 
 // Calculate genuine Haversine distance in km between two GPS coordinates
@@ -48,8 +48,8 @@ export default function SensorDetailPanel({
   const [activeTab, setActiveTab] = useState('overview');
 
   const activeSensor = sensor || DEFAULT_SENSOR;
-  const sensorId = String(activeSensor.sensorId || activeSensor.id || "773869");
-  const regionId = activeSensor.regionId || "REGION_C";
+  const sensorId = String(activeSensor.sensorId || activeSensor.id || "767620");
+  const regionId = activeSensor.regionId || "REGION_A";
 
   // Telemetry formatting
   const speedVal = typeof activeSensor.speed === 'number'
@@ -130,7 +130,7 @@ export default function SensorDetailPanel({
     : 'bg-emerald-500';
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-[#071727] rounded-2xl border border-slate-200 dark:border-[#17364E] shadow-xl overflow-hidden transition-colors">
+    <div className="flex flex-col h-full max-h-full bg-white dark:bg-[#071727] rounded-2xl border border-slate-200 dark:border-[#17364E] shadow-xl overflow-hidden transition-colors">
 
       {/* 1. Header Bar: Title + Subtitle */}
       <div className="p-4 border-b border-slate-100 dark:border-[#17364E]/80 bg-slate-50/70 dark:bg-[#0A1D30]/60 flex items-center justify-between">
@@ -197,7 +197,7 @@ export default function SensorDetailPanel({
       </div>
 
       {/* 4. Tab Body Content Area (Scrollable within own panel) */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar">
+      <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 custom-scrollbar">
 
         {/* =================================================================== */}
         {/* TAB 1: OVERVIEW */}
@@ -441,7 +441,7 @@ export default function SensorDetailPanel({
                 type="button"
               >
                 <Zap className="w-3.5 h-3.5" />
-                <span>Simulate Query</span>
+                <span>Execute Query</span>
               </button>
             </div>
           </div>

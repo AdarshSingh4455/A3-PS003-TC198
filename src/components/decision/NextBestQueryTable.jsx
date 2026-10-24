@@ -238,7 +238,7 @@ export default function NextBestQueryTable({ onQuery, onSelectSensor, data }) {
 
           {showFullRanking && (
             <div className="mt-2 rounded-lg border border-slate-200 dark:border-[#17364E] overflow-hidden">
-              <div className="max-h-52 overflow-y-auto">
+              <div className="max-h-[260px] overflow-y-auto custom-scrollbar">
                 <table className="w-full text-left text-xs font-mono">
                   <thead className="sticky top-0 bg-slate-100 dark:bg-[#0B2033] border-b border-slate-200 dark:border-[#17364E] text-slate-500 dark:text-[#8295A8] text-[11px] uppercase">
                     <tr>

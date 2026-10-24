@@ -21,6 +21,14 @@ import {
 import { useReplay } from '../../context/ReplayContext';
 import { AlertTriangle, Map as MapIcon, Search, X, Check } from 'lucide-react';
 
+const REGION_DEFAULT_SENSORS = {
+  ALL: '767620',
+  REGION_A: '767620',
+  REGION_B: '767541',
+  REGION_C: '717489',
+  REGION_D: '769430'
+};
+
 export default function TrafficNetwork() {
   const { timeIndex, timestampStr, selectedSensorId, setSelectedSensorId, dataSourceMode } = useReplay();
   const [searchParams] = useSearchParams();
@@ -75,13 +83,13 @@ export default function TrafficNetwork() {
       if (snap && snap.sensors) {
         setRealSensors(snap.sensors);
         setSelectedSensor(prev => {
-          const targetId = searchParams.get('sensor') || selectedSensorId || "773869";
-          if (!prev) {
-            const primaryMatch = snap.sensors.find(s => String(s.sensorId || s.id) === String(targetId));
-            return primaryMatch || snap.sensors[0];
+          if (prev) {
+            const matched = snap.sensors.find(s => String(s.sensorId || s.id) === String(prev.sensorId || prev.id));
+            if (matched) return matched;
           }
-          const matched = snap.sensors.find(s => String(s.sensorId || s.id) === String(prev.sensorId || prev.id));
-          return matched || snap.sensors[0];
+          const targetId = searchParams.get('sensor') || REGION_DEFAULT_SENSORS[rId] || selectedSensorId || "767620";
+          const primaryMatch = snap.sensors.find(s => String(s.sensorId || s.id) === String(targetId));
+          return primaryMatch || snap.sensors[0];
         });
         setFetchError(null);
       }
@@ -103,20 +111,20 @@ export default function TrafficNetwork() {
     let mounted = true;
     async function loadConsistency() {
       try {
-        const fromId = String(selectedSensor?.sensorId || selectedSensor?.id || "773869");
-        const res = await fetchSpatialSpeedConsistency(fromId, "767541");
+        const fromId = String(selectedSensor?.sensorId || selectedSensor?.id || "767620");
+        const res = await fetchSpatialSpeedConsistency(fromId, "767471");
         if (mounted && res) {
           setSpatialConsistencyData(res);
         }
       } catch {
         if (mounted) {
           setSpatialConsistencyData({
-            fromSensor: "773869",
-            toSensor: "767541",
-            fromSpeedMph: 64.2,
-            toSpeedMph: 62.1,
-            speedDifferenceMph: 2.1,
-            consistencyScore: 94.8,
+            fromSensor: "767620",
+            toSensor: "767471",
+            fromSpeedMph: 67.1,
+            toSpeedMph: 66.5,
+            speedDifferenceMph: 0.6,
+            consistencyScore: 98.5,
             isDisagreement: false,
             severity: "normal",
             note: "Spatial speed variation within nominal range"
@@ -160,6 +168,15 @@ export default function TrafficNetwork() {
 
   const handleRegionChange = (regionId) => {
     setActiveRegion(regionId);
+    const targetId = REGION_DEFAULT_SENSORS[regionId];
+    if (targetId) {
+      setSelectedSensorId?.(targetId);
+      setSelectedSensor(prev => {
+        if (prev && prev.regionId === regionId) return prev;
+        const found = realSensors.find(s => String(s.sensorId || s.id) === String(targetId));
+        return found || null;
+      });
+    }
   };
 
   const handleToggleFullscreen = () => {
@@ -167,7 +184,7 @@ export default function TrafficNetwork() {
   };
 
   const handleEvaluateQuery = async () => {
-    const sid = selectedSensor?.sensorId || selectedSensor?.id || "773869";
+    const sid = selectedSensor?.sensorId || selectedSensor?.id || "767620";
     try {
       const data = await fetchCounterfactual(sid);
       setCounterfactualData(data);
@@ -178,7 +195,7 @@ export default function TrafficNetwork() {
   };
 
   const handleViewEvidence = async () => {
-    const sid = selectedSensor?.sensorId || selectedSensor?.id || "773869";
+    const sid = selectedSensor?.sensorId || selectedSensor?.id || "767620";
     try {
       const data = await fetchEvidenceChain(sid);
       setEvidenceData(data);
@@ -191,7 +208,7 @@ export default function TrafficNetwork() {
   const handleQuerySensor = async (sensor) => {
     const sid = sensor.sensorId || sensor.id;
     const res = await executeQuery(sid);
-    alert(`Simulation Evidence Query executed for ${sensor.displayAlias || sid}!\nMeasured Transferred: ${res.bytesTransferred || '4.2 KB'}\nEstimated Accuracy Benefit: ${res.expectedBenefit || '18%'}`);
+    alert(`Evidence Query executed for ${sensor.displayAlias || sid}!\nMeasured Transferred: ${res.bytesTransferred || '4.2 KB'}\nEstimated Accuracy Benefit: ${res.expectedBenefit || '18%'}`);
     loadRealSnapshot(timeIndex, activeRegion);
   };
 
@@ -306,8 +323,8 @@ export default function TrafficNetwork() {
                   Traffic Network
                 </h1>
               </div>
-              <p className="text-xs text-slate-500 dark:text-[#8295A8] mt-0.5">
-                Freeway sensor network &bull; Step {timeIndex}
+              <p className="text-xs text-slate-600 dark:text-[#CBDDF0] mt-0.5 font-medium">
+                Metropolitan Freeway Corridor &bull; 207 Connected Sensors
               </p>
             </div>
           </div>
@@ -424,7 +441,7 @@ export default function TrafficNetwork() {
         </div>
 
         {/* Right Column (25% desktop width): Dedicated Sensor Details Panel */}
-        <div className={isFullscreen ? 'w-full lg:w-[380px] h-full shrink-0' : 'lg:col-span-4 xl:col-span-3 flex flex-col min-h-[640px]'}>
+        <div className={isFullscreen ? 'w-full lg:w-[380px] h-full shrink-0' : 'lg:col-span-4 xl:col-span-3 flex flex-col h-[640px] max-h-[640px]'}>
           <SensorDetailPanel
             sensor={selectedSensor}
             allSensors={realSensors}
