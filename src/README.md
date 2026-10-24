@@ -84,7 +84,7 @@ cp .env.example .env
 | :--- | :--- | :--- | :--- |
 | **Milestone 1** | **Oct 24, 2026** | Project scaffolding, dependency manifests, and environment baseline | **Completed** |
 | **Milestone 2** | **Oct 24, 2026** | PEMS-BAY sensor topology, spatial graph adjacency, and data loaders | **Completed** |
-| **Milestone 3** | **Oct 24, 2026** | Baseline traffic forecasting models & metric evaluation framework | Planned |
+| **Milestone 3** | **Oct 24, 2026** | Baseline traffic forecasting models & metric evaluation framework | **Completed** |
 | **Milestone 4-7** | **Oct 25, 2026** | Spatiotemporal neural architectures (Chebyshev GCN + LSTM) & training | Planned |
 | **Milestone 8-11** | **Oct 26, 2026** | Regional non-IID partitioning, FedAvg core, CCV scheduling & DP | Planned |
 | **Milestone 12-15** | **Oct 27, 2026** | 9-Factor Decision Intelligence, FastAPI REST service & Interactive UI | Planned |
@@ -114,3 +114,32 @@ The 207 sensors are mapped into 4 distinct geographic clusters to represent real
 2. **Region 1 (Downtown Los Angeles Core)**: High-density arterial connectors (I-10, I-110).
 3. **Region 2 (San Fernando Valley)**: Arterial routes along I-405 North.
 4. **Region 3 (East LA / San Gabriel Corridor)**: Peripheral commute arteries.
+
+---
+
+## 6. Baseline Traffic Forecasting Models
+
+To provide a rigorous benchmark for deep spatiotemporal and federated learning architectures, three standard non-deep learning baseline predictors are implemented in `ml/baselines/`:
+
+### A. Implemented Baselines
+1. **Last Value (Persistence Baseline)**:
+   Assumes current traffic speed persists into the future across all horizons:
+   $$\hat{y}_{t+h} = y_t, \quad \forall h \in \{15, 30, 45, 60\}\text{ mins}$$
+   Includes backward fallback search across preceding history window in the presence of sensor dropouts.
+
+2. **Historical Average (HA)**:
+   Captures periodic weekly commute cycles by computing conditional historical means:
+   $$\hat{y}_{t+h}(s) = \frac{1}{|D_{\text{train}}|} \sum_{\tau \in D_{\text{train}}} y_\tau(s) \quad \text{for } \text{dayofweek}(\tau) = d, \, \text{time\_slot}(\tau) = \sigma$$
+   Trained strictly on historical train splits to prevent test data leakage.
+
+3. **Linear / Ridge Regression**:
+   Direct multivariate regression learning a linear mapping from normalized temporal observation windows $X \in \mathbb{R}^{B \times 12 \times 207 \times 1}$ to multi-horizon predictions with L2 regularization ($\lambda = 1.0$).
+
+### B. Standardized Traffic Metric Formulations
+Evaluation across all forecasting models is computed strictly on unnormalized physical traffic speed space ($\text{mph}$):
+- **Mean Absolute Error (MAE)**:
+  $$\text{MAE} = \frac{1}{|V|}\sum_{i=1}^{|V|} |y_i - \hat{y}_i|$$
+- **Root Mean Squared Error (RMSE)**:
+  $$\text{RMSE} = \sqrt{\frac{1}{|V|}\sum_{i=1}^{|V|} (y_i - \hat{y}_i)^2}$$
+- **Mean Absolute Percentage Error (MAPE)**:
+  $$\text{MAPE} = \frac{100\%}{|V|}\sum_{i=1}^{|V|} \left|\frac{y_i - \hat{y}_i}{y_i}\right| \quad \text{for } y_i > 0$$
