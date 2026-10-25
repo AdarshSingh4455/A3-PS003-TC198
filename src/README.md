@@ -86,7 +86,7 @@ cp .env.example .env
 | **Milestone 2** | **Oct 24, 2026** | PEMS-BAY sensor topology, spatial graph adjacency, and data loaders | **Completed** |
 | **Milestone 3** | **Oct 24, 2026** | Baseline traffic forecasting models & metric evaluation framework | **Completed** |
 | **Milestone 4** | **Oct 25, 2026** | Temporal deep learning models (TemporalLSTM & TemporalGRU) & loss | **Completed** |
-| **Milestone 5** | **Oct 25, 2026** | Chebyshev polynomial spatial graph convolutions (SpatialGCN) | Planned |
+| **Milestone 5** | **Oct 25, 2026** | Chebyshev polynomial spatial graph convolutions (SpatialGCN) | **Completed** |
 | **Milestone 6** | **Oct 25, 2026** | Spatiotemporal neural architecture (SpatialGraphLSTM) end-to-end | Planned |
 | **Milestone 7** | **Oct 25, 2026** | Centralized model evaluation benchmarks & comparative results | Planned |
 | **Milestone 8-11** | **Oct 26, 2026** | Regional non-IID partitioning, FedAvg core, CCV scheduling & DP | Planned |
@@ -161,3 +161,22 @@ Implemented in `ml/temporal/`, these models capture sequential temporal dynamics
 Sensors occasionally undergo hardware dropouts or telemetry packet loss. To avoid penalizing models on missing data, loss is computed strictly across valid target points:
 
 $$\mathcal{L}_{\text{MaskedMAE}}(Y, \hat{Y}, M) = \frac{\sum_{b, t, s} M_{b, t, s} \cdot \left| Y_{b, t, s} - \hat{Y}_{b, t, s} \right|}{\max\left(1, \sum_{b, t, s} M_{b, t, s}\right)}$$
+
+---
+
+## 8. Spatial Graph Convolutions (SpatialGCN)
+
+Implemented in `ml/graph/`, the SpatialGCN models geographic spatial dependencies between neighboring road sensors using spectral graph theory:
+
+### A. Normalized Graph Laplacian Approximation
+Given adjacency matrix $A \in \mathbb{R}^{N \times N}$, we compute the normalized symmetric graph operator:
+$$\hat{A} = A + I_N$$
+$$\tilde{A} = \tilde{D}^{-\frac{1}{2}} \hat{A} \tilde{D}^{-\frac{1}{2}}, \quad \text{where } \tilde{D}_{ii} = \sum_j \hat{A}_{ij}$$
+
+### B. Graph Convolutional Layer Operation
+Each GraphConv layer propagates spatial representations across connected freeway corridors:
+$$H^{(l+1)} = \sigma\left(\tilde{A} H^{(l)} W^{(l)} + b^{(l)}\right)$$
+
+- Input feature mapping: $X \in \mathbb{R}^{B \times 207 \times 2} \xrightarrow{\text{GraphConv}} H_1 \in \mathbb{R}^{B \times 207 \times 64}$.
+- Second spatial layer: $H_1 \xrightarrow{\text{GraphConv}} H_2 \in \mathbb{R}^{B \times 207 \times 64} \xrightarrow{\text{Dropout}(0.1)}$.
+- Horizon output projection: $H_2 \xrightarrow{\text{Linear}} \hat{Y} \in \mathbb{R}^{B \times 4 \times 207 \times 1}$.
