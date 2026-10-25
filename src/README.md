@@ -85,7 +85,10 @@ cp .env.example .env
 | **Milestone 1** | **Oct 24, 2026** | Project scaffolding, dependency manifests, and environment baseline | **Completed** |
 | **Milestone 2** | **Oct 24, 2026** | PEMS-BAY sensor topology, spatial graph adjacency, and data loaders | **Completed** |
 | **Milestone 3** | **Oct 24, 2026** | Baseline traffic forecasting models & metric evaluation framework | **Completed** |
-| **Milestone 4-7** | **Oct 25, 2026** | Spatiotemporal neural architectures (Chebyshev GCN + LSTM) & training | Planned |
+| **Milestone 4** | **Oct 25, 2026** | Temporal deep learning models (TemporalLSTM & TemporalGRU) & loss | **Completed** |
+| **Milestone 5** | **Oct 25, 2026** | Chebyshev polynomial spatial graph convolutions (SpatialGCN) | Planned |
+| **Milestone 6** | **Oct 25, 2026** | Spatiotemporal neural architecture (SpatialGraphLSTM) end-to-end | Planned |
+| **Milestone 7** | **Oct 25, 2026** | Centralized model evaluation benchmarks & comparative results | Planned |
 | **Milestone 8-11** | **Oct 26, 2026** | Regional non-IID partitioning, FedAvg core, CCV scheduling & DP | Planned |
 | **Milestone 12-15** | **Oct 27, 2026** | 9-Factor Decision Intelligence, FastAPI REST service & Interactive UI | Planned |
 | **Milestone 16-18** | **Oct 28, 2026** | Historical replay engine, integration test suite, and final runbook | Planned |
@@ -143,3 +146,18 @@ Evaluation across all forecasting models is computed strictly on unnormalized ph
   $$\text{RMSE} = \sqrt{\frac{1}{|V|}\sum_{i=1}^{|V|} (y_i - \hat{y}_i)^2}$$
 - **Mean Absolute Percentage Error (MAPE)**:
   $$\text{MAPE} = \frac{100\%}{|V|}\sum_{i=1}^{|V|} \left|\frac{y_i - \hat{y}_i}{y_i}\right| \quad \text{for } y_i > 0$$
+
+---
+
+## 7. Temporal Deep Learning Architectures (TemporalLSTM & TemporalGRU)
+
+Implemented in `ml/temporal/`, these models capture sequential temporal dynamics across continuous 5-minute historical traffic windows:
+
+### A. Model Formulations
+- **TemporalGRU**: 1-layer GRU with hidden dimension $h=64$. Transposes input tensors to $(B \cdot S, 12, 2)$ to learn globally shared temporal transitions while maintaining lightweight parameter scale ($\sim 13.2\text{k}$ parameters).
+- **TemporalLSTM**: 1-layer LSTM with cell state memory ($h=64$), preventing vanishing gradients across the 12-step lookback window ($\sim 17.5\text{k}$ parameters).
+
+### B. Masked MAE Loss Function
+Sensors occasionally undergo hardware dropouts or telemetry packet loss. To avoid penalizing models on missing data, loss is computed strictly across valid target points:
+
+$$\mathcal{L}_{\text{MaskedMAE}}(Y, \hat{Y}, M) = \frac{\sum_{b, t, s} M_{b, t, s} \cdot \left| Y_{b, t, s} - \hat{Y}_{b, t, s} \right|}{\max\left(1, \sum_{b, t, s} M_{b, t, s}\right)}$$
