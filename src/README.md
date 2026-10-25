@@ -87,7 +87,7 @@ cp .env.example .env
 | **Milestone 3** | **Oct 24, 2026** | Baseline traffic forecasting models & metric evaluation framework | **Completed** |
 | **Milestone 4** | **Oct 25, 2026** | Temporal deep learning models (TemporalLSTM & TemporalGRU) & loss | **Completed** |
 | **Milestone 5** | **Oct 25, 2026** | Chebyshev polynomial spatial graph convolutions (SpatialGCN) | **Completed** |
-| **Milestone 6** | **Oct 25, 2026** | Spatiotemporal neural architecture (SpatialGraphLSTM) end-to-end | Planned |
+| **Milestone 6** | **Oct 25, 2026** | Spatiotemporal neural architecture (SpatialGraphLSTM) end-to-end | **Completed** |
 | **Milestone 7** | **Oct 25, 2026** | Centralized model evaluation benchmarks & comparative results | Planned |
 | **Milestone 8-11** | **Oct 26, 2026** | Regional non-IID partitioning, FedAvg core, CCV scheduling & DP | Planned |
 | **Milestone 12-15** | **Oct 27, 2026** | 9-Factor Decision Intelligence, FastAPI REST service & Interactive UI | Planned |
@@ -180,3 +180,39 @@ $$H^{(l+1)} = \sigma\left(\tilde{A} H^{(l)} W^{(l)} + b^{(l)}\right)$$
 - Input feature mapping: $X \in \mathbb{R}^{B \times 207 \times 2} \xrightarrow{\text{GraphConv}} H_1 \in \mathbb{R}^{B \times 207 \times 64}$.
 - Second spatial layer: $H_1 \xrightarrow{\text{GraphConv}} H_2 \in \mathbb{R}^{B \times 207 \times 64} \xrightarrow{\text{Dropout}(0.1)}$.
 - Horizon output projection: $H_2 \xrightarrow{\text{Linear}} \hat{Y} \in \mathbb{R}^{B \times 4 \times 207 \times 1}$.
+
+---
+
+## 9. Spatiotemporal Neural Network Architecture (SpatialGraphLSTM)
+
+Implemented in `ml/spatiotemporal/`, the `SpatialGraphLSTM` is our flagship prediction architecture combining graph spatial message passing with recurrent temporal dynamics:
+
+```text
+Input X [B, 12, 207, 2]
+   │
+   ├── (For each timestep t in 1..12) ──► GraphConv(2 -> 32) ──► ReLU
+   │                                       │
+   │                                       ▼
+   │                                     GraphConv(32 -> 32) ──► ReLU + Residual(x_t)
+   │                                       │
+   │                                       ▼
+   │                              Spatial Representation H_t [B, 207, 32]
+   │
+Stacked Across Time: [B, 12, 207, 32]
+   │
+Reshape to Shared Sequences: [B * 207, 12, 32]
+   │
+   ▼
+LSTM Layer (hidden_dim = 64) ──► Final Cell State h_n [B * 207, 64]
+   │
+   ▼
+Linear Prediction Head (64 -> 4)
+   │
+   ▼
+Canonical Forecast Output: [B, 4, 207, 1] (15m, 30m, 45m, 60m horizons in mph)
+```
+
+### Key Architectural Highlights
+- **Spatial Topology Invariance**: The spatial encoder evaluates local highway corridor connectivity via normalized Laplacian $\tilde{A}$.
+- **Residual Highway Connection**: A skip-projection layer $\text{Linear}(2 \to 32)$ guarantees uninhibited gradient flow back to raw input speeds.
+- **Cross-Dataset Transferability**: The same architecture seamlessly scales from the 207-node METR-LA speed network to the 170-node PEMS08 flow network.
