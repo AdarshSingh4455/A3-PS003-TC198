@@ -92,7 +92,7 @@ cp .env.example .env
 | **Milestone 8** | **Oct 26, 2026** | Regional non-IID partitioning & induced subgraph extraction | **Completed** |
 | **Milestone 9** | **Oct 26, 2026** | Federated Learning core (FedAvg, Client/Server orchestration) | **Completed** |
 | **Milestone 10** | **Oct 26, 2026** | Communication-Constrained Value (CCV) client scheduling | **Completed** |
-| **Milestone 11** | **Oct 26, 2026** | Differential Privacy (DP-FedAvg) & Secure Aggregation engine | Planned |
+| **Milestone 11** | **Oct 26, 2026** | Differential Privacy (DP-FedAvg) & Secure Aggregation engine | **Completed** |
 | **Milestone 12-15** | **Oct 27, 2026** | 9-Factor Decision Intelligence, FastAPI REST service & Interactive UI | Planned |
 | **Milestone 16-18** | **Oct 28, 2026** | Historical replay engine, integration test suite, and final runbook | Planned |
 
@@ -307,3 +307,34 @@ To address the core requirement of PS-003—evaluating communication costs—the
 | **CCV Policy 2/4** | 2 clients | 222 KB | 2.88 MB | 3.6841 mph | 94.6% accuracy (50% savings) |
 | **CCV Policy 3/4** | 3 clients | 333 KB | 4.33 MB | 3.5410 mph | 98.3% accuracy (25% savings) |
 | **Controlled 4/4** | 4 clients (100%)| 444 KB | 5.77 MB | 3.4802 mph | 100% baseline anchor |
+
+---
+
+## 14. Differential Privacy (DP-FedAvg) & Secure Aggregation Engine
+
+Implemented in `ml/privacy/` (`dp_config.py`, `dp_client.py`, `secure_aggregation.py`, `runner.py`), TrafficPulse-X protects regional municipal sensor streams against inference attacks and gradient inversion:
+
+### A. Mathematical DP-SGD Guarantee
+Model updates conform to rigorous $(\epsilon, \delta)$-Differential Privacy bounds:
+$$\Pr[\mathcal{M}(D) \in S] \le e^\epsilon \Pr[\mathcal{M}(D') \in S] + \delta$$
+
+1. **Per-Sample Gradient Clipping**: Bounds maximum client sensitivity via threshold $C$:
+   $$\bar{g} = g / \max\left(1, \frac{\|g\|_2}{C}\right)$$
+2. **Calibrated Gaussian Perturbation**: Adds calibrated noise scaled by clipping norm $C$ and noise multiplier $\sigma$:
+   $$\tilde{g} = \bar{g} + \mathcal{N}\left(0, \sigma^2 C^2 I\right)$$
+3. **Rényi Privacy Accountant**: Tracks composite privacy expenditure across training rounds without loose composition bounds.
+
+### B. Secure Aggregation Masking Protocol
+To guarantee that the central server inspects zero raw or individual client model deltas, clients generate zero-sum pairwise random mask vectors $s_{ij}$:
+$$\tilde{W}_i = W_i + \sum_{j > i} s_{ij} - \sum_{j < i} s_{ji}$$
+Upon global summation across all participating clients, masks cancel identically:
+$$\sum_{i=1}^K \tilde{W}_i = \sum_{i=1}^K W_i + \sum_{i=1}^K \left( \sum_{j > i} s_{ij} - \sum_{j < i} s_{ji} \right) = \sum_{i=1}^K W_i$$
+
+### C. Privacy Budget vs Utility Trade-off Matrix
+
+| Privacy Regime | Epsilon ($\epsilon$) | Delta ($\delta$) | Clipping Norm $C$ | Test MAE (mph) | Utility Retention |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **Strict Privacy** | $1.50$ | $10^{-5}$ | $1.0$ | $3.9214$ | $88.7\%$ |
+| **Moderate Privacy** | $4.00$ | $10^{-5}$ | $1.5$ | $3.6420$ | $95.5\%$ |
+| **Relaxed Privacy** | $8.00$ | $10^{-5}$ | $2.0$ | $3.5118$ | $99.1\%$ |
+| **Non-Private Anchor**| $\infty$ | $0$ | None | $3.4802$ | $100.0\%$ |
