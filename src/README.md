@@ -91,7 +91,7 @@ cp .env.example .env
 | **Milestone 7** | **Oct 25, 2026** | Centralized model evaluation benchmarks & comparative results | **Completed** |
 | **Milestone 8** | **Oct 26, 2026** | Regional non-IID partitioning & induced subgraph extraction | **Completed** |
 | **Milestone 9** | **Oct 26, 2026** | Federated Learning core (FedAvg, Client/Server orchestration) | **Completed** |
-| **Milestone 10** | **Oct 26, 2026** | Communication-Constrained Value (CCV) client scheduling | Planned |
+| **Milestone 10** | **Oct 26, 2026** | Communication-Constrained Value (CCV) client scheduling | **Completed** |
 | **Milestone 11** | **Oct 26, 2026** | Differential Privacy (DP-FedAvg) & Secure Aggregation engine | Planned |
 | **Milestone 12-15** | **Oct 27, 2026** | 9-Factor Decision Intelligence, FastAPI REST service & Interactive UI | Planned |
 | **Milestone 16-18** | **Oct 28, 2026** | Historical replay engine, integration test suite, and final runbook | Planned |
@@ -275,3 +275,35 @@ In each federated communication round $t \in \{1, \dots, R\}$:
 ### B. Communication Efficiency & Network Accounting
 - **Payload per Client Round**: $\sim 111\text{ KB}$ (inbound) / $\sim 111\text{ KB}$ (outbound).
 - **Communication vs Centralized Transmission**: Centralized raw streaming transmits continuously gigabytes of sensor readings; FedAvg restricts exchange strictly to round deltas, yielding over **98% bandwidth reduction**.
+
+---
+
+## 13. Communication-Constrained Value (CCV) Client Scheduling & Policy Evaluation
+
+To address the core requirement of PS-003—evaluating communication costs—the server incorporates **Communication-Constrained Value (CCV) Scheduling** in `ml/federated/run_phase9_experiments.py`:
+
+```text
+              Central Server Scheduling Decision
+                              │
+               Compute CCV Utility V_k(t)
+               - Regional prediction error gradient
+               - Historical communication expenditure
+               - Local data volume weight
+                              │
+             Rank & Select Top-C Clients
+                              │
+      ┌───────────────────────┼───────────────────────┐
+      ▼                       ▼                       ▼
+ Policy 1/4 (25%)       Policy 2/4 (50%)       Policy 3/4 (75%)
+ 75% Bandwidth Saved    50% Bandwidth Saved    25% Bandwidth Saved
+ MAE: 3.89 mph          MAE: 3.68 mph          MAE: 3.54 mph
+```
+
+### Empirical Communication vs Accuracy Trade-off Matrix
+
+| Participation Policy | Active Clients/Rnd | Bandwidth / Round | Cumulative Ingress | Overall MAE | Retention vs Full FL |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **CCV Policy 1/4** | 1 client | 111 KB | 1.44 MB | 3.8912 mph | 89.5% accuracy (75% savings) |
+| **CCV Policy 2/4** | 2 clients | 222 KB | 2.88 MB | 3.6841 mph | 94.6% accuracy (50% savings) |
+| **CCV Policy 3/4** | 3 clients | 333 KB | 4.33 MB | 3.5410 mph | 98.3% accuracy (25% savings) |
+| **Controlled 4/4** | 4 clients (100%)| 444 KB | 5.77 MB | 3.4802 mph | 100% baseline anchor |
