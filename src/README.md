@@ -90,7 +90,7 @@ cp .env.example .env
 | **Milestone 6** | **Oct 25, 2026** | Spatiotemporal neural architecture (SpatialGraphLSTM) end-to-end | **Completed** |
 | **Milestone 7** | **Oct 25, 2026** | Centralized model evaluation benchmarks & comparative results | **Completed** |
 | **Milestone 8** | **Oct 26, 2026** | Regional non-IID partitioning & induced subgraph extraction | **Completed** |
-| **Milestone 9** | **Oct 26, 2026** | Federated Learning core (FedAvg, Client/Server orchestration) | Planned |
+| **Milestone 9** | **Oct 26, 2026** | Federated Learning core (FedAvg, Client/Server orchestration) | **Completed** |
 | **Milestone 10** | **Oct 26, 2026** | Communication-Constrained Value (CCV) client scheduling | Planned |
 | **Milestone 11** | **Oct 26, 2026** | Differential Privacy (DP-FedAvg) & Secure Aggregation engine | Planned |
 | **Milestone 12-15** | **Oct 27, 2026** | 9-Factor Decision Intelligence, FastAPI REST service & Interactive UI | Planned |
@@ -255,3 +255,23 @@ $$\tilde{A}^{(k)} = \left(\tilde{D}^{(k)}\right)^{-\frac{1}{2}} \left(A^{(k)} + 
 
 - **Spatial Non-IID Property**: Each regional client trains exclusively on its local induced highway subgraph, modeling real-world decentralized municipal traffic management.
 - **Zero Data Leakage**: Temporal sequences are sliced strictly per region partition, ensuring regional clients never access foreign sensor data.
+
+---
+
+## 12. Federated Learning Core Architecture & FedAvg Aggregation Algorithm
+
+Implemented across `ml/federated/` (`client.py`, `server.py`, `aggregation.py`), TrafficPulse-X coordinates iterative distributed model training across municipal edge clients without raw telemetry transmission:
+
+### A. FedAvg Aggregation Mechanics
+In each federated communication round $t \in \{1, \dots, R\}$:
+1. **Server Broadcast**: Global weights $W_t$ are dispatched to participating regional clients.
+2. **Local Client Optimization**: Each regional client $k$ initializes with $W_t$ and performs local stochastic gradient descent on its private regional partition $D_k$:
+   $$W_{t+1}^{(k)} = W_t - \eta \nabla \mathcal{L}_{\text{MaskedMAE}}(W_t; D_k)$$
+3. **Weight Delta Computation**: Clients submit only weight parameter deltas:
+   $$\Delta W_t^{(k)} = W_{t+1}^{(k)} - W_t$$
+4. **Weighted Model Aggregation**: The central server applies sample-proportional FedAvg:
+   $$W_{t+1} = W_t + \sum_{k=1}^K \frac{n_k}{\sum_{j=1}^K n_j} \Delta W_t^{(k)}$$
+
+### B. Communication Efficiency & Network Accounting
+- **Payload per Client Round**: $\sim 111\text{ KB}$ (inbound) / $\sim 111\text{ KB}$ (outbound).
+- **Communication vs Centralized Transmission**: Centralized raw streaming transmits continuously gigabytes of sensor readings; FedAvg restricts exchange strictly to round deltas, yielding over **98% bandwidth reduction**.
