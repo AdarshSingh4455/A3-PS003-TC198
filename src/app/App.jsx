@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import TopNavigation from '../components/common/TopNavigation';
 import ScrollToTop from '../components/common/ScrollToTop';
 import AppRoutes from './routes';
@@ -13,18 +13,28 @@ export default function App() {
     if (urlParams.get('replay_intro') === 'true' || urlParams.get('intro') === 'true') {
       return true;
     }
-    return false;
+    try {
+      // Clear legacy permanent localStorage flag if set by prior builds
+      localStorage.removeItem('tp_intro_completed');
+      return !sessionStorage.getItem('tp_intro_completed');
+    } catch {
+      return false;
+    }
   });
 
-  const handleIntroComplete = () => {
+  const handleIntroComplete = useCallback(() => {
     try {
       sessionStorage.setItem('tp_intro_completed', 'true');
-      localStorage.setItem('tp_intro_completed', 'true');
+      // If intro was triggered via query parameter, clean it from URL
+      if (typeof window !== 'undefined' && window.location.search.includes('intro')) {
+        const cleanUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, cleanUrl);
+      }
     } catch {
       // Safe fallback for restricted browsing environments
     }
     setShowIntro(false);
-  };
+  }, []);
 
   return (
     <ReplayProvider>
@@ -47,12 +57,12 @@ export default function App() {
           <div className="max-w-[1720px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-2.5">
             <div className="flex items-center gap-2">
               <span className="font-bold text-slate-800 dark:text-[#F7FAFF]">TrafficPulse-X</span>
-              <span>•</span>
+              <span> </span>
               <span className="text-slate-600 dark:text-[#BCD0E2]">Federated Traffic Intelligence Platform</span>
             </div>
             <div className="flex items-center gap-3 font-mono text-[11px]">
               <span>Live Fleet (207 Sensors)</span>
-              <span>•</span>
+              <span> </span>
               <span className="text-emerald-600 dark:text-emerald-400 font-semibold">System Status: Operational</span>
             </div>
           </div>

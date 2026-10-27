@@ -14,23 +14,26 @@ import './OpeningExperience.css';
  */
 export default function OpeningExperience({ onComplete }) {
   const [exiting, setExiting] = useState(false);
+  const onCompleteRef = useRef(onComplete);
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
   const exitTimerRef = useRef(null);
-  const completeTimerRef = useRef(null);
+  const hasFinishedRef = useRef(false);
 
   const handleFinish = useCallback(() => {
-    setExiting((prev) => {
-      if (prev) return prev;
-      // Graceful fade transition before unmounting
-      exitTimerRef.current = setTimeout(() => {
-        onComplete?.();
-      }, 420);
-      return true;
-    });
-  }, [onComplete]);
+    if (hasFinishedRef.current) return;
+    hasFinishedRef.current = true;
+    setExiting(true);
+    // Graceful fade transition before unmounting
+    exitTimerRef.current = setTimeout(() => {
+      onCompleteRef.current?.();
+    }, 420);
+  }, []);
 
   useEffect(() => {
     // Check user preference for reduced motion
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReducedMotion) {
       // Immediate handover for reduced motion preference
       const instantTimer = setTimeout(() => {
@@ -39,10 +42,10 @@ export default function OpeningExperience({ onComplete }) {
       return () => clearTimeout(instantTimer);
     }
 
-    // Auto-advance after 2.6 seconds (total sequence ~2.8s)
-    completeTimerRef.current = setTimeout(() => {
+    // Auto-advance after 4.5 seconds for cinematic traffic sequence (~4.9s total with fade)
+    const completeTimer = setTimeout(() => {
       handleFinish();
-    }, 2600);
+    }, 4500);
 
     // Keyboard support: Escape key skips intro
     const handleKeyDown = (e) => {
@@ -54,7 +57,7 @@ export default function OpeningExperience({ onComplete }) {
     window.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      clearTimeout(completeTimerRef.current);
+      clearTimeout(completeTimer);
       clearTimeout(exitTimerRef.current);
       window.removeEventListener('keydown', handleKeyDown);
     };

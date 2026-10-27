@@ -163,52 +163,52 @@
   filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
 }
 
-/* Car 1: Lane 1 (Fast Sedan) */
+/* Car 1: Lane 1 (Executive Smart Sedan) */
 .tp-car-1 {
-  animation: tpDriveCar1 2.7s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+  animation: tpDriveCar1 4.4s cubic-bezier(0.2, 0.05, 0.2, 1) forwards;
 }
 
 @keyframes tpDriveCar1 {
-  0% { transform: translateX(-160px); opacity: 0; }
-  8% { opacity: 1; }
-  85% { opacity: 1; }
-  100% { transform: translateX(calc(100vw + 60px)); opacity: 1; }
+  0% { transform: translateX(-140px); opacity: 0; }
+  6% { opacity: 1; }
+  94% { opacity: 1; }
+  100% { transform: translateX(calc(78vw - 60px)); opacity: 1; }
 }
 
 /* Motorcycle 1: Lane 2 (Agile Sportbike) */
 .tp-moto-1 {
-  animation: tpDriveMoto1 2.5s cubic-bezier(0.15, 0.05, 0.2, 1) 0.1s forwards;
+  animation: tpDriveMoto1 4.3s cubic-bezier(0.18, 0.05, 0.2, 1) 0.15s forwards;
 }
 
 @keyframes tpDriveMoto1 {
-  0% { transform: translateX(-120px); opacity: 0; }
+  0% { transform: translateX(-100px); opacity: 0; }
   6% { opacity: 1; }
-  85% { opacity: 1; }
-  100% { transform: translateX(calc(100vw + 70px)); opacity: 1; }
+  94% { opacity: 1; }
+  100% { transform: translateX(calc(84vw - 40px)); opacity: 1; }
 }
 
 /* Car 2: Lane 3 (Electric SUV) */
 .tp-car-2 {
-  animation: tpDriveCar2 2.8s cubic-bezier(0.3, 0.1, 0.3, 1) 0.05s forwards;
+  animation: tpDriveCar2 4.45s cubic-bezier(0.22, 0.05, 0.25, 1) 0.05s forwards;
 }
 
 @keyframes tpDriveCar2 {
-  0% { transform: translateX(-180px); opacity: 0; }
-  10% { opacity: 1; }
-  85% { opacity: 1; }
-  100% { transform: translateX(calc(100vw + 50px)); opacity: 1; }
+  0% { transform: translateX(-160px); opacity: 0; }
+  7% { opacity: 1; }
+  94% { opacity: 1; }
+  100% { transform: translateX(calc(72vw - 60px)); opacity: 1; }
 }
 
 /* Motorcycle 2: Lane 4 (Urban Roadster) */
 .tp-moto-2 {
-  animation: tpDriveMoto2 2.65s cubic-bezier(0.2, 0.1, 0.25, 1) 0.15s forwards;
+  animation: tpDriveMoto2 4.35s cubic-bezier(0.2, 0.05, 0.2, 1) 0.2s forwards;
 }
 
 @keyframes tpDriveMoto2 {
-  0% { transform: translateX(-140px); opacity: 0; }
-  8% { opacity: 1; }
-  85% { opacity: 1; }
-  100% { transform: translateX(calc(100vw + 60px)); opacity: 1; }
+  0% { transform: translateX(-120px); opacity: 0; }
+  6% { opacity: 1; }
+  94% { opacity: 1; }
+  100% { transform: translateX(calc(80vw - 40px)); opacity: 1; }
 }
 
 /* Progress Line at Bottom */
@@ -217,7 +217,7 @@
   background: linear-gradient(90deg, #0ea5e9, #38bdf8, #f59e0b);
   box-shadow: 0 0 12px rgba(56, 189, 248, 0.8);
   width: 0%;
-  animation: tpProgressFill 2.6s linear forwards;
+  animation: tpProgressFill 4.5s linear forwards;
 }
 
 @keyframes tpProgressFill {
