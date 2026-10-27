@@ -93,7 +93,9 @@ cp .env.example .env
 | **Milestone 9** | **Oct 26, 2026** | Federated Learning core (FedAvg, Client/Server orchestration) | **Completed** |
 | **Milestone 10** | **Oct 26, 2026** | Communication-Constrained Value (CCV) client scheduling | **Completed** |
 | **Milestone 11** | **Oct 26, 2026** | Differential Privacy (DP-FedAvg) & Secure Aggregation engine | **Completed** |
-| **Milestone 12-15** | **Oct 27, 2026** | 9-Factor Decision Intelligence, FastAPI REST service & Interactive UI | Planned |
+| **Milestone 12** | **Oct 27, 2026** | 9-Factor Decision Intelligence & Need Score engine | **Completed** |
+| **Milestone 13** | **Oct 27, 2026** | FastAPI REST service (53 comprehensive endpoints) | Planned |
+| **Milestone 14-15** | **Oct 27, 2026** | React 19 Frontend Dashboard, Leaflet Map & Fleet Console | Planned |
 | **Milestone 16-18** | **Oct 28, 2026** | Historical replay engine, integration test suite, and final runbook | Planned |
 
 ---
@@ -338,3 +340,40 @@ $$\sum_{i=1}^K \tilde{W}_i = \sum_{i=1}^K W_i + \sum_{i=1}^K \left( \sum_{j > i}
 | **Moderate Privacy** | $4.00$ | $10^{-5}$ | $1.5$ | $3.6420$ | $95.5\%$ |
 | **Relaxed Privacy** | $8.00$ | $10^{-5}$ | $2.0$ | $3.5118$ | $99.1\%$ |
 | **Non-Private Anchor**| $\infty$ | $0$ | None | $3.4802$ | $100.0\%$ |
+
+---
+
+## 15. 9-Factor Decision Intelligence & Need Score Engine
+
+Implemented in `backend/prediction/service.py`, this module synthesizes deep federated forecasts with topological road network centrality to compute real-time operational priority:
+
+```text
+    Spatiotemporal Forecasts (15m, 30m, 45m, 60m)
+                         │
+        ┌────────────────┴────────────────┐
+        ▼                                 ▼
+Congestion Gradient: dv/dt       Topological Centrality
+        │                                 │
+        └────────────────┬────────────────┘
+                         ▼
+        9-Factor Need Score Engine S in [0, 100]
+                         │
+      ┌──────────────────┼──────────────────┐
+      ▼                  ▼                  ▼
+ CRITICAL (>= 75)   ELEVATED (50-74)    MONITORED (< 50)
+ Autonomous Signal   Dynamic Advisory    Standard Replay
+ Dispatch & Reroute  Rate Throttling     Surveillance
+```
+
+### Composite Need Score Mathematical Formulation
+$$S = \min\left(100, \, \max\left(0, \, \sum_{i=1}^9 w_i \cdot f_i\right)\right)$$
+
+1. **Congestion Severity Factor** ($w_1 = 0.20$): Ratio of predicted velocity to historical free-flow baseline.
+2. **Velocity Degradation Gradient** ($w_2 = 0.15$): Sudden deceleration rate $\frac{d v}{d t}$ over the trailing 15 minutes.
+3. **Betweenness Network Centrality** ($w_3 = 0.15$): Highway topological criticality of node in routing corridor.
+4. **Validation Uncertainty Calibration** ($w_4 = 0.10$): Model confidence penalty mapped from empirical test residuals.
+5. **Downstream Spillover Vulnerability** ($w_5 = 0.10$): Proximity risk to high-volume bottleneck junctions.
+6. **Peak Hour Demand Exposure** ($w_6 = 0.10$): Time-of-day commute vulnerability multiplier.
+7. **Anomaly / Incident Multiplier** ($w_7 = 0.10$): Sudden outlier drop exceeding $2.5\sigma$ local standard deviation.
+8. **Telemetry Freshness Decay** ($w_8 = 0.05$): Sensor packet age degradation.
+9. **Communication Resource Budget** ($w_9 = 0.05$): Client bandwidth allocation tier.
