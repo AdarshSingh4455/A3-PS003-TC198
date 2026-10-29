@@ -1,6 +1,8 @@
 // TrafficPulse-X API Service (Centralized Real-Data Backend Gateway)
 
-const API_BASE = "http://127.0.0.1:8000/api";
+const RAW_URL = (import.meta.env && import.meta.env.VITE_API_URL) ? import.meta.env.VITE_API_URL : "http://127.0.0.1:8000";
+const BACKEND_URL = RAW_URL.replace(/\/$/, "");
+const API_BASE = BACKEND_URL.endsWith("/api") ? BACKEND_URL : `${BACKEND_URL}/api`;
 const TIMEOUT_MS = 10000; // 10-second timeout to prevent premature abort errors
 
 const factorNames = {
