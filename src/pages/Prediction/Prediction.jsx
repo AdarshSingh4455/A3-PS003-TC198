@@ -160,7 +160,7 @@ export default function Prediction() {
     }
   };
 
-  const loadData = useCallback(async () => {
+  const loadData = useCallback(async (attempt = 0) => {
     setLoading(true);
     setError(null);
     try {
@@ -184,6 +184,15 @@ export default function Prediction() {
         }
       }
     } catch (err) {
+      const isColdStart = err?.isTimeout || err?.name === 'TimeoutError' || err?.message?.includes('timed out');
+      if (isColdStart && attempt < 2) {
+        console.warn(`Prediction fetch cold-start timeout (attempt ${attempt + 1}). Retrying in 3s...`);
+        setError(`Backend is waking up (${err.message}). Connecting automatically in 3s...`);
+        setTimeout(() => {
+          loadData(attempt + 1);
+        }, 3000);
+        return;
+      }
       setError(err.message || 'Failed to connect to Prediction API.');
     } finally {
       setLoading(false);
