@@ -350,7 +350,20 @@ export default function Alerts() {
     return filteredAlerts[0] || null;
   }, [filteredAlerts, selectedAlert]);
 
-  // Exactly FOUR Main KPIs matching Prompt Section 6
+  // Dynamic metrics derived from filteredAlerts
+  const uncertaintyCount = useMemo(() => {
+    return filteredAlerts.filter(a => a.category === 'Uncertainty' || (a.condition && a.condition.includes('Uncertainty'))).length;
+  }, [filteredAlerts]);
+
+  const driftCount = useMemo(() => {
+    return filteredAlerts.filter(a => a.category === 'Drift' || (a.condition && a.condition.includes('Drift'))).length;
+  }, [filteredAlerts]);
+
+  const blindSpotCount = useMemo(() => {
+    return filteredAlerts.filter(a => a.category === 'Coverage Gap' || a.category === 'Data Quality' || (a.summary && a.summary.includes('coverage'))).length;
+  }, [filteredAlerts]);
+
+  // Exactly FOUR Main KPIs matching Prompt Section 6 (Dynamic)
   const alertKPIs = [
     {
       id: "active-events",
@@ -363,7 +376,7 @@ export default function Alerts() {
     {
       id: "uncertainty-flags",
       label: "High Uncertainty",
-      value: "3",
+      value: uncertaintyCount.toString(),
       subtext: "Residual σ > 3.0 mph",
       iconType: "accuracy",
       variant: "purple"
@@ -371,7 +384,7 @@ export default function Alerts() {
     {
       id: "drift-anomalies",
       label: "High Drift",
-      value: "3",
+      value: driftCount.toString(),
       subtext: "Velocity Delta > 0.35",
       iconType: "sensor",
       variant: "amber"
@@ -379,7 +392,7 @@ export default function Alerts() {
     {
       id: "blind-spots",
       label: "Blind Spots",
-      value: "2",
+      value: blindSpotCount.toString(),
       subtext: "Corridor Debt Elevated",
       iconType: "layers",
       variant: "cyan"

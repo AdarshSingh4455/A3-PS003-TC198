@@ -19,7 +19,7 @@ import {
   fetchNetworkTopology
 } from '../../services/api';
 import { useReplay } from '../../context/ReplayContext';
-import { AlertTriangle, Map as MapIcon, Search, X, Check } from 'lucide-react';
+import { AlertTriangle, Map as MapIcon, Search, X, Check, CheckCircle2 } from 'lucide-react';
 
 const REGION_DEFAULT_SENSORS = {
   ALL: '767620',
@@ -41,6 +41,23 @@ export default function TrafficNetwork() {
 
   const [selectedSensor, setSelectedSensor] = useState(null);
   const [activeModal, setActiveModal] = useState(null);
+
+  const [actionNotice, setActionNotice] = useState(null);
+  const actionNoticeTimerRef = useRef(null);
+  const snapshotRetryTimerRef = useRef(null);
+
+  const showNotice = useCallback((msg, type = 'success') => {
+    if (actionNoticeTimerRef.current) clearTimeout(actionNoticeTimerRef.current);
+    setActionNotice({ message: msg, type });
+    actionNoticeTimerRef.current = setTimeout(() => setActionNotice(null), 5000);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (actionNoticeTimerRef.current) clearTimeout(actionNoticeTimerRef.current);
+      if (snapshotRetryTimerRef.current) clearTimeout(snapshotRetryTimerRef.current);
+    };
+  }, []);
 
   const [counterfactualData, setCounterfactualData] = useState(null);
   const [evidenceData, setEvidenceData] = useState(null);
@@ -122,7 +139,8 @@ export default function TrafficNetwork() {
         const isColdStart = err?.isTimeout || err?.name === 'TimeoutError' || err?.message?.includes('timed out');
         if (isColdStart && attempt < 2) {
           console.warn(`Snapshot cold-start timeout (attempt ${attempt + 1}). Retrying in 3s...`);
-          setTimeout(() => {
+          if (snapshotRetryTimerRef.current) clearTimeout(snapshotRetryTimerRef.current);
+          snapshotRetryTimerRef.current = setTimeout(() => {
             loadRealSnapshot(tIndex, rId, attempt + 1);
           }, 3000);
           setFetchError(`Backend warming up from cold-start (${err.message}). Connecting automatically in 3s...`);
@@ -226,7 +244,7 @@ export default function TrafficNetwork() {
       setCounterfactualData(data);
       setActiveModal('counterfactual');
     } catch (e) {
-      alert(`Could not evaluate query for ${sid}: ${e.message}`);
+      showNotice(`Could not evaluate query for ${sid}: ${e.message}`, 'error');
     }
   };
 
@@ -237,15 +255,19 @@ export default function TrafficNetwork() {
       setEvidenceData(data);
       setActiveModal('evidence');
     } catch (e) {
-      alert(`Could not fetch evidence for ${sid}: ${e.message}`);
+      showNotice(`Could not fetch evidence for ${sid}: ${e.message}`, 'error');
     }
   };
 
   const handleQuerySensor = async (sensor) => {
     const sid = sensor.sensorId || sensor.id;
-    const res = await executeQuery(sid);
-    alert(`Evidence Query executed for ${sensor.displayAlias || sid}!\nMeasured Transferred: ${res.bytesTransferred || '4.2 KB'}\nEstimated Accuracy Benefit: ${res.expectedBenefit || '18%'}`);
-    loadRealSnapshot(timeIndex, activeRegion);
+    try {
+      const res = await executeQuery(sid);
+      showNotice(`Evidence query executed for ${sensor.displayAlias || sid} • Transferred: ${res.bytesTransferred || '4.2 KB'} • Benefit: ${res.expectedBenefit || '+18.2%'}`, 'success');
+      loadRealSnapshot(timeIndex, activeRegion);
+    } catch (e) {
+      showNotice(`Could not execute query for ${sensor.displayAlias || sid}: ${e.message}`, 'error');
+    }
   };
 
   // Compute graph edges
@@ -449,6 +471,32 @@ export default function TrafficNetwork() {
         </div>
       )}
 
+      {actionNotice && (
+        <div className={`p-3 rounded-xl border flex items-center justify-between gap-3 shadow-sm transition-all duration-200 ${
+          actionNotice.type === 'error'
+            ? 'bg-rose-500/10 border-rose-500/30 text-rose-700 dark:text-rose-300'
+            : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-700 dark:text-emerald-300'
+        }`}>
+          <div className="flex items-center gap-2.5 text-xs font-medium">
+            {actionNotice.type === 'error' ? (
+              <AlertTriangle className="w-4 h-4 shrink-0 text-rose-500" />
+            ) : (
+              <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-500" />
+            )}
+            <span>{actionNotice.message}</span>
+          </div>
+          <button
+            onClick={() => setActionNotice(null)}
+            className="p-1 rounded-md hover:bg-slate-200/50 dark:hover:bg-slate-700/50 transition-colors"
+            type="button"
+            aria-label="Dismiss"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
+
+
       {/* ==================================================================== */}
       {/* 3. MAIN OPERATIONS CONSOLE (75% Large Map + 25% Side Sensor Panel)  */}
       {/* ==================================================================== */}
@@ -546,8 +594,12 @@ export default function TrafficNetwork() {
               data={counterfactualData}
               onClose={() => setActiveModal(null)}
               onExecuteQuery={async (id) => {
-                await executeQuery(id);
-                alert(`Counterfactual query executed for ${id}`);
+                try {
+                  await executeQuery(id);
+                  showNotice(`Counterfactual query executed for Sensor ${id}`, 'success');
+                } catch (e) {
+                  showNotice(`Query execution failed for Sensor ${id}: ${e.message}`, 'error');
+                }
                 setActiveModal(null);
               }}
             />

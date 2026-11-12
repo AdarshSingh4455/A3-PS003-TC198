@@ -35,8 +35,12 @@ const INITIAL_PREDICTIONS = [
 ];
 
 export default function Overview() {
-  const { timeIndex: globalTimeIndex, timestampStr } = useReplay();
+  const { timeIndex: globalTimeIndex } = useReplay();
   const effectiveTimeIndex = Math.max(12, globalTimeIndex);
+  const timestampStr = useMemo(() => {
+    const ms = new Date('2012-03-01T00:00:00Z').getTime() + effectiveTimeIndex * 5 * 60 * 1000;
+    return new Date(ms).toISOString().replace('T', ' ').substring(0, 19);
+  }, [effectiveTimeIndex]);
 
   const [selectedSensor, setSelectedSensor] = useState('773869');
   const [selectedRegion, setSelectedRegion] = useState('REGION_C');
@@ -125,15 +129,18 @@ export default function Overview() {
         const count = nbrs.length > 0 ? nbrs.length : 6;
         setNeighborCount(count);
 
-        // Compute simulated or recorded neighbor mean speed with minor natural delta
-        const measuredSpeed = s.measurements?.speed || currentSpeed;
+        // Compute neighbor mean speed using live forecast/sensor speed without causing extra effect re-runs
+        const liveSpeed = forecastRes.status === 'fulfilled' && typeof forecastRes.value?.sensor?.currentSpeedMph === 'number'
+          ? forecastRes.value.sensor.currentSpeedMph
+          : 62.0;
+        const measuredSpeed = s.measurements?.speed ?? liveSpeed;
         const offset = (Number(selectedSensor) % 3 === 0 ? 1.4 : -1.2);
         setNeighborMeanSpeed(Number((measuredSpeed + offset).toFixed(1)));
       }
     } catch {
       // Graceful fallback to initial values
     }
-  }, [effectiveTimeIndex, selectedSensor, currentSpeed]);
+  }, [effectiveTimeIndex, selectedSensor]);
 
   useEffect(() => {
     loadSensorData();

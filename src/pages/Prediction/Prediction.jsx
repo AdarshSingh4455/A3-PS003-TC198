@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
   AlertTriangle,
@@ -80,14 +80,26 @@ export default function Prediction() {
   const { isDark } = useTheme();
   const {
     timeIndex: globalTimeIndex,
-    timestampStr,
-    stepForward,
-    stepBackward,
+    maxTimeSteps,
+    jumpToStep,
     selectedSensorId,
     setSelectedSensorId
   } = useReplay();
   const [searchParams] = useSearchParams();
   const effectiveTimeIndex = Math.max(12, globalTimeIndex);
+
+  const effectiveTimestampStr = useMemo(() => {
+    const ms = new Date('2012-03-01T00:00:00Z').getTime() + effectiveTimeIndex * 5 * 60 * 1000;
+    return new Date(ms).toISOString().replace('T', ' ').substring(0, 19);
+  }, [effectiveTimeIndex]);
+
+  const handleStepForward = useCallback(() => {
+    jumpToStep(Math.min((maxTimeSteps || 34272) - 1, effectiveTimeIndex + 1));
+  }, [jumpToStep, maxTimeSteps, effectiveTimeIndex]);
+
+  const handleStepBackward = useCallback(() => {
+    jumpToStep(Math.max(12, effectiveTimeIndex - 1));
+  }, [jumpToStep, effectiveTimeIndex]);
 
   const [selectedDataset, setSelectedDataset] = useState('METR_LA');
   const [selectedRegion, setSelectedRegion] = useState('ALL');
@@ -103,6 +115,14 @@ export default function Prediction() {
   const setSensorId = (id) => setSelectedSensorId?.(id);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const retryTimerRef = useRef(null);
+  const loadDataRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (retryTimerRef.current) clearTimeout(retryTimerRef.current);
+    };
+  }, []);
 
   // Sync dataset and sensor from query parameter if provided
   useEffect(() => {
@@ -188,8 +208,9 @@ export default function Prediction() {
       if (isColdStart && attempt < 2) {
         console.warn(`Prediction fetch cold-start timeout (attempt ${attempt + 1}). Retrying in 3s...`);
         setError(`Backend is waking up (${err.message}). Connecting automatically in 3s...`);
-        setTimeout(() => {
-          loadData(attempt + 1);
+        if (retryTimerRef.current) clearTimeout(retryTimerRef.current);
+        retryTimerRef.current = setTimeout(() => {
+          loadDataRef.current?.(attempt + 1);
         }, 3000);
         return;
       }
@@ -198,6 +219,10 @@ export default function Prediction() {
       setLoading(false);
     }
   }, [selectedDataset, effectiveTimeIndex, sensorId, flowResults]);
+
+  useEffect(() => {
+    loadDataRef.current = loadData;
+  }, [loadData]);
 
   useEffect(() => {
     loadData();
@@ -382,9 +407,9 @@ export default function Prediction() {
         selectedMetric={selectedMetric}
         onMetricChange={setSelectedMetric}
         effectiveTimeIndex={effectiveTimeIndex}
-        timestampStr={timestampStr}
-        onStepForward={stepForward}
-        onStepBackward={stepBackward}
+        timestampStr={effectiveTimestampStr}
+        onStepForward={handleStepForward}
+        onStepBackward={handleStepBackward}
         onReevaluate={loadData}
         loading={loading}
       />
