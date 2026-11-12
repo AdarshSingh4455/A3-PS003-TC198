@@ -19,9 +19,9 @@ const REPRESENTATIVE_SENSORS = [
   { id: '767541', name: 'Sensor 767541 (Region B)', region: 'REGION_B' },
   { id: '717458', name: 'Sensor 717458 (Region B)', region: 'REGION_B' },
   { id: '718045', name: 'Sensor 718045 (Region B)', region: 'REGION_B' },
-  { id: '717447', name: 'Sensor 717447 (Region C)', region: 'REGION_C' },
-  { id: '717816', name: 'Sensor 717816 (Region C)', region: 'REGION_C' },
+  { id: '717447', name: 'Sensor 717447 (Region B)', region: 'REGION_B' },
   { id: '717468', name: 'Sensor 717468 (Region C)', region: 'REGION_C' },
+  { id: '717816', name: 'Sensor 717816 (Region D)', region: 'REGION_D' },
   { id: '765171', name: 'Sensor 765171 (Region D)', region: 'REGION_D' },
   { id: '769431', name: 'Sensor 769431 (Region D)', region: 'REGION_D' },
   { id: '767350', name: 'Sensor 767350 (Region D)', region: 'REGION_D' }

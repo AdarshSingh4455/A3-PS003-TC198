@@ -74,7 +74,7 @@ export default function NextBestQueryTable({ onQuery, onSelectSensor, data }) {
         {
           rank: 5,
           sensorId: "717447",
-          regionId: "REGION_C",
+          regionId: "REGION_B",
           needScore: 0.69,
           queryUtility: 0.82,
           expectedBenefit: "+29.0%",

@@ -50,10 +50,12 @@ const SENSOR_REGION_MAP = {
   '717458': 'Region B',
   '717447': 'Region B',
   '718045': 'Region B',
+  '771667': 'Region B',
   '773869': 'Region C',
-  '717816': 'Region C',
   '717468': 'Region C',
   '717489': 'Region C',
+  '761003': 'Region C',
+  '717816': 'Region D',
   '765171': 'Region D',
   '769431': 'Region D',
   '767350': 'Region D',
@@ -364,6 +366,7 @@ export default function DecisionIntelligence() {
         <div className="lg:col-span-6">
           <CounterfactualQueryCard
             data={counterfactualData}
+            sensorId={selectedSensorId}
             onExecuteQuery={handleQuery}
           />
         </div>

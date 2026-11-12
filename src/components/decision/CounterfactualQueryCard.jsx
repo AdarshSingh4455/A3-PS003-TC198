@@ -24,10 +24,10 @@ const DEFAULT_COUNTERFACTUAL = {
   }
 };
 
-export default function CounterfactualQueryCard({ data, _onClose, onExecuteQuery }) {
+export default function CounterfactualQueryCard({ data, sensorId: propSensorId, _onClose, onExecuteQuery }) {
   const activeData = data || DEFAULT_COUNTERFACTUAL;
   const {
-    sensorId = "767620",
+    sensorId: dataSensorId = "773869",
     withoutQuery = {},
     withQuery = {},
     expectedBenefit = "45%",
@@ -36,6 +36,7 @@ export default function CounterfactualQueryCard({ data, _onClose, onExecuteQuery
     reason
   } = activeData;
 
+  const sensorId = propSensorId || activeData.sensorId || dataSensorId || "773869";
   const isQuery = decision === "QUERY";
 
   return (
