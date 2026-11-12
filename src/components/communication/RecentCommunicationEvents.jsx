@@ -4,10 +4,18 @@ import { useReplay } from '../../context/ReplayContext';
 
 export default function RecentCommunicationEvents() {
   const { timeIndex } = useReplay();
+
+  const formatOffsetTime = (offsetMins) => {
+    const totalMinutes = Math.max(0, (timeIndex || 0) * 5 - offsetMins);
+    const h = String(Math.floor((totalMinutes / 60) % 24)).padStart(2, '0');
+    const m = String(totalMinutes % 60).padStart(2, '0');
+    return `${h}:${m}`;
+  };
+
   const events = [
     {
       id: 'e1',
-      time: '00:45',
+      time: formatOffsetTime(0),
       type: 'EVIDENCE',
       title: 'Detailed Evidence Batch',
       target: 'Sensor 773869 (Region C)',
@@ -18,7 +26,7 @@ export default function RecentCommunicationEvents() {
     },
     {
       id: 'e2',
-      time: '00:40',
+      time: formatOffsetTime(5),
       type: 'UPLOAD',
       title: 'Regional Model Upload',
       target: 'Region B (South-East)',
@@ -29,7 +37,7 @@ export default function RecentCommunicationEvents() {
     },
     {
       id: 'e3',
-      time: '00:40',
+      time: formatOffsetTime(5),
       type: 'UPLOAD',
       title: 'Regional Model Upload',
       target: 'Region C (Central-West)',
@@ -40,7 +48,7 @@ export default function RecentCommunicationEvents() {
     },
     {
       id: 'e4',
-      time: '00:40',
+      time: formatOffsetTime(5),
       type: 'DEFERRED',
       title: 'Regional Client Deferred',
       target: 'Region A & Region D',
@@ -51,7 +59,7 @@ export default function RecentCommunicationEvents() {
     },
     {
       id: 'e5',
-      time: '00:35',
+      time: formatOffsetTime(10),
       type: 'DOWNLOAD',
       title: 'Global Model Download',
       target: 'All 4 Regional Clients',
@@ -62,10 +70,10 @@ export default function RecentCommunicationEvents() {
     },
     {
       id: 'e6',
-      time: '00:25',
+      time: formatOffsetTime(20),
       type: 'HEARTBEAT',
       title: 'Compact Telemetry Polled',
-      target: 'Sensor 767541 (Region C)',
+      target: 'Sensor 767541 (Region B)',
       payload: '187 B',
       reason: 'Spatial speed consistency verification with neighbor node',
       dotColor: 'bg-cyan-500',

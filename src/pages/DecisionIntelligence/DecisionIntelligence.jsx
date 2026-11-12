@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import MetricCard from '../../components/common/MetricCard';
 import NeedScoreBreakdown from '../../components/decision/NeedScoreBreakdown';
@@ -33,12 +33,32 @@ import {
 } from 'lucide-react';
 
 const CANONICAL_REPRESENTATIVES = [
-  { id: "773869", label: "773869", sublabel: "North-East Arterial", isPrimary: true },
+  { id: "773869", label: "773869", sublabel: "Central-West Arterial", isPrimary: true },
   { id: "767541", label: "767541", sublabel: "South-East Corridor", isPrimary: false },
   { id: "717458", label: "717458", sublabel: "South-East Urban", isPrimary: false },
-  { id: "717447", label: "717447", sublabel: "Central-West Arterial", isPrimary: false },
+  { id: "717447", label: "717447", sublabel: "South-East Arterial", isPrimary: false },
   { id: "765171", label: "765171", sublabel: "North-West Chokepoint", isPrimary: false }
 ];
+
+const SENSOR_REGION_MAP = {
+  '767620': 'Region A',
+  '773975': 'Region A',
+  '773927': 'Region A',
+  '767573': 'Region A',
+  '773916': 'Region A',
+  '767541': 'Region B',
+  '717458': 'Region B',
+  '717447': 'Region B',
+  '718045': 'Region B',
+  '773869': 'Region C',
+  '717816': 'Region C',
+  '717468': 'Region C',
+  '717489': 'Region C',
+  '765171': 'Region D',
+  '769431': 'Region D',
+  '767350': 'Region D',
+  '769430': 'Region D'
+};
 
 export default function DecisionIntelligence() {
   const { timeIndex, timestampStr, selectedSensorId, setSelectedSensorId } = useReplay();
@@ -61,6 +81,13 @@ export default function DecisionIntelligence() {
   const [juryData, setJuryData] = useState(null);
   const [physicsData, setPhysicsData] = useState(null);
   const [queryAlert, setQueryAlert] = useState(null);
+  const queryAlertTimerRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (queryAlertTimerRef.current) clearTimeout(queryAlertTimerRef.current);
+    };
+  }, []);
 
   // Load general candidates and coverage
   useEffect(() => {
@@ -94,7 +121,7 @@ export default function DecisionIntelligence() {
           fetchEvidenceChain(selectedSensorId).catch(() => null),
           fetchSensorJury(selectedSensorId, timeIndex).catch(() => null),
           fetchPhysicsGate(selectedSensorId, timeIndex).catch(() => null),
-          fetchSpatialSpeedConsistency(selectedSensorId, "767541").catch(() => null)
+          fetchSpatialSpeedConsistency(selectedSensorId, selectedSensorId === "767541" ? "773869" : "767541").catch(() => null)
         ]);
         if (isMounted) {
           if (score) setNeedScoreData(score);
@@ -121,7 +148,8 @@ export default function DecisionIntelligence() {
         bytes: res.bytesTransferred || '187 B (compact) / ~4.2 KB (proxy)',
         benefit: res.expectedBenefit || '+18.2%'
       });
-      setTimeout(() => setQueryAlert(null), 6000);
+      if (queryAlertTimerRef.current) clearTimeout(queryAlertTimerRef.current);
+      queryAlertTimerRef.current = setTimeout(() => setQueryAlert(null), 6000);
 
       // Refresh calculations synchronously
       const [score, cf, ev, cands] = await Promise.all([
@@ -150,13 +178,17 @@ export default function DecisionIntelligence() {
     ? authoritativeNeedScore.toFixed(2)
     : parseFloat(authoritativeNeedScore || 0.58).toFixed(2);
 
+  const activeRegionName = SENSOR_REGION_MAP[selectedSensorId]
+    || (needScoreData?.regionId ? needScoreData.regionId.replace('REGION_', 'Region ') : 'Region C');
+  const activeRegionCode = activeRegionName.toUpperCase().replace(' ', '_');
+
   // Exactly FOUR Main KPIs matching Prompt Section 6
   const decisionKPIs = [
     {
       id: "selected-sensor",
       label: "Selected Sensor",
       value: selectedSensorId,
-      subtext: "REGION_C • Primary Target",
+      subtext: `${activeRegionCode} • Target Sensor`,
       iconType: "sensor",
       variant: "blue"
     },
@@ -210,7 +242,7 @@ export default function DecisionIntelligence() {
               <span>&bull;</span>
               <span className="font-semibold text-slate-800 dark:text-white">Sensor {selectedSensorId}</span>
               <span>&bull;</span>
-              <span>Region C</span>
+              <span>{activeRegionName}</span>
               <span>&bull;</span>
               <span>Window: {timestampStr ? timestampStr.substring(11, 16) : '00:00'}</span>
             </div>

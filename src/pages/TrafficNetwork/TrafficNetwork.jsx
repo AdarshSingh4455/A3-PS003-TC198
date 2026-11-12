@@ -45,6 +45,7 @@ export default function TrafficNetwork() {
   const [actionNotice, setActionNotice] = useState(null);
   const actionNoticeTimerRef = useRef(null);
   const snapshotRetryTimerRef = useRef(null);
+  const loadRealSnapshotRef = useRef(null);
 
   const showNotice = useCallback((msg, type = 'success') => {
     if (actionNoticeTimerRef.current) clearTimeout(actionNoticeTimerRef.current);
@@ -141,7 +142,7 @@ export default function TrafficNetwork() {
           console.warn(`Snapshot cold-start timeout (attempt ${attempt + 1}). Retrying in 3s...`);
           if (snapshotRetryTimerRef.current) clearTimeout(snapshotRetryTimerRef.current);
           snapshotRetryTimerRef.current = setTimeout(() => {
-            loadRealSnapshot(tIndex, rId, attempt + 1);
+            loadRealSnapshotRef.current?.(tIndex, rId, attempt + 1);
           }, 3000);
           setFetchError(`Backend warming up from cold-start (${err.message}). Connecting automatically in 3s...`);
           return;
@@ -155,6 +156,10 @@ export default function TrafficNetwork() {
       }
     }
   }, [searchParams, selectedSensorId, dataSourceMode]);
+
+  useEffect(() => {
+    loadRealSnapshotRef.current = loadRealSnapshot;
+  }, [loadRealSnapshot]);
 
   useEffect(() => {
     loadRealSnapshot(timeIndex, activeRegion);
