@@ -1,3 +1,4 @@
+import sensorLocationNames from '../../data/sensor_location_names.json';
 import React, { useState } from 'react';
 import { Search, ListFilter } from 'lucide-react';
 import SectionCard from '../common/SectionCard';
@@ -14,7 +15,8 @@ export default function SensorTable({ sensors, selectedSensorId, onSelectSensor 
     const alias = String(sensor.displayAlias || '').toLowerCase();
     const region = String(sensor.regionId || '').toUpperCase();
 
-    const matchesSearch = sid.includes(term) || alias.includes(term);
+    const locName = String(sensorLocationNames[sid]?.locationName || sensor.locationName || '').toLowerCase();
+    const matchesSearch = sid.includes(term) || alias.includes(term) || locName.includes(term);
     const matchesRegion = regionFilter === 'ALL' || region === regionFilter;
 
     return matchesSearch && matchesRegion;
@@ -22,20 +24,25 @@ export default function SensorTable({ sensors, selectedSensorId, onSelectSensor 
 
   const columns = [
     {
-      header: "Sensor ID",
+      header: "Sensor ID & Location",
       key: "sensorId",
       className: "whitespace-nowrap",
       render: (row) => {
-        const id = row.sensorId || row.id;
-        const alias = row.displayAlias;
+        const id = String(row.sensorId || row.id);
+        const loc = sensorLocationNames[id]?.locationName || row.locationName || row.displayAlias;
         const isSelected = selectedSensorId === id;
         return (
-          <div className="flex items-center gap-1.5 whitespace-nowrap">
-            <span className={`font-mono font-semibold text-[13px] ${
+          <div className="flex flex-col whitespace-nowrap">
+            <span className={`font-mono font-bold text-[13px] ${
               isSelected ? "text-cyan-600 dark:text-cyan-400" : "text-slate-900 dark:text-white"
             }`}>
-              {alias ? `${alias} (${id})` : id}
+              {id}
             </span>
+            {loc && (
+              <span className="text-[11px] text-slate-500 dark:text-[#8295A8] font-medium truncate max-w-[260px]">
+                {loc}
+              </span>
+            )}
           </div>
         );
       }

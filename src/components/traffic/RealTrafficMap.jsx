@@ -1,3 +1,4 @@
+import sensorLocationNames from '../../data/sensor_location_names.json';
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Tooltip, Polyline, Polygon, useMap } from 'react-leaflet';
 import L from 'leaflet';
@@ -212,11 +213,12 @@ const sensorIconCache = new Map();
 
 function createRealSensorIcon({
   sensorId,
+  locationName = '',
   color,
   isSelected,
   isNeighbor
 }) {
-  const cacheKey = `${sensorId}_${color}_${isSelected ? 1 : 0}_${isNeighbor ? 1 : 0}`;
+  const cacheKey = `${sensorId}_${locationName}_${color}_${isSelected ? 1 : 0}_${isNeighbor ? 1 : 0}`;
   const cached = sensorIconCache.get(cacheKey);
   if (cached) return cached;
 
@@ -239,17 +241,18 @@ function createRealSensorIcon({
           <span style="width: 6px; height: 6px; border-radius: 9999px; background-color: #ffffff;"></span>
         </div>
 
-        <!-- High-Contrast Attached Sensor Label Pill with Red Border -->
-        <div style="margin-left: 7px; padding: 2.5px 8.5px; border-radius: 6px; background-color: #071727; color: #ffffff; border: 2px solid #ef4444; font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; font-weight: 800; font-size: 11px; box-shadow: 0 4px 14px rgba(0,0,0,0.65); white-space: nowrap; pointer-events: none; line-height: 1.2; display: flex; align-items: center; gap: 4px; z-index: 10;">
-          <span style="width: 5px; height: 5px; border-radius: 9999px; background-color: #ef4444;"></span>
-          <span>${sensorId}</span>
+        <!-- High-Contrast Attached Sensor Label Pill with Red Border & Real Location Name -->
+        <div style="margin-left: 7px; padding: 3px 9px; border-radius: 6px; background-color: #071727; color: #ffffff; border: 2px solid #ef4444; font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; font-weight: 800; font-size: 11px; box-shadow: 0 4px 14px rgba(0,0,0,0.65); white-space: nowrap; pointer-events: none; line-height: 1.2; display: flex; align-items: center; gap: 5px; z-index: 10;">
+          <span style="width: 5px; height: 5px; border-radius: 9999px; background-color: #ef4444; flex-shrink: 0;"></span>
+          <span style="letter-spacing: 0.02em;">${sensorId}</span>
+          ${locationName ? `<span style="color: #cbd5e1; font-weight: 600; font-size: 10px; border-left: 1px solid #334155; padding-left: 6px; margin-left: 2px;">${locationName}</span>` : ''}
         </div>
       </div>
     `;
     icon = L.divIcon({
       html,
       className: 'custom-leaflet-marker',
-      iconSize: [115, 36],
+      iconSize: [locationName ? 340 : 120, 36],
       iconAnchor: [11, 18]
     });
   } else if (isNeighbor) {
@@ -1246,12 +1249,15 @@ export default function RealTrafficMap({
             const isSelected = activeSelectedId === sid;
             const isNeighbor = neighborIdSet.has(sid);
             const color = getSensorColorByMode(sensor, overlayMode);
+            const locMeta = sensorLocationNames[sid] || {};
+            const locationName = locMeta.locationName || sensor.locationName || '';
             const speedDisplay = sensor.speed !== null && sensor.speed !== undefined && !sensor.maskedNull
               ? `${Number(sensor.speed).toFixed(1)} mph`
               : 'Masked Null';
 
             const icon = createRealSensorIcon({
               sensorId: sid,
+              locationName,
               color,
               isSelected,
               isNeighbor
@@ -1263,13 +1269,16 @@ export default function RealTrafficMap({
                 position={[sensor.latitude, sensor.longitude]}
                 icon={icon}
                 eventHandlers={{
-                  click: () => onSelectSensor && onSelectSensor(sensor)
+                  click: () => onSelectSensor && onSelectSensor({ ...sensor, locationName })
                 }}
               >
-                {/* Instant Hover Tooltip for Zero-Clutter Readability */}
+                {/* Instant Hover Tooltip for Zero-Clutter Readability with Real Location Name */}
                 <Tooltip direction="top" offset={[0, -8]} opacity={0.96}>
                   <div className="font-sans text-xs font-semibold py-0.5">
                     <span className="text-red-600 dark:text-red-400 font-bold">{sid}</span>
+                    {locationName && (
+                      <span className="text-slate-800 dark:text-slate-100 font-bold ml-1.5">• {locationName}</span>
+                    )}
                     {isNeighbor && (
                       <span className="text-cyan-600 dark:text-cyan-400 font-bold ml-1">• Neighbor</span>
                     )}
