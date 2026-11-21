@@ -58,7 +58,7 @@ export default function SelectedAlertInspector({ alert }) {
   return (
     <SectionCard
       title={`Alert Context — Sensor ${alert.sensorId}`}
-      subtitle={`${alert.condition} • ${alert.regionId}`}
+      subtitle={`${alert.locationName ? `${alert.locationName} • ` : ''}${alert.condition} • ${alert.regionId}`}
       icon={FileText}
       action={
         <div className="flex items-center gap-2">

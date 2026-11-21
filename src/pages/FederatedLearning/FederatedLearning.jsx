@@ -42,6 +42,8 @@ const FROZEN_CLIENT_PARTITIONS = [
     fedAvgWeight: '0.229069',
     targets: '4,221,681',
     testMae: '2.4446 mph',
+    edgeLatency: '14 ms RTT',
+    hardware: 'Jetson Orin Nano Edge Gateway',
     colorBorder: 'border-l-blue-500',
     badgeColor: 'text-blue-400 bg-blue-500/10 border-blue-500/20',
     description: 'Lowest prediction error across network'
@@ -55,6 +57,8 @@ const FROZEN_CLIENT_PARTITIONS = [
     fedAvgWeight: '0.277117',
     targets: '5,107,314',
     testMae: '4.0770 mph',
+    edgeLatency: '21 ms RTT',
+    hardware: 'Edge TPU Compute Unit',
     colorBorder: 'border-l-emerald-500',
     badgeColor: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
     description: 'High-density urban commuter arteries'
@@ -68,6 +72,8 @@ const FROZEN_CLIENT_PARTITIONS = [
     fedAvgWeight: '0.279458',
     targets: '5,150,446',
     testMae: '3.4840 mph',
+    edgeLatency: '16 ms RTT',
+    hardware: 'Industrial IPC Micro-Server',
     colorBorder: 'border-l-purple-500',
     badgeColor: 'text-purple-400 bg-purple-500/10 border-purple-500/20',
     description: 'High graph degree arterial interchange'
@@ -81,6 +87,8 @@ const FROZEN_CLIENT_PARTITIONS = [
     fedAvgWeight: '0.214357',
     targets: '3,950,559',
     testMae: '4.0979 mph',
+    edgeLatency: '25 ms RTT',
+    hardware: 'ARM Embedded Telemetry Unit',
     colorBorder: 'border-l-amber-500',
     badgeColor: 'text-amber-400 bg-amber-500/10 border-amber-500/20',
     description: 'Valley transition chokepoint highway'
@@ -272,11 +280,19 @@ export default function FederatedLearning() {
                     <span className="text-slate-500">Speed Test MAE:</span>
                     <strong className="text-emerald-400">{c.testMae}</strong>
                   </div>
+                  <div className="flex items-center justify-between pt-1 border-t border-slate-100 dark:border-[#17364E] text-[11px]">
+                    <span className="text-slate-500 flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      <span>Edge RTT:</span>
+                    </span>
+                    <strong className="text-cyan-500 dark:text-cyan-400">{c.edgeLatency}</strong>
+                  </div>
                 </div>
               </div>
 
-              <div className="mt-3 text-[10px] text-slate-400 dark:text-[#7F96AA] italic">
-                {c.description}
+              <div className="mt-3 pt-2 border-t border-slate-100 dark:border-[#17364E]/60 text-[10px] text-slate-500 dark:text-[#7F96AA]">
+                <span className="font-semibold text-slate-700 dark:text-slate-300 block">{c.hardware}</span>
+                <span className="italic">{c.description}</span>
               </div>
             </div>
           ))}

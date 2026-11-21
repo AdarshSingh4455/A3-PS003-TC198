@@ -1,5 +1,6 @@
 import React from 'react';
 import { Radio, Clock, Filter, Eye } from 'lucide-react';
+import sensorLocationNames from '../../data/sensor_location_names.json';
 
 export default function OverviewHeroConsole({
   selectedSensor = '773869',
@@ -71,11 +72,13 @@ export default function OverviewHeroConsole({
             </span>
             {quickReps.map((rep) => {
               const isSelected = selectedSensor === rep.id;
+              const loc = sensorLocationNames[rep.id]?.locationName || rep.label;
               return (
                 <button
                   key={rep.id}
                   onClick={() => onSelectSensor(rep.id)}
                   type="button"
+                  title={`${rep.name} • ${loc}`}
                   className={`px-2.5 py-1 text-xs font-mono font-bold rounded-lg transition-all cursor-pointer ${
                     isSelected
                       ? 'bg-cyan-500 text-slate-950 shadow-sm font-extrabold'

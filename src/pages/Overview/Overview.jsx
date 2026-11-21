@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useReplay } from '../../context/ReplayContext';
 import { fetchForecast, fetchNeedScore, fetchSensorById } from '../../services/api';
+import sensorLocationNames from '../../data/sensor_location_names.json';
 
 import OverviewHeroConsole from '../../components/overview/OverviewHeroConsole';
 import CurrentSensorStateCard from '../../components/overview/CurrentSensorStateCard';
@@ -11,21 +12,30 @@ import NeighborConsensusCard from '../../components/overview/NeighborConsensusCa
 import TrafficOutlookTimelineCard from '../../components/overview/TrafficOutlookTimelineCard';
 import WhatToWatchCard from '../../components/overview/WhatToWatchCard';
 
-const REPRESENTATIVE_SENSORS = [
-  { id: '773869', name: 'Sensor 773869 (Region C)', region: 'REGION_C' },
-  { id: '773975', name: 'Sensor 773975 (Region A)', region: 'REGION_A' },
-  { id: '773927', name: 'Sensor 773927 (Region A)', region: 'REGION_A' },
-  { id: '767573', name: 'Sensor 767573 (Region A)', region: 'REGION_A' },
-  { id: '767541', name: 'Sensor 767541 (Region B)', region: 'REGION_B' },
-  { id: '717458', name: 'Sensor 717458 (Region B)', region: 'REGION_B' },
-  { id: '718045', name: 'Sensor 718045 (Region B)', region: 'REGION_B' },
-  { id: '717447', name: 'Sensor 717447 (Region B)', region: 'REGION_B' },
-  { id: '717468', name: 'Sensor 717468 (Region C)', region: 'REGION_C' },
-  { id: '717816', name: 'Sensor 717816 (Region D)', region: 'REGION_D' },
-  { id: '765171', name: 'Sensor 765171 (Region D)', region: 'REGION_D' },
-  { id: '769431', name: 'Sensor 769431 (Region D)', region: 'REGION_D' },
-  { id: '767350', name: 'Sensor 767350 (Region D)', region: 'REGION_D' }
+const RAW_REPRESENTATIVE_SENSORS = [
+  { id: '773869', region: 'REGION_C' },
+  { id: '773975', region: 'REGION_A' },
+  { id: '773927', region: 'REGION_A' },
+  { id: '767573', region: 'REGION_A' },
+  { id: '767541', region: 'REGION_B' },
+  { id: '717458', region: 'REGION_B' },
+  { id: '718045', region: 'REGION_B' },
+  { id: '717447', region: 'REGION_B' },
+  { id: '717468', region: 'REGION_C' },
+  { id: '717816', region: 'REGION_D' },
+  { id: '765171', region: 'REGION_D' },
+  { id: '769431', region: 'REGION_D' },
+  { id: '767350', region: 'REGION_D' }
 ];
+
+const REPRESENTATIVE_SENSORS = RAW_REPRESENTATIVE_SENSORS.map((s) => {
+  const loc = sensorLocationNames[s.id]?.locationName || '';
+  return {
+    ...s,
+    name: loc ? `${s.id} • ${loc}` : `Sensor ${s.id}`,
+    locationName: loc
+  };
+});
 
 const INITIAL_PREDICTIONS = [
   { horizonMinutes: 5, horizonLabel: '+5 min', predictedSpeedMph: 62.4, actualSpeedMph: 62.8 },
@@ -167,6 +177,7 @@ export default function Overview() {
         <div className="lg:col-span-4 flex flex-col">
           <CurrentSensorStateCard
             sensorId={selectedSensor}
+            locationName={sensorLocationNames[selectedSensor]?.locationName || ''}
             regionId={sensorRegion}
             currentSpeed={currentSpeed}
             recentMean={recentMean}

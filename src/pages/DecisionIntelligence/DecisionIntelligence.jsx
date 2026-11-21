@@ -29,15 +29,17 @@ import {
   Send,
   ShieldCheck,
   RefreshCw,
-  ArrowRight
+  ArrowRight,
+  CheckCircle2
 } from 'lucide-react';
+import sensorLocationNames from '../../data/sensor_location_names.json';
 
 const CANONICAL_REPRESENTATIVES = [
-  { id: "773869", label: "773869", sublabel: "Central-West Arterial", isPrimary: true },
-  { id: "767541", label: "767541", sublabel: "South-East Corridor", isPrimary: false },
-  { id: "717458", label: "717458", sublabel: "South-East Urban", isPrimary: false },
-  { id: "717447", label: "717447", sublabel: "South-East Arterial", isPrimary: false },
-  { id: "765171", label: "765171", sublabel: "North-West Chokepoint", isPrimary: false }
+  { id: "773869", label: "773869", sublabel: "SR-134 (Ventura Fwy)", isPrimary: true },
+  { id: "767541", label: "767541", sublabel: "SR-2 (Glendale Fwy)", isPrimary: false },
+  { id: "717458", label: "717458", sublabel: "I-110 (Harbor Fwy)", isPrimary: false },
+  { id: "717447", label: "717447", sublabel: "US-101 (Hollywood Fwy)", isPrimary: false },
+  { id: "765171", label: "765171", sublabel: "I-405 (San Diego Fwy)", isPrimary: false }
 ];
 
 const SENSOR_REGION_MAP = {
@@ -243,6 +245,12 @@ export default function DecisionIntelligence() {
               </span>
               <span>&bull;</span>
               <span className="font-semibold text-slate-800 dark:text-white">Sensor {selectedSensorId}</span>
+              {sensorLocationNames[selectedSensorId]?.locationName && (
+                <>
+                  <span>&bull;</span>
+                  <span className="text-cyan-600 dark:text-cyan-400 font-semibold">{sensorLocationNames[selectedSensorId]?.locationName}</span>
+                </>
+              )}
               <span>&bull;</span>
               <span>{activeRegionName}</span>
               <span>&bull;</span>
@@ -308,18 +316,40 @@ export default function DecisionIntelligence() {
         </div>
       </div>
 
-      {/* Query Notification Alert */}
+      {/* Query Notification Alert & Floating Toast */}
       {queryAlert && (
-        <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-600 text-emerald-800 dark:text-emerald-300 flex items-center justify-between text-xs shadow-md animate-fade-in font-mono">
-          <div className="flex items-center gap-2">
-            <Zap className="w-4 h-4 text-emerald-500 fill-emerald-500" />
-            <span>Telemetry Evidence Query Dispatched for <strong>{queryAlert.sensorId}</strong></span>
+        <>
+          <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-600 text-emerald-800 dark:text-emerald-300 flex items-center justify-between text-xs shadow-md animate-fade-in font-mono">
+            <div className="flex items-center gap-2">
+              <Zap className="w-4 h-4 text-emerald-500 fill-emerald-500" />
+              <span>Telemetry Evidence Query Dispatched for <strong>{queryAlert.sensorId}</strong></span>
+            </div>
+            <div className="flex items-center gap-4">
+              <span>Payload: {queryAlert.bytes}</span>
+              <span>Forecast Error Reduction: <strong>{queryAlert.benefit}</strong></span>
+            </div>
           </div>
-          <div className="flex items-center gap-4">
-            <span>Payload: {queryAlert.bytes}</span>
-            <span>Forecast Error Reduction: <strong>{queryAlert.benefit}</strong></span>
+
+          <div className="fixed bottom-6 right-6 z-[9999] max-w-sm p-4 rounded-2xl bg-white dark:bg-[#071727] border-2 border-emerald-500 text-slate-900 dark:text-white shadow-2xl flex items-start gap-3 backdrop-blur-xl animate-fade-in">
+            <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shrink-0">
+              <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+            </div>
+            <div className="space-y-1 flex-1 font-mono text-xs">
+              <div className="font-bold text-sm text-emerald-700 dark:text-emerald-400 flex items-center justify-between">
+                <span>Query Dispatched</span>
+                <span className="text-[10px] font-normal px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-600 dark:text-emerald-300">ACTIVE</span>
+              </div>
+              <p className="text-slate-600 dark:text-slate-300 text-xs font-sans">
+                Sensor <strong>{queryAlert.sensorId}</strong> ({sensorLocationNames[queryAlert.sensorId]?.locationName || 'Caltrans PeMS'})
+              </p>
+              <div className="flex items-center gap-2 pt-0.5 text-[11px] text-slate-500 dark:text-slate-400">
+                <span>Bytes: <strong className="text-slate-800 dark:text-white">{queryAlert.bytes.split('/')[0]}</strong></span>
+                <span>&bull;</span>
+                <span>Gain: <strong className="text-emerald-600 dark:text-emerald-400">{queryAlert.benefit}</strong></span>
+              </div>
+            </div>
           </div>
-        </div>
+        </>
       )}
 
       {/* 2. Exactly FOUR KPI Cards (Section 6) */}

@@ -11,8 +11,9 @@ import SelectedAlertInspector from '../../components/alerts/SelectedAlertInspect
 import AlertSecondaryAnalytics from '../../components/alerts/AlertSecondaryAnalytics';
 import IndiaCaseStudiesCard from '../../components/federated/IndiaCaseStudiesCard';
 import { useReplay } from '../../context/ReplayContext';
+import sensorLocationNames from '../../data/sensor_location_names.json';
 
-const REPLAY_ALERTS_DATA = [
+const RAW_REPLAY_ALERTS_DATA = [
   {
     id: 'ALT-101',
     timestamp: '2012-03-01 01:00',
@@ -317,6 +318,11 @@ const REPLAY_ALERTS_DATA = [
     routeLabel: 'Open in Decision'
   }
 ];
+
+const REPLAY_ALERTS_DATA = RAW_REPLAY_ALERTS_DATA.map((alt) => ({
+  ...alt,
+  locationName: sensorLocationNames[alt.sensorId]?.locationName || ''
+}));
 
 export default function Alerts() {
   const { timestampStr } = useReplay();

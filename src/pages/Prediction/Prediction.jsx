@@ -30,22 +30,32 @@ import FlowModelBenchmarkCard from '../../components/prediction/FlowModelBenchma
 import CollapsibleRegionalAnalysis from '../../components/prediction/CollapsibleRegionalAnalysis';
 import CollapsibleAdditionalAnalysis from '../../components/prediction/CollapsibleAdditionalAnalysis';
 import CollapsibleTechnicalDetails from '../../components/prediction/CollapsibleTechnicalDetails';
+import sensorLocationNames from '../../data/sensor_location_names.json';
 
-const REPRESENTATIVE_SENSORS = [
-  { id: '773975', name: '773975 (Loop / North-East)', region: 'REGION_A' },
-  { id: '773927', name: '773927 (Arterial / North-East)', region: 'REGION_A' },
-  { id: '767573', name: '767573 (Freeway / North-East)', region: 'REGION_A' },
-  { id: '767541', name: '767541 (Corridor / South-East)', region: 'REGION_B' },
-  { id: '717458', name: '717458 (Freeway / South-East)', region: 'REGION_B' },
-  { id: '718045', name: '718045 (Interchange / South-East)', region: 'REGION_B' },
-  { id: '773869', name: '773869 (Primary / Central-West)', region: 'REGION_C' },
-  { id: '717447', name: '717447 (Arterial / South-East)', region: 'REGION_B' },
-  { id: '717816', name: '717816 (Highway / North-West)', region: 'REGION_D' },
-  { id: '717468', name: '717468 (Corridor / Central-West)', region: 'REGION_C' },
-  { id: '765171', name: '765171 (Junction / North-West)', region: 'REGION_D' },
-  { id: '769431', name: '769431 (Interchange / North-West)', region: 'REGION_D' },
-  { id: '767350', name: '767350 (Freeway / North-West)', region: 'REGION_D' }
+const RAW_METR_REPRESENTATIVE_SENSORS = [
+  { id: '773975', region: 'REGION_A' },
+  { id: '773927', region: 'REGION_A' },
+  { id: '767573', region: 'REGION_A' },
+  { id: '767541', region: 'REGION_B' },
+  { id: '717458', region: 'REGION_B' },
+  { id: '718045', region: 'REGION_B' },
+  { id: '773869', region: 'REGION_C' },
+  { id: '717447', region: 'REGION_B' },
+  { id: '717816', region: 'REGION_D' },
+  { id: '717468', region: 'REGION_C' },
+  { id: '765171', region: 'REGION_D' },
+  { id: '769431', region: 'REGION_D' },
+  { id: '767350', region: 'REGION_D' }
 ];
+
+const REPRESENTATIVE_SENSORS = RAW_METR_REPRESENTATIVE_SENSORS.map((s) => {
+  const loc = sensorLocationNames[s.id]?.locationName || '';
+  return {
+    ...s,
+    name: loc ? `${s.id} • ${loc}` : `${s.id} (${s.region})`,
+    locationName: loc
+  };
+});
 
 const PEMS08_REPRESENTATIVE_SENSORS = [
   { id: 'PEMS08_009', name: 'PEMS08_009 (I-10 Corridor)', region: 'I-10 Corridor' },
@@ -559,7 +569,7 @@ export default function Prediction() {
                 <LineChart data={chartData} margin={{ top: 15, right: 20, left: 5, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#17364E" : "#E2E8F0"} opacity={isDark ? 0.6 : 0.9} vertical={false} />
                   <XAxis dataKey="step" stroke={isDark ? "#8295A8" : "#60758A"} fontSize={11} fontFamily="Inter, sans-serif" fontWeight={500} tickLine={false} />
-                  <YAxis domain={[(dataMin) => Math.floor(dataMin - 4), (dataMax) => Math.ceil(dataMax + 4)]} width={54} stroke={isDark ? "#8295A8" : "#60758A"} fontSize={11} fontFamily="Inter, sans-serif" fontWeight={500} tickLine={false} tickFormatter={(v) => `${Math.round(v)} ${isPeMS ? 'veh' : 'mph'}`} />
+                  <YAxis domain={[(dataMin) => Math.max(0, Math.floor(dataMin - 6)), (dataMax) => Math.ceil(dataMax + 8)]} width={54} stroke={isDark ? "#8295A8" : "#60758A"} fontSize={11} fontFamily="Inter, sans-serif" fontWeight={500} tickLine={false} tickFormatter={(v) => `${Math.round(v)} ${isPeMS ? 'veh' : 'mph'}`} />
                   <Tooltip
                     content={({ active, payload, label }) => {
                       if (active && payload && payload.length) {
