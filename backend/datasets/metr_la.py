@@ -1123,6 +1123,16 @@ class METRLADatasetInspector:
             else:
                 target_sids = items
 
+        # Load location names map
+        loc_names_path = os.path.join(os.path.dirname(__file__), "..", "data_sources", "sensor_location_names.json")
+        loc_names_map = {}
+        if os.path.exists(loc_names_path):
+            try:
+                with open(loc_names_path, "r", encoding="utf-8") as f:
+                    loc_names_map = json.load(f)
+            except Exception:
+                pass
+
         # Load snapshot frame speed array in single fast access
         with h5py.File(self.h5_path, "r") as hf:
             step_values = hf["df"]["block0_values"][time_index, :]
@@ -1162,9 +1172,13 @@ class METRLADatasetInspector:
                 else:
                     speed_cond = "SLOW"
 
+            loc_info = loc_names_map.get(sid, {})
+            location_name = loc_info.get("locationName", "")
+
             snapshot_sensors.append({
                 "displayAlias": display_alias,
                 "sensorId": sid,
+                "locationName": location_name,
                 "regionId": r_assigned,
                 "latitude": lat,
                 "longitude": lon,
