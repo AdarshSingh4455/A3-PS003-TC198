@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import sensorLocationNames from '../../data/sensor_location_names.json';
 import RealTrafficMap from '../../components/traffic/RealTrafficMap';
 import GlobalActionModal from '../../components/common/GlobalActionModal';
 import SensorDetailPanel from '../../components/traffic/SensorDetailPanel';
@@ -257,25 +258,26 @@ export default function TrafficNetwork() {
   };
 
   const handleQuerySensor = async (sensor) => {
-    const sid = sensor.sensorId || sensor.id;
-    const alias = sensor.displayAlias || sid;
+    const sid = String(sensor.sensorId || sensor.id);
+    const locMeta = sensorLocationNames[sid]?.locationName || sensor.locationName || '';
+    const displayName = locMeta ? `Sensor ${sid} (${locMeta})` : `Sensor ${sid}`;
     try {
       const res = await executeQuery(sid);
       const transferred = res?.bytesTransferred || '4.2 KB';
       const benefit = res?.expectedBenefit || '+18.2%';
       setQueryModalData({
         isOpen: true,
-        message: `Evidence Query executed for ${alias}!\nMeasured Transferred: ${transferred}\nEstimated Accuracy Benefit: ${benefit}`
+        message: `Evidence Query executed for ${displayName}!\nMeasured Transferred: ${transferred}\nEstimated Accuracy Benefit: ${benefit}`
       });
-      showNotice(`Evidence query executed for ${alias} • Transferred: ${transferred} • Benefit: ${benefit}`, 'success');
+      showNotice(`Evidence query executed for ${displayName} • Transferred: ${transferred} • Benefit: ${benefit}`, 'success');
       loadRealSnapshot(timeIndex, activeRegion);
     } catch (e) {
       setQueryModalData({
         isOpen: true,
         type: 'error',
-        message: `Could not execute query for ${alias}: ${e.message}`
+        message: `Could not execute query for ${displayName}: ${e.message}`
       });
-      showNotice(`Could not execute query for ${alias}: ${e.message}`, 'error');
+      showNotice(`Could not execute query for ${displayName}: ${e.message}`, 'error');
     }
   };
 
@@ -310,7 +312,7 @@ export default function TrafficNetwork() {
     return lines;
   }, [showGraphEdges, realSensors, neighborsMap]);
 
-  // Search filter results
+  // Search filter results (matches Sensor ID, Region, and Corridor Name)
   const searchResults = useMemo(() => {
     if (!searchQuery.trim() || !realSensors) return [];
     const q = searchQuery.toLowerCase().trim();
@@ -318,7 +320,8 @@ export default function TrafficNetwork() {
       .filter(s => {
         const sid = String(s.sensorId || s.id || '').toLowerCase();
         const reg = String(s.regionId || '').toLowerCase();
-        return sid.includes(q) || reg.includes(q);
+        const loc = String(sensorLocationNames[sid]?.locationName || s.locationName || '').toLowerCase();
+        return sid.includes(q) || reg.includes(q) || loc.includes(q);
       })
       .slice(0, 8);
   }, [searchQuery, realSensors]);
@@ -518,22 +521,25 @@ export default function TrafficNetwork() {
               data={counterfactualData}
               onClose={() => setActiveModal(null)}
               onExecuteQuery={async (id) => {
+                const sid = String(id);
+                const locMeta = sensorLocationNames[sid]?.locationName || '';
+                const displayName = locMeta ? `Sensor ${sid} (${locMeta})` : `Sensor ${sid}`;
                 try {
-                  const res = await executeQuery(id);
+                  const res = await executeQuery(sid);
                   const transferred = res?.bytesTransferred || '4.2 KB';
                   const benefit = res?.expectedBenefit || '+18.2%';
                   setQueryModalData({
                     isOpen: true,
-                    message: `Counterfactual Query executed for Sensor ${id}!\nMeasured Transferred: ${transferred}\nEstimated Accuracy Benefit: ${benefit}`
+                    message: `Counterfactual Query executed for ${displayName}!\nMeasured Transferred: ${transferred}\nEstimated Accuracy Benefit: ${benefit}`
                   });
-                  showNotice(`Counterfactual query executed for Sensor ${id}`, 'success');
+                  showNotice(`Counterfactual query executed for ${displayName}`, 'success');
                 } catch (e) {
                   setQueryModalData({
                     isOpen: true,
                     type: 'error',
-                    message: `Query execution failed for Sensor ${id}: ${e.message}`
+                    message: `Query execution failed for ${displayName}: ${e.message}`
                   });
-                  showNotice(`Query execution failed for Sensor ${id}: ${e.message}`, 'error');
+                  showNotice(`Query execution failed for ${displayName}: ${e.message}`, 'error');
                 }
                 setActiveModal(null);
               }}
