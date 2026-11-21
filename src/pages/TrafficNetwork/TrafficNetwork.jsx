@@ -10,6 +10,7 @@ import EvidenceChain from '../../components/decision/EvidenceChain';
 import MetricCard from '../../components/common/MetricCard';
 import TrafficSpeedHeatmap from '../../components/traffic/TrafficSpeedHeatmap';
 import CoverageBlindSpotsPanel from '../../components/traffic/CoverageBlindSpotsPanel';
+import TrafficNetworkHeader from '../../components/traffic/TrafficNetworkHeader';
 import {
   fetchCounterfactual,
   fetchEvidenceChain,
@@ -20,7 +21,7 @@ import {
   fetchNetworkTopology
 } from '../../services/api';
 import { useReplay } from '../../context/ReplayContext';
-import { AlertTriangle, Map as MapIcon, Search, X, Check, CheckCircle2 } from 'lucide-react';
+import { AlertTriangle, X, CheckCircle2 } from 'lucide-react';
 
 const REGION_DEFAULT_SENSORS = {
   ALL: '767620',
@@ -30,6 +31,11 @@ const REGION_DEFAULT_SENSORS = {
   REGION_D: '769430'
 };
 
+/**
+ * TrafficNetwork Page Component
+ * Interactive geospatial dashboard rendering 207 real METR-LA loop detectors,
+ * real-time telemetry snapshots, topological graph connections, and counterfactual queries.
+ */
 export default function TrafficNetwork() {
   const { timeIndex, timestampStr, selectedSensorId, setSelectedSensorId, dataSourceMode } = useReplay();
   const [searchParams] = useSearchParams();
@@ -69,7 +75,6 @@ export default function TrafficNetwork() {
   // Search state
   const [searchQuery, setSearchQuery] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
-  const searchRef = useRef(null);
 
   // Fullscreen state
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -87,12 +92,9 @@ export default function TrafficNetwork() {
           setNeighborsMap(topo.neighborsMap);
         }
       } catch (e) {
-        // Do not retry permanent HTTP client errors (400, 401, 403, 404)
         const isPermanentError = e?.message && /\b(400|401|403|404)\b/.test(e.message);
-
-        // Maximum 2 retries (3 total attempts) with progressive delay for transient failures and cold-start timeouts
         if (mounted && !isPermanentError && attempt < 2) {
-          const delayMs = (attempt + 1) * 2000; // 2s, 4s
+          const delayMs = (attempt + 1) * 2000;
           console.warn(`Topology fetch attempt ${attempt + 1} failed (${e?.message || e}). Retrying in ${delayMs / 1000}s...`);
           retryTimer = setTimeout(() => {
             if (mounted) {
@@ -138,7 +140,6 @@ export default function TrafficNetwork() {
       if (dataSourceMode === 'external_live') {
         setFetchError(`Live source unavailable: ${err.message || 'External streaming experiment is not configured.'} Historical Replay remains the baseline.`);
       } else {
-        // Cold-start auto retry: if Render backend is spinning up, retry once after 3s
         const isColdStart = err?.isTimeout || err?.name === 'TimeoutError' || err?.message?.includes('timed out');
         if (isColdStart && attempt < 2) {
           console.warn(`Snapshot cold-start timeout (attempt ${attempt + 1}). Retrying in 3s...`);
@@ -207,17 +208,6 @@ export default function TrafficNetwork() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isFullscreen]);
-
-  // Close search popover on outside click
-  useEffect(() => {
-    function handleClickOutside(e) {
-      if (searchRef.current && !searchRef.current.contains(e.target)) {
-        setSearchOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   const handleSelectSensor = (sensor) => {
     setSelectedSensor(sensor);
@@ -382,92 +372,18 @@ export default function TrafficNetwork() {
 
   return (
     <div className="space-y-5 pb-10">
+      {/* 1. Header with Autocomplete Sensor Search */}
+      <TrafficNetworkHeader
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        searchOpen={searchOpen}
+        setSearchOpen={setSearchOpen}
+        searchResults={searchResults}
+        selectedSensor={selectedSensor}
+        onSelectSensor={handleSelectSensor}
+      />
 
-      {/* ==================================================================== */}
-      {/* 1. COMPACT OPERATIONS HEADER (Reference Style: Title + Regions + Search) */}
-      {/* ==================================================================== */}
-      <div className="rounded-2xl bg-white dark:bg-[#071727] border border-slate-200 dark:border-[#17364E] p-4 lg:p-5 shadow-xs transition-colors">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-
-          {/* Left: Brand Title & Replay Subtitle */}
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-blue-500/10 text-cyan-600 dark:text-cyan-400 border border-blue-500/20 shrink-0">
-              <MapIcon className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2.5">
-                <h1 className="text-xl lg:text-2xl font-black text-slate-900 dark:text-[#F5F8FC] tracking-tight">
-                  Traffic Network
-                </h1>
-              </div>
-              <p className="text-xs text-slate-600 dark:text-[#CBDDF0] mt-0.5 font-medium">
-                Metropolitan Freeway Corridor &bull; 207 Connected Sensors
-              </p>
-            </div>
-          </div>
-
-          {/* Right: Real Sensor Search Input */}
-          <div className="relative w-full sm:w-80 lg:w-96" ref={searchRef}>
-            <div className="relative">
-              <Search className="w-4 h-4 text-slate-400 dark:text-[#8295A8] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-              <input
-                type="text"
-                placeholder="Search sensor (e.g. 773869), region..."
-                value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  setSearchOpen(true);
-                }}
-                onFocus={() => setSearchOpen(true)}
-                className="w-full h-9 pl-9 pr-8 rounded-xl bg-slate-50 dark:bg-[#0B2033] border border-slate-200 dark:border-[#17364E] text-xs text-slate-900 dark:text-[#F5F8FC] placeholder-slate-400 dark:placeholder-[#647C92] focus:outline-hidden focus:border-cyan-500 transition-colors"
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-white"
-                  type="button"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              )}
-            </div>
-
-            {/* Search Autocomplete Dropdown */}
-            {searchOpen && searchResults.length > 0 && (
-              <div className="absolute right-0 mt-1.5 w-full bg-white dark:bg-[#071727] border border-slate-200 dark:border-[#17364E] rounded-xl shadow-2xl p-1 z-50 divide-y divide-slate-100 dark:divide-slate-800">
-                {searchResults.map(s => {
-                  const sid = String(s.sensorId || s.id);
-                  const isCur = String(selectedSensor?.sensorId || selectedSensor?.id) === sid;
-                  return (
-                    <button
-                      key={`search-${sid}`}
-                      onClick={() => handleSelectSensor(s)}
-                      className="w-full p-2 text-left text-xs rounded-lg hover:bg-slate-100 dark:hover:bg-[#0B2033] flex items-center justify-between transition-colors"
-                      type="button"
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono font-bold text-slate-900 dark:text-white">{sid}</span>
-                        <span className="text-[10px] text-slate-500 dark:text-[#8295A8]">{s.regionId}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">
-                          {s.speed !== null && s.speed !== undefined ? `${Number(s.speed).toFixed(1)} mph` : '--'}
-                        </span>
-                        {isCur && <Check className="w-3.5 h-3.5 text-cyan-500" />}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-
-        </div>
-      </div>
-
-      {/* ==================================================================== */}
-      {/* 2. TOP 5 KPI CARDS ROW                                               */}
-      {/* ==================================================================== */}
+      {/* 2. Top 5 KPI Cards Row */}
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3.5">
         {networkTopKPIs.map((kpi) => (
           <MetricCard
@@ -515,10 +431,7 @@ export default function TrafficNetwork() {
         </div>
       )}
 
-
-      {/* ==================================================================== */}
-      {/* 3. MAIN OPERATIONS CONSOLE (75% Large Map + 25% Side Sensor Panel)  */}
-      {/* ==================================================================== */}
+      {/* 3. Main Operations Console (Large Map + Side Sensor Details Panel) */}
       <div
         ref={consoleRef}
         className={`transition-all ${
@@ -527,7 +440,6 @@ export default function TrafficNetwork() {
             : 'grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch'
         }`}
       >
-        {/* Left Column (75% desktop width): Large Map Canvas */}
         <div className={isFullscreen ? 'flex-1 h-full min-h-0' : 'lg:col-span-8 xl:col-span-9 flex flex-col min-h-[640px]'}>
           <RealTrafficMap
             sensors={realSensors}
@@ -543,7 +455,6 @@ export default function TrafficNetwork() {
           />
         </div>
 
-        {/* Right Column (25% desktop width): Dedicated Sensor Details Panel */}
         <div className={isFullscreen ? 'w-full lg:w-[380px] h-full shrink-0' : 'lg:col-span-4 xl:col-span-3 flex flex-col h-[640px] max-h-[640px]'}>
           <SensorDetailPanel
             sensor={selectedSensor}
@@ -557,12 +468,9 @@ export default function TrafficNetwork() {
         </div>
       </div>
 
-      {/* ==================================================================== */}
-      {/* 4. TRAFFIC HEATMAP & COVERAGE ANALYTICS (Reference Operations Layout) */}
-      {/* ==================================================================== */}
+      {/* 4. Traffic Heatmap & Coverage Analytics */}
       {!isFullscreen && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
-          {/* Left Card (~55%): Traffic Speed Heatmap */}
           <div className="lg:col-span-7 xl:col-span-7 flex flex-col min-h-[460px]">
             <TrafficSpeedHeatmap
               selectedSensor={selectedSensor}
@@ -575,7 +483,6 @@ export default function TrafficNetwork() {
             />
           </div>
 
-          {/* Right Card (~45%): Coverage & Blind Spots Panel */}
           <div className="lg:col-span-5 xl:col-span-5 flex flex-col min-h-[460px]">
             <CoverageBlindSpotsPanel
               onSelectRegion={handleRegionChange}
@@ -586,16 +493,12 @@ export default function TrafficNetwork() {
         </div>
       )}
 
-      {/* ==================================================================== */}
-      {/* 5. OPERATIONAL DETAILS (Spatial Speed Consistency + Full Sensor Table) */}
-      {/* ==================================================================== */}
+      {/* 5. Operational Details (Spatial Speed Consistency + Full Sensor Table) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start pt-2">
-        {/* Left Column (5 cols): Spatial Speed Consistency Engine */}
         <div className="lg:col-span-5 space-y-5">
           <SpatialSpeedConsistencyPanel data={spatialConsistencyData} />
         </div>
 
-        {/* Right Column (7 cols): Full 207-Sensor Telemetry Table */}
         <div className="lg:col-span-7 space-y-5">
           <SensorTable
             sensors={realSensors}
