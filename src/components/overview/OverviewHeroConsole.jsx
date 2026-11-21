@@ -2,6 +2,11 @@ import React from 'react';
 import { Radio, Clock, Filter, Eye } from 'lucide-react';
 import sensorLocationNames from '../../data/sensor_location_names.json';
 
+/**
+ * OverviewHeroConsole Component
+ * Operations header banner featuring executive title, replay timeline badge,
+ * quick sensor pills with region badges, and dynamic region/sensor dropdown selectors.
+ */
 export default function OverviewHeroConsole({
   selectedSensor = '773869',
   onSelectSensor,
@@ -12,10 +17,10 @@ export default function OverviewHeroConsole({
   timeIndex = 12
 }) {
   const quickReps = [
-    { id: '773869', name: '773869', region: 'REGION_C', label: 'Region C' },
-    { id: '773975', name: '773975', region: 'REGION_A', label: 'Region A' },
-    { id: '767541', name: '767541', region: 'REGION_B', label: 'Region B' },
-    { id: '765171', name: '765171', region: 'REGION_D', label: 'Region D' }
+    { id: '773869', name: '773869', region: 'REGION_C', label: 'Region C', code: 'C', color: 'text-purple-400' },
+    { id: '773975', name: '773975', region: 'REGION_A', label: 'Region A', code: 'A', color: 'text-blue-400' },
+    { id: '767541', name: '767541', region: 'REGION_B', label: 'Region B', code: 'B', color: 'text-orange-400' },
+    { id: '765171', name: '765171', region: 'REGION_D', label: 'Region D', code: 'D', color: 'text-emerald-400' }
   ];
 
   const regions = [
@@ -78,14 +83,19 @@ export default function OverviewHeroConsole({
                   key={rep.id}
                   onClick={() => onSelectSensor(rep.id)}
                   type="button"
-                  title={`${rep.name} • ${loc}`}
-                  className={`px-2.5 py-1 text-xs font-mono font-bold rounded-lg transition-all cursor-pointer ${
+                  title={`${rep.name} • ${loc} (${rep.label})`}
+                  className={`px-2.5 py-1 text-xs font-mono font-bold rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
                     isSelected
                       ? 'bg-cyan-500 text-slate-950 shadow-sm font-extrabold'
                       : 'text-slate-600 dark:text-[#8295A8] hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-[#17364E]/50'
                   }`}
                 >
-                  {rep.name}
+                  <span className={`text-[10px] font-bold px-1 py-0.2 rounded ${
+                    isSelected ? 'bg-slate-950/20 text-slate-950' : 'bg-slate-200/80 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
+                  }`}>
+                    {rep.code}
+                  </span>
+                  <span>{rep.name}</span>
                 </button>
               );
             })}

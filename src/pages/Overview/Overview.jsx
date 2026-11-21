@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useReplay } from '../../context/ReplayContext';
 import { fetchForecast, fetchNeedScore, fetchSensorById } from '../../services/api';
 import sensorLocationNames from '../../data/sensor_location_names.json';
@@ -44,22 +45,33 @@ const INITIAL_PREDICTIONS = [
   { horizonMinutes: 60, horizonLabel: '+60 min', predictedSpeedMph: 60.5, actualSpeedMph: 60.1 }
 ];
 
+/**
+ * Overview Page Component
+ * Executive traffic operations overview displaying real-time detector status,
+ * 60-minute multi-horizon speed forecast, directional indicators, and neighbor consensus.
+ */
 export default function Overview() {
-  const { timeIndex: globalTimeIndex } = useReplay();
+  const { timeIndex: globalTimeIndex, selectedSensorId, setSelectedSensorId } = useReplay();
+  const [searchParams] = useSearchParams();
   const effectiveTimeIndex = Math.max(12, globalTimeIndex);
+
   const timestampStr = useMemo(() => {
     const ms = new Date('2012-03-01T00:00:00Z').getTime() + effectiveTimeIndex * 5 * 60 * 1000;
     return new Date(ms).toISOString().replace('T', ' ').substring(0, 19);
   }, [effectiveTimeIndex]);
 
-  const [selectedSensor, setSelectedSensor] = useState('773869');
-  const [selectedRegion, setSelectedRegion] = useState('REGION_C');
+  // Initial sensor resolution: URL param > ReplayContext > default '773869'
+  const initialSensorId = searchParams.get('sensor') || selectedSensorId || '773869';
+  const initialMeta = REPRESENTATIVE_SENSORS.find(s => s.id === initialSensorId);
+
+  const [selectedSensor, setSelectedSensor] = useState(initialSensorId);
+  const [selectedRegion, setSelectedRegion] = useState(initialMeta ? initialMeta.region : 'REGION_C');
 
   // Sensor state
   const [currentSpeed, setCurrentSpeed] = useState(62.0);
   const [recentMean, setRecentMean] = useState(62.8);
   const [driftState, setDriftState] = useState('normal');
-  const [sensorRegion, setSensorRegion] = useState('REGION_C');
+  const [sensorRegion, setSensorRegion] = useState(initialMeta ? initialMeta.region : 'REGION_C');
 
   // Forecast state
   const [predictions, setPredictions] = useState(INITIAL_PREDICTIONS);
@@ -69,6 +81,19 @@ export default function Overview() {
   const [needScore, setNeedScore] = useState(0.42);
   const [neighborCount, setNeighborCount] = useState(6);
   const [neighborMeanSpeed, setNeighborMeanSpeed] = useState(63.4);
+
+  // Sync with URL query parameter changes if navigated from other routes
+  useEffect(() => {
+    const qSensor = searchParams.get('sensor');
+    if (qSensor && qSensor !== selectedSensor) {
+      setSelectedSensor(qSensor);
+      const meta = REPRESENTATIVE_SENSORS.find(s => s.id === qSensor);
+      if (meta) {
+        setSensorRegion(meta.region);
+        setSelectedRegion(meta.region);
+      }
+    }
+  }, [searchParams, selectedSensor]);
 
   // Filter sensor list by region if not 'ALL'
   const filteredSensors = useMemo(() => {
@@ -80,13 +105,16 @@ export default function Overview() {
     setSelectedRegion(region);
     const matching = region === 'ALL' ? REPRESENTATIVE_SENSORS : REPRESENTATIVE_SENSORS.filter((s) => s.region === region);
     if (matching.length > 0 && !matching.some((s) => s.id === selectedSensor)) {
-      setSelectedSensor(matching[0].id);
+      const nextSensor = matching[0].id;
+      setSelectedSensor(nextSensor);
       setSensorRegion(matching[0].region);
+      setSelectedSensorId?.(nextSensor);
     }
   };
 
   const handleSelectSensor = (sensorId) => {
     setSelectedSensor(sensorId);
+    setSelectedSensorId?.(sensorId);
     const meta = REPRESENTATIVE_SENSORS.find((s) => s.id === sensorId);
     if (meta) {
       setSensorRegion(meta.region);
@@ -139,7 +167,6 @@ export default function Overview() {
         const count = nbrs.length > 0 ? nbrs.length : 6;
         setNeighborCount(count);
 
-        // Compute neighbor mean speed using live forecast/sensor speed without causing extra effect re-runs
         const liveSpeed = forecastRes.status === 'fulfilled' && typeof forecastRes.value?.sensor?.currentSpeedMph === 'number'
           ? forecastRes.value.sensor.currentSpeedMph
           : 62.0;
