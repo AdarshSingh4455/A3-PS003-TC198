@@ -5,9 +5,8 @@ import {
   TrendingUp
 } from 'lucide-react';
 import {
-  ComposedChart,
+  LineChart,
   Line,
-  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -266,12 +265,7 @@ export default function Prediction() {
       actual: isResidual ? 0.0 : isDelta ? 0.0 : Number(currentValue.toFixed(1)),
       predicted: isResidual ? 0.0 : isDelta ? 0.0 : Number(currentValue.toFixed(1)),
       upper: isResidual ? (isPeMS ? 8.0 : 1.2) : isDelta ? (isPeMS ? 8.0 : 1.2) : Number((currentValue + (isPeMS ? 8.0 : 1.2)).toFixed(1)),
-      lower: isResidual ? 0.0 : isDelta ? (isPeMS ? -8.0 : -1.2) : Number((currentValue - (isPeMS ? 8.0 : 1.2)).toFixed(1)),
-      uncertaintyBand: isResidual
-        ? [0.0, isPeMS ? 8.0 : 1.2]
-        : isDelta
-        ? [isPeMS ? -8.0 : -1.2, isPeMS ? 8.0 : 1.2]
-        : [Number((currentValue - (isPeMS ? 8.0 : 1.2)).toFixed(1)), Number((currentValue + (isPeMS ? 8.0 : 1.2)).toFixed(1))]
+      lower: isResidual ? 0.0 : isDelta ? (isPeMS ? -8.0 : -1.2) : Number((currentValue - (isPeMS ? 8.0 : 1.2)).toFixed(1))
     }
   ];
 
@@ -300,20 +294,16 @@ export default function Prediction() {
       ? 0.0
       : rawActual;
 
-    const upVal = isResidual
-      ? Number((predVal + delta * 0.5).toFixed(1))
-      : Number((predVal + delta).toFixed(1));
-    const lowVal = isResidual
-      ? Math.max(0, Number((predVal - delta * 0.5).toFixed(1)))
-      : Number((predVal - delta).toFixed(1));
-
     chartData.push({
       step: p.horizonLabel,
       predicted: predVal,
       actual: actualVal,
-      upper: upVal,
-      lower: lowVal,
-      uncertaintyBand: [lowVal, upVal]
+      upper: isResidual
+        ? Number((predVal + delta * 0.5).toFixed(1))
+        : Number((predVal + delta).toFixed(1)),
+      lower: isResidual
+        ? Math.max(0, Number((predVal - delta * 0.5).toFixed(1)))
+        : Number((predVal - delta).toFixed(1))
     });
   });
 
@@ -554,42 +544,19 @@ export default function Prediction() {
                     : 'Historical Input Window (-15m → -5m) • Current State (Now) • Multi-Horizon Inference (+5m → +60m)'}
                 </p>
               </div>
-              <div className="flex flex-wrap items-center gap-2">
-                {/* Horizon Quick Selector Pills */}
-                <div className="flex items-center gap-1 p-1 rounded-xl bg-slate-100 dark:bg-[#0E2438] border border-slate-200 dark:border-[#17364E] text-xs">
-                  <span className="text-[10px] font-bold text-slate-500 dark:text-[#8295A8] uppercase tracking-wider px-1.5">
-                    Horizon:
-                  </span>
-                  {['ALL', '+5 min', '+15 min', '+30 min', '+60 min'].map((h) => (
-                    <button
-                      key={h}
-                      type="button"
-                      onClick={() => setSelectedHorizon(h)}
-                      className={`px-2 py-0.5 rounded-lg text-xs font-semibold font-mono transition-all cursor-pointer ${
-                        selectedHorizon === h
-                          ? 'bg-cyan-500 text-slate-950 font-bold shadow-xs border border-cyan-400'
-                          : 'text-slate-600 dark:text-[#BACCDA] hover:text-slate-900 dark:hover:text-white'
-                      }`}
-                    >
-                      {h === 'ALL' ? 'All' : h.replace(' min', 'm')}
-                    </button>
-                  ))}
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-cyan-300 border border-blue-500/20">
-                    {sensorId}
-                  </span>
-                  <span className="text-[10px] font-sans font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
-                    {isPeMS ? 'PeMS08 FLOW FORECAST' : 'ACTIVE FORECAST'}
-                  </span>
-                </div>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-cyan-300 border border-blue-500/20">
+                  {sensorId}
+                </span>
+                <span className="text-[10px] font-sans font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
+                  {isPeMS ? 'PeMS08 FLOW FORECAST' : 'ACTIVE FORECAST'}
+                </span>
               </div>
             </div>
 
             <div className="h-[280px] w-full pt-2">
               <ResponsiveContainer width="100%" height="100%">
-                <ComposedChart data={chartData} margin={{ top: 15, right: 20, left: 5, bottom: 0 }}>
+                <LineChart data={chartData} margin={{ top: 15, right: 20, left: 5, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#17364E" : "#E2E8F0"} opacity={isDark ? 0.6 : 0.9} vertical={false} />
                   <XAxis dataKey="step" stroke={isDark ? "#8295A8" : "#60758A"} fontSize={11} fontFamily="Inter, sans-serif" fontWeight={500} tickLine={false} />
                   <YAxis domain={[(dataMin) => Math.floor(dataMin - 4), (dataMax) => Math.ceil(dataMax + 4)]} width={54} stroke={isDark ? "#8295A8" : "#60758A"} fontSize={11} fontFamily="Inter, sans-serif" fontWeight={500} tickLine={false} tickFormatter={(v) => `${Math.round(v)} ${isPeMS ? 'veh' : 'mph'}`} />
@@ -599,7 +566,7 @@ export default function Prediction() {
                         return (
                           <div className="p-3 rounded-xl bg-white dark:bg-[#04101A] border border-slate-200 dark:border-[#17364E] text-slate-900 dark:text-white text-xs font-mono shadow-2xl space-y-1.5">
                             <div className="font-bold text-slate-700 dark:text-cyan-400 border-b border-slate-100 dark:border-slate-800 pb-1">{label}</div>
-                            {payload.filter(entry => entry.dataKey !== 'uncertaintyBand').map((entry, idx) => (
+                            {payload.map((entry, idx) => (
                               <div key={idx} style={{ color: entry.color }} className="flex items-center justify-between gap-4">
                                 <span>{entry.name}:</span>
                                 <strong>{entry.value !== null ? `${entry.value} ${currentUnit}` : 'N/A'}</strong>
@@ -620,26 +587,6 @@ export default function Prediction() {
                     strokeWidth={2}
                     strokeDasharray="3 3"
                     label={{ value: 'NOW (T0)', fill: '#f59e0b', fontSize: 11, fontFamily: 'Inter, sans-serif', fontWeight: 700, position: 'top' }}
-                  />
-                  {/* Highlight active selected horizon if specific */}
-                  {selectedHorizon !== 'ALL' && (
-                    <ReferenceLine
-                      x={selectedHorizon}
-                      stroke="#00D2FF"
-                      strokeWidth={2}
-                      strokeDasharray="2 2"
-                      label={{ value: 'ACTIVE HORIZON', fill: '#00D2FF', fontSize: 10, fontFamily: 'Inter, sans-serif', fontWeight: 700, position: 'insideTopRight' }}
-                    />
-                  )}
-                  {/* Shaded Uncertainty Confidence Envelope Band Area */}
-                  <Area
-                    type="monotone"
-                    dataKey="uncertaintyBand"
-                    name="Confidence Band (±1σ)"
-                    stroke="none"
-                    fill="#a855f7"
-                    fillOpacity={isDark ? 0.22 : 0.14}
-                    connectNulls={true}
                   />
                   {/* Upper Uncertainty Envelope */}
                   <Line
@@ -684,7 +631,7 @@ export default function Prediction() {
                     strokeDasharray="4 4"
                     dot={{ r: 3.5, fill: '#10b981' }}
                   />
-                </ComposedChart>
+                </LineChart>
               </ResponsiveContainer>
             </div>
           </div>

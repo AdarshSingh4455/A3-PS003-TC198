@@ -13,7 +13,6 @@ import {
   fetchNetworkAccountingStatus,
   fetchNetworkAccountingReport
 } from '../../services/api';
-import LiveBandwidthSavingsBar from '../../components/communication/LiveBandwidthSavingsBar';
 import CommunicationHeroFlow from '../../components/communication/CommunicationHeroFlow';
 import CommunicationSummaryKPIs from '../../components/communication/CommunicationSummaryKPIs';
 import CommunicationBreakdownDonut from '../../components/communication/CommunicationBreakdownDonut';
@@ -264,19 +263,6 @@ export default function Communication() {
           </div>
         </div>
       )}
-
-      {/* ==================================================================== */}
-      {/* LIVE BANDWIDTH SAVINGS & ECO OPTIMIZATION BAR                        */}
-      {/* ==================================================================== */}
-      <LiveBandwidthSavingsBar
-        activeStrategy={activeStrategy}
-        onSelectStrategy={setActiveStrategy}
-        baselineTotalBytes={effectiveBaselineTotalBytes}
-        selectedTotalBytes={activeStrategyObj.totalBytes}
-        reductionPercent={activeStrategyObj.reductionPercent}
-        selectedStrategyName={activeStrategyObj.name}
-        isBestTradeoff={activeStrategyObj.isBestTradeoff}
-      />
 
       {/* ==================================================================== */}
       {/* A. Baseline Communication Accounting & Architecture Hero Flow        */}

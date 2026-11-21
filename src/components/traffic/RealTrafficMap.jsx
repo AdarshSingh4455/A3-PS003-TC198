@@ -214,10 +214,9 @@ function createRealSensorIcon({
   sensorId,
   color,
   isSelected,
-  isNeighbor,
-  hasHighDrift
+  isNeighbor
 }) {
-  const cacheKey = `${sensorId}_${color}_${isSelected ? 1 : 0}_${isNeighbor ? 1 : 0}_${hasHighDrift ? 1 : 0}`;
+  const cacheKey = `${sensorId}_${color}_${isSelected ? 1 : 0}_${isNeighbor ? 1 : 0}`;
   const cached = sensorIconCache.get(cacheKey);
   if (cached) return cached;
 
@@ -253,22 +252,8 @@ function createRealSensorIcon({
       iconSize: [115, 36],
       iconAnchor: [11, 18]
     });
-  } else if (hasHighDrift) {
-    // 2. HIGH-DRIFT SENSOR: Pulsing Amber Alert Radar Ripple Ring
-    const html = `
-      <div style="position: relative; display: flex; align-items: center; justify-content: center; width: 34px; height: 34px;">
-        <div class="amber-radar-pulse-ring" style="position: absolute; top: -6px; left: -6px; width: 46px; height: 46px; border-radius: 9999px; border: 2px solid rgba(245, 158, 11, 0.9); background: radial-gradient(circle, rgba(245, 158, 11, 0.35) 0%, transparent 72%); pointer-events: none;"></div>
-        <div style="position: relative; width: 14px; height: 14px; border-radius: 9999px; background-color: ${color}; border: 2px solid #ffffff; box-shadow: 0 0 12px rgba(245, 158, 11, 0.95); cursor: pointer; z-index: 5;"></div>
-      </div>
-    `;
-    icon = L.divIcon({
-      html,
-      className: 'custom-leaflet-marker',
-      iconSize: [34, 34],
-      iconAnchor: [17, 17]
-    });
   } else if (isNeighbor) {
-    // 3. CONNECTED NEIGHBOR SENSOR: Glowing ring with electric cyan accent and speed-coded core
+    // 2. CONNECTED NEIGHBOR SENSOR: Glowing ring with electric cyan accent and speed-coded core
     const html = `
       <div style="position: relative; display: flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 9999px; background: radial-gradient(circle, #06b6d445 0%, transparent 72%); border: 1.5px solid #00D2FF; box-shadow: 0 0 10px rgba(0, 210, 255, 0.65); cursor: pointer;">
         <div style="width: 13px; height: 13px; border-radius: 9999px; background-color: ${color}; border: 2px solid #ffffff; box-shadow: 0 1px 4px rgba(0,0,0,0.45);"></div>
@@ -281,7 +266,7 @@ function createRealSensorIcon({
       iconAnchor: [13, 13]
     });
   } else {
-    // 4. STANDARD SENSOR: Crisp 10px circular node with high-contrast white border and ambient speed aura
+    // 3. STANDARD SENSOR: Crisp 10px circular node with high-contrast white border and ambient speed aura
     const html = `
       <div style="position: relative; display: flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 9999px; background: radial-gradient(circle, ${color}35 0%, transparent 70%); cursor: pointer;">
         <div style="width: 10px; height: 10px; border-radius: 9999px; background-color: ${color}; border: 1.5px solid #ffffff; box-shadow: 0 0 6px ${color}90; transition: transform 0.15s ease;"></div>
@@ -377,7 +362,6 @@ function UnifiedMapControls({
 }) {
   const map = useMap();
   const {
-    timeIndex,
     timestampStr,
     isPlaying,
     replaySpeed,
@@ -898,97 +882,6 @@ function UnifiedMapControls({
           </div>
         </div>
 
-      </div>
-      {/* ==================================================================== */}
-      {/* FLOATING MAP HUD SCRUBBER BAR (Bottom Center)                        */}
-      {/* ==================================================================== */}
-      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-[500] pointer-events-auto max-w-[96%] w-auto select-none animate-fade-in">
-        <div className="flex flex-wrap items-center gap-2 sm:gap-3 px-3 py-1.5 sm:px-4 sm:py-2 rounded-2xl bg-white/95 dark:bg-[#071727]/95 border border-slate-200 dark:border-cyan-500/40 shadow-2xl shadow-cyan-950/40 backdrop-blur-md text-xs font-mono">
-          {/* Play/Pause Button */}
-          <button
-            onClick={togglePlay}
-            type="button"
-            title={isPlaying ? "Pause Timeline" : "Play Replay (5-min intervals)"}
-            className={`flex items-center gap-1.5 h-7 sm:h-8 px-2.5 sm:px-3 rounded-xl font-bold transition-all cursor-pointer ${
-              isPlaying
-                ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/30 font-extrabold animate-pulse'
-                : 'bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white shadow-md shadow-cyan-500/20'
-            }`}
-          >
-            {isPlaying ? <Pause className="w-3.5 h-3.5 fill-current" /> : <Play className="w-3.5 h-3.5 fill-current" />}
-            <span className="hidden sm:inline">{isPlaying ? 'PAUSE' : 'PLAY'}</span>
-          </button>
-
-          {/* Step Controls */}
-          <div className="flex items-center gap-0.5 bg-slate-100 dark:bg-slate-900/80 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700/60">
-            <button
-              onClick={stepBackward}
-              type="button"
-              title="Previous Interval (-5m)"
-              className="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
-            >
-              <ChevronLeft className="w-3.5 h-3.5" />
-            </button>
-            <button
-              onClick={stepForward}
-              type="button"
-              title="Next Interval (+5m)"
-              className="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
-            >
-              <ChevronRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
-          {/* Timeline Range Scrubber Slider */}
-          <div className="flex items-center gap-1.5 sm:gap-2 px-1">
-            <span className="text-[10px] text-cyan-600 dark:text-cyan-400 font-bold hidden md:inline">00:00</span>
-            <input
-              type="range"
-              min="0"
-              max="287"
-              value={(timeIndex || 0) % 288}
-              onChange={(e) => jumpToStep && jumpToStep(Number(e.target.value))}
-              title={`Scrub timeline (Step ${(timeIndex || 0) % 288} of 288)`}
-              className="w-20 sm:w-36 md:w-52 h-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-500 focus:outline-hidden"
-            />
-            <span className="text-[10px] text-cyan-600 dark:text-cyan-400 font-bold hidden md:inline">23:55</span>
-          </div>
-
-          {/* Live Step & Time Pill */}
-          <div className="flex items-center gap-1.5 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-xl bg-slate-100 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-700/80 text-slate-800 dark:text-white font-bold text-xs">
-            <span className="w-2 h-2 rounded-full bg-cyan-500 animate-ping" />
-            <span className="text-cyan-600 dark:text-cyan-300">{timestampStr ? timestampStr.substring(11, 16) : '00:00'}</span>
-            <span className="text-slate-500 dark:text-slate-400 text-[10px] font-normal hidden lg:inline">(Step {timeIndex || 0})</span>
-          </div>
-
-          {/* Replay Speed Pills */}
-          <div className="hidden sm:flex items-center gap-1 bg-slate-100 dark:bg-slate-900/80 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700/60 text-[11px]">
-            {[0.5, 1, 2].map((spd) => (
-              <button
-                key={spd}
-                onClick={() => setReplaySpeed(spd)}
-                type="button"
-                className={`px-2 py-0.5 rounded-lg font-bold transition-all cursor-pointer ${
-                  replaySpeed === spd
-                    ? 'bg-cyan-500 text-slate-950 font-extrabold shadow-xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800'
-                }`}
-              >
-                {spd}x
-              </button>
-            ))}
-          </div>
-
-          {/* Reset */}
-          <button
-            onClick={() => jumpToStep && jumpToStep(0)}
-            type="button"
-            title="Reset to Step 0"
-            className="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
-          </button>
-        </div>
       </div>
     </>
   );
