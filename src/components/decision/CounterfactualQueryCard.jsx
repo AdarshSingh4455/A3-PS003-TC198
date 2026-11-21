@@ -1,5 +1,5 @@
-import React from 'react';
-import { HelpCircle, CheckCircle2, XCircle, Zap } from 'lucide-react';
+import React, { useState } from 'react';
+import { HelpCircle, CheckCircle2, XCircle, Zap, Sliders, Sparkles } from 'lucide-react';
 import SectionCard from '../common/SectionCard';
 import ScientificBadge from '../common/ScientificBadge';
 
@@ -38,6 +38,7 @@ export default function CounterfactualQueryCard({ data, sensorId: propSensorId, 
 
   const sensorId = propSensorId || activeData.sensorId || dataSensorId || "773869";
   const isQuery = decision === "QUERY";
+  const [simulatedBudget, setSimulatedBudget] = useState(1);
 
   return (
     <SectionCard
@@ -114,6 +115,96 @@ export default function CounterfactualQueryCard({ data, sensorId: propSensorId, 
               <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">
                 {withQuery.coverageGain || "+20%"}
               </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Interactive What-If Query Budget Simulator */}
+        <div className="p-3.5 rounded-xl bg-gradient-to-r from-blue-500/5 via-cyan-500/5 to-purple-500/5 dark:from-[#0B2033] dark:to-[#071624] border border-cyan-500/30 dark:border-cyan-500/20 space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20">
+                <Sliders className="w-3.5 h-3.5" />
+              </div>
+              <div>
+                <span className="text-xs font-bold text-slate-800 dark:text-cyan-300">
+                  Interactive What-If: Multi-Node Query Budget
+                </span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 block">
+                  Simulate predictive uncertainty reduction vs telemetry payload trade-off
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-1.5 self-start sm:self-auto">
+              {[1, 3, 5].map((preset) => (
+                <button
+                  key={preset}
+                  type="button"
+                  onClick={() => setSimulatedBudget(preset)}
+                  className={`text-[10px] font-mono px-2 py-0.5 rounded-md border transition-all cursor-pointer ${
+                    simulatedBudget === preset
+                      ? 'bg-cyan-500 text-slate-950 font-bold border-cyan-400 shadow-xs'
+                      : 'bg-white dark:bg-[#071727] text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:border-cyan-500/50'
+                  }`}
+                >
+                  {preset === 1 ? '1 Node' : preset === 3 ? '3 Nodes' : '5 Nodes'}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Slider input */}
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between text-xs font-mono">
+              <span className="text-slate-600 dark:text-slate-400 flex items-center gap-1">
+                <Sparkles className="w-3 h-3 text-cyan-400" />
+                Active Node Budget:
+              </span>
+              <span className="font-bold text-cyan-700 dark:text-cyan-300">
+                {simulatedBudget} {simulatedBudget === 1 ? 'Sensor Node' : 'Sensor Nodes'}
+              </span>
+            </div>
+            <input
+              type="range"
+              min="1"
+              max="5"
+              step="1"
+              value={simulatedBudget}
+              onChange={(e) => setSimulatedBudget(Number(e.target.value))}
+              className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-cyan-500"
+            />
+            <div className="flex justify-between text-[10px] font-mono text-slate-400">
+              <span>1 Node (Min Overhead)</span>
+              <span>3 Nodes (Balanced)</span>
+              <span>5 Nodes (High Precision)</span>
+            </div>
+          </div>
+
+          {/* Dynamic Reactive Simulation Output Cards */}
+          <div className="grid grid-cols-3 gap-2 pt-1 text-center font-mono">
+            <div className="p-2 rounded-lg bg-white/80 dark:bg-[#04101A] border border-slate-200 dark:border-slate-800">
+              <span className="text-[10px] text-slate-500 block uppercase font-sans">Simulated Cost</span>
+              <span className="text-xs font-bold text-blue-600 dark:text-blue-400">
+                {simulatedBudget * 187} B
+              </span>
+              <span className="text-[9px] text-slate-400 block font-sans">
+                ({(simulatedBudget * 4.2).toFixed(1)} KB proxy)
+              </span>
+            </div>
+            <div className="p-2 rounded-lg bg-white/80 dark:bg-[#04101A] border border-slate-200 dark:border-slate-800">
+              <span className="text-[10px] text-slate-500 block uppercase font-sans">Uncertainty</span>
+              <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                -{(18 + (simulatedBudget - 1) * 7.5).toFixed(1)}%
+              </span>
+              <span className="text-[9px] text-slate-400 block font-sans">Variance drop</span>
+            </div>
+            <div className="p-2 rounded-lg bg-white/80 dark:bg-[#04101A] border border-slate-200 dark:border-slate-800">
+              <span className="text-[10px] text-slate-500 block uppercase font-sans">Accuracy Gain</span>
+              <span className="text-xs font-bold text-purple-600 dark:text-purple-400">
+                +{(18 + (simulatedBudget - 1) * 6.5).toFixed(1)}%
+              </span>
+              <span className="text-[9px] text-slate-400 block font-sans">Empirical gain</span>
             </div>
           </div>
         </div>

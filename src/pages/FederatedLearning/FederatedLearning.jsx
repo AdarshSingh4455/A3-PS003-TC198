@@ -8,7 +8,14 @@ import {
   Layers,
   ShieldCheck,
   ArrowDown,
-  Info
+  Info,
+  Sliders,
+  Play,
+  Pause,
+  ChevronLeft,
+  ChevronRight,
+  RotateCcw,
+  Award
 } from 'lucide-react';
 import {
   LineChart,
@@ -91,6 +98,16 @@ export default function FederatedLearning() {
   const { isDark } = useTheme();
   const [error, setError] = useState(null);
   const [roundsData, setRoundsData] = useState(null);
+  const [scrubbedRound, setScrubbedRound] = useState(8);
+  const [isPlayingRound, setIsPlayingRound] = useState(false);
+
+  useEffect(() => {
+    if (!isPlayingRound) return;
+    const timer = setInterval(() => {
+      setScrubbedRound((prev) => (prev >= 13 ? 0 : prev + 1));
+    }, 1200);
+    return () => clearInterval(timer);
+  }, [isPlayingRound]);
 
   const loadData = async () => {
     setError(null);
