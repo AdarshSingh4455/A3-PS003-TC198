@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   Bell,
   Clock,
@@ -27,10 +28,64 @@ const REPLAY_ALERTS_DATA = RAW_REPLAY_ALERTS_DATA.map((alt) => ({
  */
 export default function Alerts() {
   const { timestampStr } = useReplay();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const [selectedSeverity, setSelectedSeverity] = useState('All');
-  const [selectedAlert, setSelectedAlert] = useState(REPLAY_ALERTS_DATA[0]);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const urlSensor = searchParams.get('sensor');
+  const urlCategory = searchParams.get('category');
+  const urlSeverity = searchParams.get('severity');
+  const urlQuery = searchParams.get('q');
+
+  const [searchTerm, setSearchTerm] = useState(urlQuery || '');
+  const [selectedCategory, setSelectedCategory] = useState(urlCategory || 'All');
+  const [selectedSeverity, setSelectedSeverity] = useState(urlSeverity || 'All');
+  const [selectedAlertState, setSelectedAlertState] = useState(null);
+
+  // Derive selectedAlert from state, URL param, or fallback to first alert
+  const selectedAlert = useMemo(() => {
+    if (selectedAlertState) return selectedAlertState;
+    if (urlSensor) {
+      const match = REPLAY_ALERTS_DATA.find((a) => a.sensorId === urlSensor);
+      if (match) return match;
+    }
+    return REPLAY_ALERTS_DATA[0];
+  }, [selectedAlertState, urlSensor]);
+
+  const handleSelectAlert = (alertItem) => {
+    setSelectedAlertState(alertItem);
+    if (alertItem?.sensorId) {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        next.set('sensor', alertItem.sensorId);
+        return next;
+      }, { replace: true });
+    }
+  };
+
+  const handleSelectCategory = (cat) => {
+    setSelectedCategory(cat);
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      if (cat === 'All') {
+        next.delete('category');
+      } else {
+        next.set('category', cat);
+      }
+      return next;
+    }, { replace: true });
+  };
+
+  const handleSelectSeverity = (sev) => {
+    setSelectedSeverity(sev);
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      if (sev === 'All') {
+        next.delete('severity');
+      } else {
+        next.set('severity', sev);
+      }
+      return next;
+    }, { replace: true });
+  };
 
   // Dynamic filter pipeline
   const filteredAlerts = useMemo(() => {
@@ -40,7 +95,8 @@ export default function Alerts() {
         item.sensorId.toLowerCase().includes(term) ||
         item.summary.toLowerCase().includes(term) ||
         item.condition.toLowerCase().includes(term) ||
-        item.regionId.toLowerCase().includes(term);
+        item.regionId.toLowerCase().includes(term) ||
+        (item.locationName && item.locationName.toLowerCase().includes(term));
 
       const matchesCat = selectedCategory === 'All' || item.category === selectedCategory;
       const matchesSev = selectedSeverity === 'All' || item.severity === selectedSeverity;
@@ -51,7 +107,7 @@ export default function Alerts() {
 
   // Keep selectedAlert synchronized when filtered items change
   const activeSelectedAlert = useMemo(() => {
-    if (filteredAlerts.some(a => a.id === selectedAlert?.id)) {
+    if (filteredAlerts.some((a) => a.id === selectedAlert?.id)) {
       return selectedAlert;
     }
     return filteredAlerts[0] || null;
@@ -160,13 +216,13 @@ export default function Alerts() {
           <AlertStreamTable
             alerts={filteredAlerts}
             selectedAlert={activeSelectedAlert}
-            onSelectAlert={setSelectedAlert}
+            onSelectAlert={handleSelectAlert}
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
             selectedCategory={selectedCategory}
-            setSelectedCategory={setSelectedCategory}
+            setSelectedCategory={handleSelectCategory}
             selectedSeverity={selectedSeverity}
-            setSelectedSeverity={setSelectedSeverity}
+            setSelectedSeverity={handleSelectSeverity}
           />
         </div>
 
