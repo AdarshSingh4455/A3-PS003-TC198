@@ -3,6 +3,7 @@ import { History, CheckCircle2, XCircle } from 'lucide-react';
 import SectionCard from '../common/SectionCard';
 import ScientificBadge from '../common/ScientificBadge';
 import { useReplay } from '../../context/ReplayContext';
+import sensorLocationNames from '../../data/sensor_location_names.json';
 
 export default function RecentDecisionsTable({ data, onSelectSensor }) {
   const { timeIndex } = useReplay();
@@ -110,8 +111,13 @@ export default function RecentDecisionsTable({ data, onSelectSensor }) {
                     <td className="py-2 px-3 text-slate-500 dark:text-[#8295A8] whitespace-nowrap">
                       {row.time || formatOffsetTime(idx * 5)}
                     </td>
-                    <td className="py-2 px-3 font-bold text-slate-900 dark:text-white whitespace-nowrap">
-                      {row.sensor || row.sensorId}
+                    <td className="py-2 px-3 whitespace-nowrap">
+                      <span className="font-bold text-slate-900 dark:text-white block">{row.sensor || row.sensorId}</span>
+                      {sensorLocationNames[row.sensor || row.sensorId]?.locationName && (
+                        <span className="text-[10px] text-slate-400 font-sans truncate block max-w-[150px]">
+                          {sensorLocationNames[row.sensor || row.sensorId].locationName}
+                        </span>
+                      )}
                     </td>
                     <td className="py-2 px-3 text-right font-bold text-cyan-600 dark:text-cyan-400 tabular-nums whitespace-nowrap">
                       {score}

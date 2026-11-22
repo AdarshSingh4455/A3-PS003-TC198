@@ -66,9 +66,17 @@ const SENSOR_REGION_MAP = {
 
 export default function DecisionIntelligence() {
   const { timeIndex, timestampStr, selectedSensorId, setSelectedSensorId } = useReplay();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  // Sync sensor from query parameter if provided
+  const urlSensor = searchParams.get('sensor');
+  const activeSensorId = urlSensor || selectedSensorId || "773869";
+
+  const handleSelectSensor = (id) => {
+    setSelectedSensorId?.(id);
+    setSearchParams({ sensor: id }, { replace: true });
+  };
+
+  // Sync external search params changes (e.g. browser back/forward)
   useEffect(() => {
     const qSensor = searchParams.get('sensor');
     if (qSensor && qSensor !== selectedSensorId) {
@@ -114,18 +122,18 @@ export default function DecisionIntelligence() {
     return () => { isMounted = false; };
   }, []);
 
-  // Reload sensor-specific intelligence whenever selectedSensorId or timeIndex changes
+  // Reload sensor-specific intelligence whenever activeSensorId or timeIndex changes
   useEffect(() => {
     let isMounted = true;
     async function loadSensorIntelligence() {
       try {
         const [score, cf, ev, jury, physics, spatial] = await Promise.all([
-          fetchNeedScore(selectedSensorId).catch(() => null),
-          fetchCounterfactual(selectedSensorId).catch(() => null),
-          fetchEvidenceChain(selectedSensorId).catch(() => null),
-          fetchSensorJury(selectedSensorId, timeIndex).catch(() => null),
-          fetchPhysicsGate(selectedSensorId, timeIndex).catch(() => null),
-          fetchSpatialSpeedConsistency(selectedSensorId, selectedSensorId === "767541" ? "773869" : "767541").catch(() => null)
+          fetchNeedScore(activeSensorId).catch(() => null),
+          fetchCounterfactual(activeSensorId).catch(() => null),
+          fetchEvidenceChain(activeSensorId).catch(() => null),
+          fetchSensorJury(activeSensorId, timeIndex).catch(() => null),
+          fetchPhysicsGate(activeSensorId, timeIndex).catch(() => null),
+          fetchSpatialSpeedConsistency(activeSensorId, activeSensorId === "767541" ? "773869" : "767541").catch(() => null)
         ]);
         if (isMounted) {
           if (score) setNeedScoreData(score);
@@ -141,7 +149,7 @@ export default function DecisionIntelligence() {
     }
     loadSensorIntelligence();
     return () => { isMounted = false; };
-  }, [selectedSensorId, timeIndex]);
+  }, [activeSensorId, timeIndex]);
 
   const handleQuery = async (queryItem) => {
     const id = queryItem.sensorId || queryItem.sensor || queryItem;
@@ -154,6 +162,8 @@ export default function DecisionIntelligence() {
       });
       if (queryAlertTimerRef.current) clearTimeout(queryAlertTimerRef.current);
       queryAlertTimerRef.current = setTimeout(() => setQueryAlert(null), 6000);
+
+      handleSelectSensor(id);
 
       // Refresh calculations synchronously
       const [score, cf, ev, cands] = await Promise.all([
@@ -173,7 +183,7 @@ export default function DecisionIntelligence() {
 
   const handleSelectFromTable = (row) => {
     const id = typeof row === 'string' ? row : (row.sensorId || row.sensor || "773869");
-    setSelectedSensorId(id);
+    handleSelectSensor(id);
   };
 
   // Synchronized authoritative need score: STRICT SINGLE SOURCE OF TRUTH
@@ -182,7 +192,7 @@ export default function DecisionIntelligence() {
     ? authoritativeNeedScore.toFixed(2)
     : parseFloat(authoritativeNeedScore || 0.58).toFixed(2);
 
-  const activeRegionName = SENSOR_REGION_MAP[selectedSensorId]
+  const activeRegionName = SENSOR_REGION_MAP[activeSensorId]
     || (needScoreData?.regionId ? needScoreData.regionId.replace('REGION_', 'Region ') : 'Region C');
   const activeRegionCode = activeRegionName.toUpperCase().replace(' ', '_');
 
@@ -191,7 +201,7 @@ export default function DecisionIntelligence() {
     {
       id: "selected-sensor",
       label: "Selected Sensor",
-      value: selectedSensorId,
+      value: activeSensorId,
       subtext: `${activeRegionCode} • Target Sensor`,
       iconType: "sensor",
       variant: "blue"
@@ -244,11 +254,11 @@ export default function DecisionIntelligence() {
                 Live Optimization
               </span>
               <span>&bull;</span>
-              <span className="font-semibold text-slate-800 dark:text-white">Sensor {selectedSensorId}</span>
-              {sensorLocationNames[selectedSensorId]?.locationName && (
+              <span className="font-semibold text-slate-800 dark:text-white">Sensor {activeSensorId}</span>
+              {sensorLocationNames[activeSensorId]?.locationName && (
                 <>
                   <span>&bull;</span>
-                  <span className="text-cyan-600 dark:text-cyan-400 font-semibold">{sensorLocationNames[selectedSensorId]?.locationName}</span>
+                  <span className="text-cyan-600 dark:text-cyan-400 font-semibold">{sensorLocationNames[activeSensorId]?.locationName}</span>
                 </>
               )}
               <span>&bull;</span>
@@ -267,10 +277,10 @@ export default function DecisionIntelligence() {
               {CANONICAL_REPRESENTATIVES.map((s) => (
                 <button
                   key={s.id}
-                  onClick={() => setSelectedSensorId(s.id)}
+                  onClick={() => handleSelectSensor(s.id)}
                   title={s.sublabel}
                   className={`px-2.5 py-1 text-xs font-mono font-bold rounded transition-all cursor-pointer ${
-                    selectedSensorId === s.id
+                    activeSensorId === s.id
                       ? "bg-blue-600 text-white shadow-xs"
                       : "text-slate-600 dark:text-[#B8C7D8] hover:text-slate-900 dark:hover:text-[#F5F8FC]"
                   }`}
@@ -371,7 +381,7 @@ export default function DecisionIntelligence() {
         <div className="lg:col-span-6">
           <NeedScoreBreakdown
             data={needScoreData}
-            sensorId={selectedSensorId}
+            sensorId={activeSensorId}
           />
         </div>
 
@@ -389,14 +399,14 @@ export default function DecisionIntelligence() {
         <div className="lg:col-span-6">
           <EvidenceChain
             data={evidenceData}
-            targetSensorId={selectedSensorId}
+            targetSensorId={activeSensorId}
           />
         </div>
 
         <div className="lg:col-span-6">
           <CounterfactualQueryCard
             data={counterfactualData}
-            sensorId={selectedSensorId}
+            sensorId={activeSensorId}
             onExecuteQuery={handleQuery}
           />
         </div>
@@ -408,7 +418,7 @@ export default function DecisionIntelligence() {
           juryData={juryData}
           physicsData={physicsData}
           spatialData={spatialConsistencyData}
-          selectedSensorId={selectedSensorId}
+          selectedSensorId={activeSensorId}
         />
       </div>
 

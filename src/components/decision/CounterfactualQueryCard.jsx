@@ -2,6 +2,7 @@ import React from 'react';
 import { HelpCircle, CheckCircle2, XCircle, Zap } from 'lucide-react';
 import SectionCard from '../common/SectionCard';
 import ScientificBadge from '../common/ScientificBadge';
+import sensorLocationNames from '../../data/sensor_location_names.json';
 
 const DEFAULT_COUNTERFACTUAL = {
   sensorId: "767620",
@@ -41,7 +42,7 @@ export default function CounterfactualQueryCard({ data, sensorId: propSensorId, 
 
   return (
     <SectionCard
-      title={`Query Impact Evaluation — Sensor ${sensorId}`}
+      title={`Query Impact Evaluation — Sensor ${sensorId}${sensorLocationNames[sensorId]?.locationName ? ' • ' + sensorLocationNames[sensorId].locationName : ''}`}
       subtitle="Counterfactual comparison estimating state benefit against telemetry byte cost"
       icon={HelpCircle}
       action={<ScientificBadge type="COUNTERFACTUAL" label="ESTIMATED BENEFIT" size="xs" />}
