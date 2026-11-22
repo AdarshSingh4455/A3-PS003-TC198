@@ -38,6 +38,7 @@ const FROZEN_CLIENT_PARTITIONS = [
     clientLabel: 'Regional Edge Node A',
     regionId: 'REGION_A',
     regionName: 'North-East Cluster',
+    corridors: 'I-210 Foothill & SR-134',
     sensorCount: 48,
     fedAvgWeight: '0.229069',
     targets: '4,221,681',
@@ -53,6 +54,7 @@ const FROZEN_CLIENT_PARTITIONS = [
     clientLabel: 'Regional Edge Node B',
     regionId: 'REGION_B',
     regionName: 'South-East Corridor',
+    corridors: 'I-5 Santa Ana & I-110 Harbor',
     sensorCount: 57,
     fedAvgWeight: '0.277117',
     targets: '5,107,314',
@@ -68,6 +70,7 @@ const FROZEN_CLIENT_PARTITIONS = [
     clientLabel: 'Regional Edge Node C',
     regionId: 'REGION_C',
     regionName: 'Central-West Arterial',
+    corridors: 'US-101 Hollywood & SR-2 Glendale',
     sensorCount: 58,
     fedAvgWeight: '0.279458',
     targets: '5,150,446',
@@ -83,6 +86,7 @@ const FROZEN_CLIENT_PARTITIONS = [
     clientLabel: 'Regional Edge Node D',
     regionId: 'REGION_D',
     regionName: 'North-West Chokepoints',
+    corridors: 'I-405 San Diego & US-101 Valley',
     sensorCount: 44,
     fedAvgWeight: '0.214357',
     targets: '3,950,559',
@@ -100,18 +104,22 @@ export default function FederatedLearning() {
   const [error, setError] = useState(null);
   const [roundsData, setRoundsData] = useState(null);
 
-  const loadData = async () => {
-    setError(null);
-    try {
-      const rdRes = await fetchFederatedRounds().catch(() => null);
-      setRoundsData(rdRes);
-    } catch (err) {
-      setError(err.message || 'Failed to connect to backend federated service.');
-    }
-  };
-
   useEffect(() => {
+    let isMounted = true;
+    async function loadData() {
+      try {
+        const rdRes = await fetchFederatedRounds().catch(() => null);
+        if (isMounted && rdRes) {
+          setRoundsData(rdRes);
+        }
+      } catch (err) {
+        if (isMounted) {
+          setError(err.message || 'Failed to connect to backend federated service.');
+        }
+      }
+    }
     loadData();
+    return () => { isMounted = false; };
   }, []);
 
   const chartRounds = roundsData?.roundsHistory || [
@@ -262,6 +270,9 @@ export default function FederatedLearning() {
                   </span>
                 </div>
                 <div className="text-xs text-slate-500 dark:text-[#7F96AA] font-medium">{c.regionName}</div>
+                {c.corridors && (
+                  <div className="text-[10px] text-cyan-600 dark:text-cyan-400 font-semibold mt-0.5">{c.corridors}</div>
+                )}
 
                 <div className="mt-3 space-y-1.5 text-xs font-mono">
                   <div className="flex items-center justify-between">

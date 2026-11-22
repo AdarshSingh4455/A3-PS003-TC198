@@ -41,8 +41,6 @@ export default function DistributionReproducibilitySection() {
   const [_error, setError] = useState(null);
 
   const loadAllExperimentData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
     try {
       const [compRes, seedRes, convRes] = await Promise.all([
         fetchDistributionComparison().catch(() => null),
@@ -60,7 +58,13 @@ export default function DistributionReproducibilitySection() {
   }, []);
 
   useEffect(() => {
-    loadAllExperimentData();
+    let isMounted = true;
+    async function init() {
+      if (isMounted) {
+        await loadAllExperimentData();
+      }
+    }
+    init();
     const interval = setInterval(() => {
       setComparison(curr => {
         if (!curr || curr.status === 'PENDING') {
@@ -69,7 +73,10 @@ export default function DistributionReproducibilitySection() {
         return curr;
       });
     }, 10000);
-    return () => clearInterval(interval);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
   }, [loadAllExperimentData]);
 
   const isCompleted = comparison?.status === 'COMPLETED' && comparison?.statisticalSummary;

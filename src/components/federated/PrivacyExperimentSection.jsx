@@ -17,21 +17,20 @@ export default function PrivacyExperimentSection() {
   const [loading, setLoading] = useState(true);
   const [_error, setError] = useState(null);
 
-  const loadData = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetchPrivacyResults();
-      setData(res);
-    } catch (err) {
-      setError(err.message || 'Failed to fetch privacy experiment');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    let isMounted = true;
+    async function loadData() {
+      try {
+        const res = await fetchPrivacyResults();
+        if (isMounted) setData(res);
+      } catch (err) {
+        if (isMounted) setError(err.message || 'Failed to fetch privacy experiment');
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    }
     loadData();
+    return () => { isMounted = false; };
   }, []);
 
   const isEvaluated = data?.status === 'COMPLETED' && data?.evaluated === true;
