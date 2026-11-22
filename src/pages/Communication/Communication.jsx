@@ -140,34 +140,34 @@ export default function Communication() {
     };
   }, [effectiveBaselineTotalBytes, activeStrategyObj, projectionDays]);
 
-  // Load baseline communication stats
-  const loadData = async () => {
-    setError(null);
-    try {
-      const res = await fetchFederatedCommunication();
-      setCommData(res);
-    } catch (err) {
-      setError(err.message || 'Failed to connect to backend communication service.');
-    }
-  };
-
+  // Load baseline communication stats & experimental models
   useEffect(() => {
-    loadData();
+    let isMounted = true;
+    fetchFederatedCommunication()
+      .then((res) => {
+        if (isMounted) setCommData(res);
+      })
+      .catch((err) => {
+        if (isMounted) setError(err.message || 'Failed to connect to backend communication service.');
+      });
+
     fetchPhase9Experiments()
-      .then(setPhase9Experiments)
+      .then((res) => { if (isMounted) setPhase9Experiments(res); })
       .catch(() => {});
     fetchPhase9Tradeoff()
-      .then(setPhase9Tradeoff)
+      .then((res) => { if (isMounted) setPhase9Tradeoff(res); })
       .catch(() => {});
     fetchPhase9ClientValues()
-      .then(setClientValues)
+      .then((res) => { if (isMounted) setClientValues(res); })
       .catch(() => {});
     fetchNetworkAccountingStatus()
-      .then(setAccountingStatus)
+      .then((res) => { if (isMounted) setAccountingStatus(res); })
       .catch(() => {});
     fetchNetworkAccountingReport()
-      .then(setAccountingReport)
+      .then((res) => { if (isMounted) setAccountingReport(res); })
       .catch(() => {});
+
+    return () => { isMounted = false; };
   }, []);
 
   // Update selection budget when active strategy changes
