@@ -415,15 +415,39 @@ export default function FederatedLearning() {
               Aggregation weights are strictly proportional to the number of valid non-masked target speed observations in each client partition.
             </p>
 
-            <div className="p-3 rounded-lg bg-slate-50 dark:bg-[#0B2033] border border-slate-200 dark:border-[#17364E] text-xs font-mono space-y-2">
-              <div className="text-slate-500 text-[11px]">Weight Equation:</div>
-              <div className="text-cyan-400 font-bold">
-                w_k = |D_k| / &sum; |D_j|
+            <div className="p-3 rounded-lg bg-slate-50 dark:bg-[#0B2033] border border-slate-200 dark:border-[#17364E] text-xs font-mono space-y-2.5">
+              <div className="flex items-center justify-between text-slate-500 text-[11px]">
+                <span>FedAvg Mathematical Weight Equation:</span>
+                <span className="text-cyan-600 dark:text-cyan-400 font-bold">w_k = |D_k| / &sum; |D_j|</span>
               </div>
-              <div className="pt-2 border-t border-slate-200 dark:border-[#17364E] space-y-1 text-[11px] text-slate-400">
-                <div className="flex justify-between"><span>Total Valid Training Targets:</span> <strong className="text-[#F7FAFF]">18,430,000</strong></div>
-                <div className="flex justify-between"><span>Model Architecture:</span> <strong>SpatialGraphLSTM</strong></div>
-                <div className="flex justify-between"><span>Parameters per Update:</span> <strong>26,596 FP32</strong></div>
+
+              {/* Exact 4-Client Mathematical Derivation */}
+              <div className="p-2 rounded bg-white dark:bg-[#071624] border border-slate-200/80 dark:border-[#17364E]/80 space-y-1 text-[11px]">
+                <div className="flex justify-between items-center text-slate-600 dark:text-[#CBDDF0]">
+                  <span>Client A (48 sensors):</span>
+                  <span>4,221,681 &divide; 18.43M = <strong className="text-cyan-600 dark:text-cyan-400">0.2291</strong> (22.9%)</span>
+                </div>
+                <div className="flex justify-between items-center text-slate-600 dark:text-[#CBDDF0]">
+                  <span>Client B (57 sensors):</span>
+                  <span>5,107,193 &divide; 18.43M = <strong className="text-cyan-600 dark:text-cyan-400">0.2771</strong> (27.7%)</span>
+                </div>
+                <div className="flex justify-between items-center text-slate-600 dark:text-[#CBDDF0]">
+                  <span>Client C (58 sensors):</span>
+                  <span>5,150,335 &divide; 18.43M = <strong className="text-cyan-600 dark:text-cyan-400">0.2795</strong> (27.9%)</span>
+                </div>
+                <div className="flex justify-between items-center text-slate-600 dark:text-[#CBDDF0]">
+                  <span>Client D (44 sensors):</span>
+                  <span>3,950,552 &divide; 18.43M = <strong className="text-cyan-600 dark:text-cyan-400">0.2144</strong> (21.4%)</span>
+                </div>
+                <div className="pt-1 border-t border-slate-200 dark:border-[#17364E] flex justify-between items-center text-[10px] text-slate-500 dark:text-[#7F96AA]">
+                  <span>Total Targets: 18,429,761</span>
+                  <span className="font-bold text-emerald-600 dark:text-emerald-400">&sum; w_k = 1.0000 (100.0%)</span>
+                </div>
+              </div>
+
+              <div className="pt-1.5 border-t border-slate-200 dark:border-[#17364E] space-y-1 text-[11px] text-slate-500 dark:text-[#7F96AA]">
+                <div className="flex justify-between"><span>Model Architecture:</span> <strong className="text-slate-800 dark:text-white font-sans">SpatialGraphLSTM</strong></div>
+                <div className="flex justify-between"><span>Parameters per Update:</span> <strong className="text-slate-800 dark:text-white">26,596 FP32 (~106 KB)</strong></div>
               </div>
             </div>
           </div>
