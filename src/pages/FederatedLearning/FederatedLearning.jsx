@@ -139,13 +139,13 @@ export default function FederatedLearning() {
     { round: 13, validationMAE: 3.2100 }
   ];
 
-  // Top 5 KPIs matching PS-003 frozen evaluation
+  // Top 6 KPIs matching PS-003 frozen evaluation
   const flKPIs = [
     {
       id: "best-round",
       label: "Best Round",
       value: "Round 8",
-      subtext: "Selected Global Model Checkpoint",
+      subtext: "Early Stopping Converged",
       iconType: "accuracy",
       variant: "emerald"
     },
@@ -153,7 +153,7 @@ export default function FederatedLearning() {
       id: "val-mae",
       label: "Best Val Speed MAE",
       value: "3.1536 mph",
-      subtext: "Optimal Validation Performance",
+      subtext: "Validation Performance",
       iconType: "accuracy",
       variant: "cyan"
     },
@@ -161,7 +161,7 @@ export default function FederatedLearning() {
       id: "test-mae",
       label: "Final Test Speed MAE",
       value: "3.5322 mph",
-      subtext: "Evaluated on Full 207-Sensor Test Set",
+      subtext: "Full 207-Sensor Test Set",
       iconType: "layers",
       variant: "purple"
     },
@@ -169,7 +169,7 @@ export default function FederatedLearning() {
       id: "centralized-ref",
       label: "Centralized Ref",
       value: "3.4378 mph",
-      subtext: "Centralized Graph+LSTM Baseline",
+      subtext: "Centralized Baseline",
       iconType: "sensor",
       variant: "blue"
     },
@@ -180,6 +180,14 @@ export default function FederatedLearning() {
       subtext: "+0.0944 mph Trade-Off",
       iconType: "alert",
       variant: "amber"
+    },
+    {
+      id: "comm-cost",
+      label: "Comm Cost / Round",
+      value: "882 KB",
+      subtext: "11.47 MB Across 13 Rds",
+      iconType: "comm",
+      variant: "comm"
     }
   ];
 
@@ -189,16 +197,19 @@ export default function FederatedLearning() {
       <div className="relative overflow-hidden rounded-2xl bg-white dark:bg-[#071727] border border-slate-200 dark:border-[#17364E] p-5 lg:p-6 shadow-xs dark:shadow-md transition-colors">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               <div className="p-2 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">
                 <Network className="w-5 h-5" />
               </div>
               <h1 className="text-xl lg:text-2xl font-extrabold text-slate-900 dark:text-[#F5F8FC] tracking-tight">
                 Federated Learning
               </h1>
+              <span className="px-2.5 py-0.5 rounded-md text-[11px] font-mono font-bold bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30">
+                PS-003 BENCHMARK
+              </span>
             </div>
             <p className="text-xs sm:text-sm text-slate-600 dark:text-[#CBDDF0] font-medium max-w-3xl">
-              Decentralized collaborative speed forecasting across four regional traffic zones using FedAvg federated consensus.
+              Decentralized collaborative speed forecasting across four regional traffic zones with rigorous communication-cost &amp; non-IID evaluation.
             </p>
           </div>
           <div className="flex items-center gap-2 self-start md:self-auto">
@@ -209,8 +220,8 @@ export default function FederatedLearning() {
         </div>
       </div>
 
-      {/* 2. Top 5 KPI Cards Row */}
-      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3.5">
+      {/* 2. Top 6 KPI Cards Row */}
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3.5">
         {flKPIs.map((kpi) => (
           <MetricCard
             key={kpi.id}
