@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   ShieldCheck,
   ChevronDown,
@@ -17,21 +17,30 @@ export default function PrivacyExperimentSection() {
   const [loading, setLoading] = useState(true);
   const [_error, setError] = useState(null);
 
+  const loadData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetchPrivacyResults();
+      setData(res);
+    } catch (err) {
+      setError(err.message || 'Failed to fetch privacy experiment');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     let isMounted = true;
-    async function loadData() {
-      try {
-        const res = await fetchPrivacyResults();
-        if (isMounted) setData(res);
-      } catch (err) {
-        if (isMounted) setError(err.message || 'Failed to fetch privacy experiment');
-      } finally {
-        if (isMounted) setLoading(false);
+    async function init() {
+      if (isMounted) {
+        await loadData();
       }
     }
-    loadData();
-    return () => { isMounted = false; };
-  }, []);
+    init();
+    return () => {
+      isMounted = false;
+    };
+  }, [loadData]);
 
   const isEvaluated = data?.status === 'COMPLETED' && data?.evaluated === true;
   const spec = data?.privacySpecification;
