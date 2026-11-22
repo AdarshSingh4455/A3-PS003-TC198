@@ -239,7 +239,7 @@ export default function Alerts() {
         <AlertSecondaryAnalytics alerts={filteredAlerts} />
       </div>
 
-      {/* 6. Smart-Mobility Incident & Anomaly Case Studies */}
+      {/* 6. Real-World Pilot Transferability: Indian Smart Cities Mission */}
       <div id="case-studies" className="pt-2">
         <IndiaCaseStudiesCard />
       </div>

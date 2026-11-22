@@ -5,7 +5,6 @@ import RealTrafficMap from '../../components/traffic/RealTrafficMap';
 import GlobalActionModal from '../../components/common/GlobalActionModal';
 import SensorDetailPanel from '../../components/traffic/SensorDetailPanel';
 import SensorTable from '../../components/traffic/SensorTable';
-import SpatialSpeedConsistencyPanel from '../../components/decision/SpatialSpeedConsistencyPanel';
 import CounterfactualQueryCard from '../../components/decision/CounterfactualQueryCard';
 import EvidenceChain from '../../components/decision/EvidenceChain';
 import MetricCard from '../../components/common/MetricCard';
@@ -18,7 +17,6 @@ import {
   executeQuery,
   fetchMetrSnapshot,
   fetchStreamingSnapshot,
-  fetchSpatialSpeedConsistency,
   fetchNetworkTopology
 } from '../../services/api';
 import { useReplay } from '../../context/ReplayContext';
@@ -71,7 +69,6 @@ export default function TrafficNetwork() {
 
   const [counterfactualData, setCounterfactualData] = useState(null);
   const [evidenceData, setEvidenceData] = useState(null);
-  const [spatialConsistencyData, setSpatialConsistencyData] = useState(null);
 
   // Search state
   const [searchQuery, setSearchQuery] = useState('');
@@ -168,36 +165,6 @@ export default function TrafficNetwork() {
   useEffect(() => {
     loadRealSnapshot(timeIndex, activeRegion);
   }, [timeIndex, activeRegion, loadRealSnapshot]);
-
-  // Load spatial speed consistency data
-  useEffect(() => {
-    let mounted = true;
-    async function loadConsistency() {
-      try {
-        const fromId = String(selectedSensor?.sensorId || selectedSensor?.id || "767620");
-        const res = await fetchSpatialSpeedConsistency(fromId, "767471");
-        if (mounted && res) {
-          setSpatialConsistencyData(res);
-        }
-      } catch {
-        if (mounted) {
-          setSpatialConsistencyData({
-            fromSensor: "767620",
-            toSensor: "767471",
-            fromSpeedMph: 67.1,
-            toSpeedMph: 66.5,
-            speedDifferenceMph: 0.6,
-            consistencyScore: 98.5,
-            isDisagreement: false,
-            severity: "normal",
-            note: "Spatial speed variation within nominal range"
-          });
-        }
-      }
-    }
-    loadConsistency();
-    return () => { mounted = false; };
-  }, [selectedSensor]);
 
   // Handle escape key to exit fullscreen
   useEffect(() => {
@@ -496,19 +463,13 @@ export default function TrafficNetwork() {
         </div>
       )}
 
-      {/* 5. Operational Details (Spatial Speed Consistency + Full Sensor Table) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start pt-2">
-        <div className="lg:col-span-5 space-y-5">
-          <SpatialSpeedConsistencyPanel data={spatialConsistencyData} />
-        </div>
-
-        <div className="lg:col-span-7 space-y-5">
-          <SensorTable
-            sensors={realSensors}
-            selectedSensorId={selectedSensor?.sensorId || selectedSensor?.id}
-            onSelectSensor={handleSelectSensor}
-          />
-        </div>
+      {/* 5. Network Sensor Inventory Table */}
+      <div className="pt-2">
+        <SensorTable
+          sensors={realSensors}
+          selectedSensorId={selectedSensor?.sensorId || selectedSensor?.id}
+          onSelectSensor={handleSelectSensor}
+        />
       </div>
 
       {/* Decision Intelligence Inspection Modals */}
