@@ -22,7 +22,9 @@ export default function ForecastChartCard({
   selectedMetric,
   sensorId,
   isDark,
-  currentUnit
+  currentUnit,
+  selectedHorizon = 'ALL',
+  onSelectHorizon
 }) {
   return (
     <div className="lg:col-span-8 bg-white dark:bg-[#071727] border border-slate-200 dark:border-[#17364E] rounded-2xl p-5 shadow-xs dark:shadow-md flex flex-col justify-between transition-colors">
@@ -46,13 +48,30 @@ export default function ForecastChartCard({
                 ? 'Relative Speed Change vs Current Velocity (mph) • Multi-Horizon Inference (+5m → +60m)'
                 : selectedMetric === 'residual'
                 ? 'Absolute Residual Deviation |Ground Truth - Predicted| (mph) across prediction horizons'
+                : selectedHorizon !== 'ALL'
+                ? `Historical Input Window (-15m → -5m) • Target Horizon Filter: ${selectedHorizon} Forecast`
                 : 'Historical Input Window (-15m → -5m) • Current State (Now) • Multi-Horizon Inference (+5m → +60m)'}
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-cyan-300 border border-blue-500/20">
               {sensorId}
             </span>
+            {selectedHorizon !== 'ALL' ? (
+              <button
+                type="button"
+                onClick={() => onSelectHorizon?.('ALL')}
+                className="text-[10px] font-sans font-bold px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-700 dark:text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/25 transition-colors flex items-center gap-1 cursor-pointer"
+                title="Click to reset to all horizons"
+              >
+                <span>TARGET: {selectedHorizon}</span>
+                <span className="text-xs font-bold leading-none">×</span>
+              </button>
+            ) : (
+              <span className="text-[10px] font-sans font-medium px-2 py-0.5 rounded bg-slate-500/10 text-slate-600 dark:text-slate-400 border border-slate-500/20">
+                ALL HORIZONS
+              </span>
+            )}
             <span className="text-[10px] font-sans font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
               {isPeMS ? 'PeMS08 FLOW FORECAST' : 'ACTIVE FORECAST'}
             </span>
@@ -102,6 +121,23 @@ export default function ForecastChartCard({
                 strokeDasharray="3 3"
                 label={{ value: 'NOW (T0)', fill: '#f59e0b', fontSize: 11, fontFamily: 'Inter, sans-serif', fontWeight: 700, position: 'top' }}
               />
+              {/* Optional Target Horizon Reference Line when filtered */}
+              {selectedHorizon !== 'ALL' && (
+                <ReferenceLine
+                  x={selectedHorizon}
+                  stroke="#00D2FF"
+                  strokeWidth={2}
+                  strokeDasharray="3 3"
+                  label={{
+                    value: `TARGET (${selectedHorizon})`,
+                    fill: '#00D2FF',
+                    fontSize: 10,
+                    fontFamily: 'Inter, sans-serif',
+                    fontWeight: 700,
+                    position: 'top'
+                  }}
+                />
+              )}
               {/* Upper Uncertainty Envelope */}
               <Line
                 type="monotone"
@@ -120,7 +156,34 @@ export default function ForecastChartCard({
                 name={isPeMS ? "Predicted Flow (veh/5min)" : "Predicted Speed (mph)"}
                 stroke="#00D2FF"
                 strokeWidth={3}
-                dot={{ r: 4.5, fill: '#00D2FF', stroke: '#071727', strokeWidth: 1.5 }}
+                dot={(props) => {
+                  const { cx, cy, payload } = props;
+                  if (!payload || payload.predicted === null || payload.predicted === undefined) return null;
+                  const isTarget = selectedHorizon !== 'ALL' && payload.step === selectedHorizon;
+                  return (
+                    <g key={`pred-dot-${payload.step}`}>
+                      {isTarget && (
+                        <circle
+                          cx={cx}
+                          cy={cy}
+                          r={8}
+                          fill="none"
+                          stroke="#00D2FF"
+                          strokeWidth={2}
+                          strokeDasharray="2 2"
+                        />
+                      )}
+                      <circle
+                        cx={cx}
+                        cy={cy}
+                        r={isTarget ? 5.5 : 4.5}
+                        fill={isTarget ? '#FFFFFF' : '#00D2FF'}
+                        stroke="#00D2FF"
+                        strokeWidth={isTarget ? 2.5 : 1.5}
+                      />
+                    </g>
+                  );
+                }}
                 activeDot={{ r: 6.5, fill: '#00D2FF' }}
                 connectNulls={true}
               />
@@ -152,7 +215,11 @@ export default function ForecastChartCard({
 
       <div className="text-[11px] text-slate-500 dark:text-[#7F96AA] pt-3 mt-2 border-t border-slate-100 dark:border-[#17364E]/70 flex flex-col sm:flex-row sm:items-center justify-between gap-1 font-sans">
         <span>Input Window: Past 60 minutes (12 timesteps @ 5-min intervals)</span>
-        <span>Forecast Horizon: Up to 60 minutes ahead (4 multi-step horizons)</span>
+        <span>
+          {selectedHorizon === 'ALL'
+            ? 'Forecast Horizon: Up to 60 minutes ahead (4 multi-step horizons)'
+            : `Filtered Horizon: Showing forecast trajectory up to ${selectedHorizon} • Click another horizon or ALL to expand`}
+        </span>
       </div>
     </div>
   );

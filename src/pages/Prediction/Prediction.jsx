@@ -241,8 +241,21 @@ export default function Prediction() {
     '+60 min': isPeMS ? 30.0 : 3.90
   };
 
+  const horizonMinutesMap = {
+    '+5 min': 5,
+    '+15 min': 15,
+    '+30 min': 30,
+    '+60 min': 60
+  };
+
+  const maxMinutes = selectedHorizon === 'ALL' ? 60 : (horizonMinutesMap[selectedHorizon] || 60);
+
   const predictionsList = forecastData?.sensor?.predictions || INITIAL_PREDICTIONS;
-  predictionsList.forEach((p) => {
+  const filteredPredictions = selectedHorizon === 'ALL'
+    ? predictionsList
+    : predictionsList.filter(p => (p.horizonMinutes || horizonMinutesMap[p.horizonLabel] || 60) <= maxMinutes);
+
+  filteredPredictions.forEach((p) => {
     const isFlowPred = p.predictedFlowVeh !== undefined;
     const rawPred = isFlowPred ? p.predictedFlowVeh : p.predictedSpeedMph;
     const rawActual = isFlowPred ? p.actualFlowVeh : p.actualSpeedMph;
@@ -424,6 +437,8 @@ export default function Prediction() {
           sensorId={sensorId}
           isDark={isDark}
           currentUnit={currentUnit}
+          selectedHorizon={selectedHorizon}
+          onSelectHorizon={setSelectedHorizon}
         />
 
         <div className="lg:col-span-4 flex flex-col min-h-[360px]">
