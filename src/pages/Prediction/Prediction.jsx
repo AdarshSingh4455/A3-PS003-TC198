@@ -40,7 +40,7 @@ export default function Prediction() {
     selectedSensorId,
     setSelectedSensorId
   } = useReplay();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const effectiveTimeIndex = Math.max(12, globalTimeIndex);
 
   const effectiveTimestampStr = useMemo(() => {
@@ -56,18 +56,31 @@ export default function Prediction() {
     jumpToStep(Math.max(12, effectiveTimeIndex - 1));
   }, [jumpToStep, effectiveTimeIndex]);
 
-  const [selectedDataset, setSelectedDataset] = useState('METR_LA');
+  const urlDataset = searchParams.get('dataset');
+  const initialDataset = urlDataset === 'PEMS08' ? 'PEMS08' : 'METR_LA';
+
+  const [selectedDataset, setSelectedDataset] = useState(initialDataset);
   const [selectedRegion, setSelectedRegion] = useState('ALL');
   const [selectedHorizon, setSelectedHorizon] = useState('ALL');
-  const [selectedMetric, setSelectedMetric] = useState('speed');
+  const [selectedMetric, setSelectedMetric] = useState(initialDataset === 'PEMS08' ? 'flow' : 'speed');
   const [flowResults, setFlowResults] = useState(null);
 
   const isPeMS = selectedDataset === 'PEMS08';
   const availableSensors = isPeMS ? PEMS08_REPRESENTATIVE_SENSORS : REPRESENTATIVE_SENSORS;
+  const defaultSensorId = isPeMS ? 'PEMS08_009' : '773869';
+
+  const urlSensor = searchParams.get('sensor');
+  const initialSensorId = urlSensor || selectedSensorId || defaultSensorId;
+
   const sensorId = isPeMS
-    ? (selectedSensorId && selectedSensorId.startsWith('PEMS08_') ? selectedSensorId : 'PEMS08_009')
-    : (selectedSensorId && !selectedSensorId.startsWith('PEMS08_') ? selectedSensorId : '773869');
-  const setSensorId = (id) => setSelectedSensorId?.(id);
+    ? (initialSensorId.startsWith('PEMS08_') ? initialSensorId : 'PEMS08_009')
+    : (!initialSensorId.startsWith('PEMS08_') ? initialSensorId : '773869');
+
+  const setSensorId = (id) => {
+    setSelectedSensorId?.(id);
+    setSearchParams({ dataset: selectedDataset, sensor: id }, { replace: true });
+  };
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const retryTimerRef = useRef(null);
@@ -79,25 +92,19 @@ export default function Prediction() {
     };
   }, []);
 
-  // Sync dataset and sensor from query parameter if provided
+  // Sync external search params changes (e.g. browser back/forward)
   useEffect(() => {
     const qDataset = searchParams.get('dataset');
-    if (qDataset === 'PEMS08' && selectedDataset !== 'PEMS08') {
-      setSelectedDataset('PEMS08');
-      setSelectedMetric('flow');
-      setSelectedRegion('ALL');
-      setSelectedSensorId?.('PEMS08_009');
-    } else if (qDataset === 'METR_LA' && selectedDataset !== 'METR_LA') {
-      setSelectedDataset('METR_LA');
-      setSelectedMetric('speed');
-      setSelectedRegion('ALL');
-      setSelectedSensorId?.('773869');
-    }
     const qSensor = searchParams.get('sensor');
+    if (qDataset && qDataset !== selectedDataset) {
+      setSelectedDataset(qDataset);
+      setSelectedMetric(qDataset === 'PEMS08' ? 'flow' : 'speed');
+      setSelectedRegion('ALL');
+    }
     if (qSensor && qSensor !== selectedSensorId) {
       setSelectedSensorId?.(qSensor);
     }
-  }, [searchParams, selectedSensorId, setSelectedSensorId, selectedDataset]);
+  }, [searchParams, selectedDataset, selectedSensorId, setSelectedSensorId]);
 
   // Initial calibrated baseline
   const [forecastData, setForecastData] = useState({
@@ -118,20 +125,23 @@ export default function Prediction() {
   const handleDatasetChange = (newDataset) => {
     setSelectedDataset(newDataset);
     setSelectedRegion('ALL');
+    const targetSensor = newDataset === 'PEMS08' ? 'PEMS08_009' : '773869';
     if (newDataset === 'PEMS08') {
       setSelectedMetric('flow');
-      setSelectedSensorId?.('PEMS08_009');
     } else {
       setSelectedMetric('speed');
-      setSelectedSensorId?.('773869');
     }
+    setSelectedSensorId?.(targetSensor);
+    setSearchParams({ dataset: newDataset, sensor: targetSensor }, { replace: true });
   };
 
   const handleRegionChange = (newRegion) => {
     setSelectedRegion(newRegion);
     const matching = newRegion === 'ALL' ? availableSensors : availableSensors.filter(s => s.region === newRegion);
     if (matching.length > 0 && !matching.some(s => s.id === sensorId)) {
-      setSelectedSensorId?.(matching[0].id);
+      const nextId = matching[0].id;
+      setSelectedSensorId?.(nextId);
+      setSearchParams({ dataset: selectedDataset, sensor: nextId }, { replace: true });
     }
   };
 
@@ -355,7 +365,7 @@ export default function Prediction() {
         selectedRegion={selectedRegion}
         onRegionChange={handleRegionChange}
         selectedSensor={sensorId}
-        onSensorChange={(id) => setSelectedSensorId?.(id)}
+        onSensorChange={setSensorId}
         sensorOptions={filteredSensors}
         selectedHorizon={selectedHorizon}
         onHorizonChange={setSelectedHorizon}
