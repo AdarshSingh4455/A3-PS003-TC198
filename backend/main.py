@@ -70,6 +70,17 @@ class HeartbeatPayload(BaseModel):
 
 
 
+@app.get("/")
+def root():
+    return {
+        "status": "ONLINE",
+        "service": "TrafficPulse-X Backend API",
+        "version": "1.0.0",
+        "health": "/api/health",
+        "docs": "/docs"
+    }
+
+
 @app.get("/api/health")
 def health_check():
     return data_source_mgr.get_health()
