@@ -22,8 +22,58 @@
 - **Team Member:** Shaurya Singh
 - **Faculty Mentor:** Aditya Sir
 - **Official Team Repository:** [https://github.com/aiori-hackathon/A3-PS003-TC198](https://github.com/aiori-hackathon/A3-PS003-TC198)
+- **Live Interactive Dashboard:** [https://trafficpulsex-frontend.onrender.com](https://trafficpulsex-frontend.onrender.com)
+- **Live Backend API:** [https://trafficpulse-x.onrender.com](https://trafficpulse-x.onrender.com)
 - **Project Presentation (Slide Deck):** [View Presentation PDF](./A3-PS003-TC198-Presentation.pdf)
-- **Team Demonstration Video:** [Watch Demonstration Video](https://youtu.be/kbMFY39V_l4)
+- **Team Introduction Video:** [Watch Introduction Video](https://youtu.be/kbMFY39V_l4)
+- **Dashboard Demonstration Video:** [Watch Walkthrough Video](https://youtu.be/_b2-zvt9JjI)
+
+---
+
+## System Architecture
+
+```mermaid
+flowchart TD
+    subgraph DataLayer ["1. Telemetry & Sensor Benchmarks"]
+        METR["METR-LA HDF5 Benchmark<br/>(207 Sensors x 34,272 Timesteps)"]
+        PeMS["PeMS08 Flow Benchmark<br/>(170 Sensors District 8)"]
+        Geo["Caltrans PeMS GIS Cross-Points<br/>(sensor_location_names.json)"]
+    end
+
+    subgraph BackendEngine ["2. FastAPI Backend Engine (Python 3.11)"]
+        Stream["Replay & Telemetry Adapter<br/>(backend/data_source.py)"]
+        Pred["SpatialGraphLSTM Forecast Engine<br/>(backend/prediction/)"]
+        Decision["9-Factor Need Score Engine<br/>(backend/decision/)"]
+        FL["4-Region FedAvg Service<br/>(backend/federated/)"]
+        Comm["Selective Communication Engine<br/>(backend/communication_intelligence/)"]
+    end
+
+    subgraph ClientLayer ["3. React 19 Frontend Dashboard"]
+        Shell["App Layout & Theme Provider"]
+        Replay["ReplayContext Telemetry Clock"]
+        Dashboards["7 Specialized Competition Dashboards:<br/>Overview | Network Map | Predictions | Decision Intel | Federated | Comm | Alerts"]
+    end
+
+    METR --> Stream
+    PeMS --> Stream
+    Geo --> Stream
+
+    Stream --> Pred
+    Stream --> Decision
+    Pred --> FL
+    FL --> Comm
+
+    Comm --> Replay
+    Pred --> Replay
+    Decision --> Replay
+    Replay --> Dashboards
+    Shell --> Dashboards
+```
+
+Detailed component breakdowns and code guides:
+- [Frontend Architecture & Component Guide](src/README.md)
+- [Backend Engine & Model Provenance Guide](backend/README.md)
+- [Viva Presentation & Defense Guide](docs/DEMO_VIVA.md)
 
 ---
 
