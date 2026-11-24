@@ -362,10 +362,10 @@ export default function DistributionReproducibilitySection() {
                     }}
                   />
                   <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '4px' }} iconSize={10} />
-                  <Bar dataKey="NonIID" name="Non-IID (Geographic)" fill="#9D5CFF" radius={[4, 4, 0, 0]}>
+                  <Bar dataKey="NonIID" name="Non-IID (Geographic)" fill="#9D5CFF" radius={[4, 4, 0, 0]} isAnimationActive={true} animationDuration={400}>
                     <ErrorBar dataKey="NonIID_error" width={4} strokeWidth={1.5} stroke={isDark ? "#E2E8F0" : "#334155"} />
                   </Bar>
-                  <Bar dataKey="IID" name="IID (Uniform-Random)" fill="#06B6D4" radius={[4, 4, 0, 0]}>
+                  <Bar dataKey="IID" name="IID (Uniform-Random)" fill="#06B6D4" radius={[4, 4, 0, 0]} isAnimationActive={true} animationDuration={400}>
                     <ErrorBar dataKey="IID_error" width={4} strokeWidth={1.5} stroke={isDark ? "#E2E8F0" : "#334155"} />
                   </Bar>
                 </BarChart>
@@ -425,6 +425,8 @@ export default function DistributionReproducibilitySection() {
                     stroke="#9D5CFF"
                     strokeWidth={2.2}
                     dot={{ r: 2.5, fill: '#9D5CFF' }}
+                    isAnimationActive={true}
+                    animationDuration={400}
                   />
                   <Line
                     type="monotone"
@@ -434,6 +436,8 @@ export default function DistributionReproducibilitySection() {
                     strokeWidth={2.2}
                     strokeDasharray="4 4"
                     dot={{ r: 2.5, fill: '#06B6D4' }}
+                    isAnimationActive={true}
+                    animationDuration={400}
                   />
                 </LineChart>
               </ResponsiveContainer>

@@ -356,7 +356,7 @@ export default function Prediction() {
   ];
 
   return (
-    <div className="space-y-6 w-full pb-12">
+    <div className="space-y-6 w-full pb-12 animate-page-enter">
       {/* SECTION A: HEADER HERO CARD */}
       <div className="relative overflow-hidden rounded-2xl bg-white dark:bg-[#071727] border border-slate-200 dark:border-[#17364E] p-5 lg:p-6 shadow-xs dark:shadow-md transition-colors">
         <div className="space-y-1.5">

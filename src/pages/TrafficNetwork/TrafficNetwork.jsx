@@ -341,7 +341,7 @@ export default function TrafficNetwork() {
   ];
 
   return (
-    <div className="space-y-5 pb-10">
+    <div className="space-y-5 pb-10 animate-page-enter">
       {/* 1. Header with Autocomplete Sensor Search */}
       <TrafficNetworkHeader
         searchQuery={searchQuery}

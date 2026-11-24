@@ -56,7 +56,9 @@ TrafficPulse-X evaluates whether decentralized federated training with selective
 - **Historical Replay Engine**: Deterministic playback over 34,272 METR-LA observations (March-June 2012).
 - **Live Data Streaming Adapter**: Pluggable provider interface for external streaming (Historical Replay default; unconfigured streams report 503 without fake fallback).
 - **PeMS08 Traffic Flow Extension**: Verified public benchmark extension forecasting traffic flow volume (veh/5min) across 170 sensors in District 8.
-- **Differential Privacy Add-On**: Evaluated Opacus DP-FedAvg experiment providing verified $(\epsilon = 5.311, \delta = 10^{-5})$-DP bounds.
+- **Differential Privacy Experiment**: Empirical gradient-clipping and Gaussian-perturbation study; the Opacus accountant projects a theoretical $(\epsilon = 5.311, \delta = 10^{-5})$ bound under sampling and per-example clipping assumptions not formally satisfied by the current batch-level implementation.
+- **Production UI & Sharp Typography Engine**: High-performance font rendering (Inter, JetBrains Mono, Cascadia Code), GPU-composited anti-blurring, micro-interaction transitions, and WCAG-compliant reduced motion accessibility.
+- **Optimized Bundle Chunking**: Manual chunk splitting isolating React runtime, Recharts data visualization, Leaflet GIS mapping, and Lucide icons for instantaneous sub-2-second production builds.
 
 ---
 
@@ -175,14 +177,22 @@ The frontend console provides 7 canonical routes:
 
 ## Federated Learning & Selective Communication
 
-### 4-Region Client Partitioning
+### 4-Region Client Partitioning & Target-Weighted FedAvg
 
-The 207 sensors are partitioned into 4 geographic zones to reflect administrative boundaries:
+The 207 sensors are partitioned into 4 geographic zones to reflect authentic administrative freeway corridors:
 
-- **Client A (North-East)**: 48 sensors (Weight: 0.2319)
-- **Client B (South-East)**: 57 sensors (Weight: 0.2754)
-- **Client C (Central-West)**: 58 sensors (Weight: 0.2802)
-- **Client D (North-West)**: 44 sensors (Weight: 0.2126)
+- **Client A (North-East Cluster)**: 48 sensors | 4,221,681 valid targets | **Weight: 0.229069**
+- **Client B (South-East Corridor)**: 57 sensors | 5,107,314 valid targets | **Weight: 0.277117**
+- **Client C (Central-West Arterial)**: 58 sensors | 5,150,446 valid targets | **Weight: 0.279458**
+- **Client D (North-West Chokepoints)**: 44 sensors | 3,950,559 valid targets | **Weight: 0.214357**
+- **Total Network**: 207 sensors | 18,429,761 valid targets | **Sum of Weights: 1.000000**
+
+#### Why Valid Training Targets Determine Aggregation Weights:
+In real-world highway loop detector networks like METR-LA, sensor missingness (dropouts, masked null readings) varies significantly across regional corridors. If aggregation weights were calculated from raw sensor counts ($48/207 \approx 0.2319$, etc.), clients with high sensor dropouts would be disproportionately overweighted during parameter aggregation. Instead, TrafficPulse-X strictly weights each client by its count of non-masked, valid training observations $n_k$:
+
+$$w_k = \frac{n_k}{\sum_{j=1}^{4} n_j}, \quad \theta_{\text{global}} = \sum_{k=1}^{4} w_k \theta_k$$
+
+This aligns client influence with actual valid observation volume, preventing missing telemetry from distorting parameter aggregation across heterogeneous non-IID partitions.
 
 ### CCV Selective Participation Policies
 
@@ -215,7 +225,7 @@ TrafficPulse-X/
 │   ├── graph/                            # Spatial GCN (Chebyshev polynomials)
 │   ├── spatiotemporal/                   # Joint Graph+LSTM architecture
 │   ├── federated/                        # Client, Server, FedAvg training
-│   └── privacy/                          # Opacus DP-FedAvg experiment
+│   └── privacy/                          # Gradient clipping & Gaussian perturbation experiment
 ├── data/
 │   ├── raw/metr-la/                      # adj_mx.pkl, sensor IDs (metr-la.h5 ignored)
 │   ├── raw/pems08/                       # distance.csv, pems08.npz (18.5 MB)
@@ -327,7 +337,7 @@ The FastAPI server exposes 61 REST endpoints under `/api/*`:
 1. **Historical Replay as Primary Execution**: All demonstrations use deterministic replay of the METR-LA benchmark. No claims are made of active municipal live deployments.
 2. **No Physical Bandwidth Claims**: Telemetry reduction is reported as **Application Payload** (serialized tensor bytes). Cellular radio bandwidth savings are not claimed.
 3. **Controlled Transport Benchmark**: Network-byte measurements are conducted over localhost sockets to quantify protocol framing, not field wireless links.
-4. **Differential Privacy Boundaries**: Formal $(\epsilon, \delta)$-DP guarantees apply exclusively to the optional Opacus experiment add-on, not the standard FedAvg baseline.
+4. **Differential Privacy Scope**: The optional privacy module implements empirical batch-level gradient clipping and Gaussian noise perturbation. The reported $(\epsilon = 5.311, \delta = 10^{-5})$ value is a theoretical Opacus RDP accountant projection whose per-example clipping assumptions are not formally satisfied by the batch-level training pipeline; it is not claimed as a mathematically proven privacy guarantee.
 5. **No Fabricated Data**: Unconfigured external streaming endpoints report unavailable without synthetic fallback.
 
 For complete contracts and SHA-256 artifact checksums, see [docs/SCIENTIFIC_SCOPE.md](docs/SCIENTIFIC_SCOPE.md).

@@ -163,7 +163,7 @@ export default function Alerts() {
   ];
 
   return (
-    <div className="space-y-5 pb-10">
+    <div className="space-y-5 pb-10 animate-page-enter">
       {/* 1. Header & Replay Context Strip */}
       <div className="relative overflow-hidden rounded-2xl bg-white dark:bg-[#071727] border border-slate-200 dark:border-[#17364E] p-5 lg:p-6 shadow-xs dark:shadow-md transition-colors">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -173,18 +173,18 @@ export default function Alerts() {
                 <Bell className="w-5 h-5" />
               </div>
               <h1 className="text-xl lg:text-2xl font-extrabold text-slate-900 dark:text-[#F5F8FC] tracking-tight">
-                Traffic Alerts
+                Traffic Alerts &bull; 10 Curated Benchmark Incident Scenarios
               </h1>
             </div>
             <p className="text-xs sm:text-sm text-slate-600 dark:text-[#B8C7D8] font-medium max-w-2xl">
-              Replay-aware incident triggers, uncertainty boundaries, and evidence actions across the network.
+              10 Curated Benchmark Incident Scenarios (METR-LA Replay Evaluation Set): Demonstrating replay-aware anomaly triggers, uncertainty boundaries, and evidence actions across the network.
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-[#0B2033] border border-slate-200 dark:border-[#17364E] font-mono text-xs text-slate-700 dark:text-[#BCD0E2]">
               <Clock className="w-3.5 h-3.5 text-cyan-500" />
-              <span>Historical Replay &bull; Active &bull; {timestampStr ? timestampStr.substring(0, 16) : '2012-03-01 00:00'}</span>
+              <span>Historical Replay &bull; Active &bull; {timestampStr ? timestampStr.substring(0, 16) : '2012-03-01 01:00'}</span>
             </div>
           </div>
         </div>

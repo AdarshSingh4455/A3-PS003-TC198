@@ -200,12 +200,16 @@ export default function CentralizedVsFederatedCard() {
                   name="Centralized"
                   fill="#3B82F6"
                   radius={[4, 4, 0, 0]}
+                  isAnimationActive={true}
+                  animationDuration={400}
                 />
                 <Bar
                   dataKey="Federated"
                   name="Federated"
                   fill="#9D5CFF"
                   radius={[4, 4, 0, 0]}
+                  isAnimationActive={true}
+                  animationDuration={400}
                 />
               </BarChart>
             </ResponsiveContainer>

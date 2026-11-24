@@ -233,7 +233,7 @@ export default function DecisionIntelligence() {
   ];
 
   return (
-    <div className="space-y-5 pb-10">
+    <div className="space-y-5 pb-10 animate-page-enter">
       {/* 1. Header & Replay Context */}
       <div className="relative overflow-hidden rounded-2xl bg-white dark:bg-[#071727] border border-slate-200 dark:border-[#17364E] p-5 lg:p-6 shadow-xs dark:shadow-md transition-colors">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">

@@ -187,7 +187,7 @@ export default function Communication() {
   }, [activeHistoryPolicy]);
 
   return (
-    <div className="space-y-6 pb-12">
+    <div className="space-y-6 pb-12 animate-page-enter">
 
       {/* ==================================================================== */}
       {/* 1. CINEMATIC HEADER STRIP                                            */}
@@ -199,12 +199,9 @@ export default function Communication() {
               <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20">
                 <Radio className="w-5 h-5" />
               </div>
-              <h1 className="text-xl lg:text-2xl font-black text-slate-900 dark:text-[#F5F8FC] tracking-tight">
+              <h1 className="text-xl lg:text-2xl font-bold text-slate-900 dark:text-[#F5F8FC] tracking-tight">
                 Communication Intelligence
               </h1>
-              <span className="px-2.5 py-0.5 rounded-md text-[11px] font-mono font-bold bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30">
-                PS-003 EVALUATION
-              </span>
             </div>
             <p className="text-xs sm:text-sm text-slate-600 dark:text-[#B8C7D8] font-medium max-w-2xl">
               Adaptive sensor querying and selective federated weight synchronization.

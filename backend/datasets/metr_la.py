@@ -486,7 +486,7 @@ class METRLADatasetInspector:
                 "speedPredictionTarget": {
                     "classification": "PREDICTION_TARGET_AVAILABLE",
                     "available": ts_ok,
-                    "description": "Speed time-series target for GNN/LSTM prediction models (Model training NOT_IMPLEMENTED)"
+                    "description": "Speed time-series target for GNN/LSTM prediction models (SpatialGraphLSTM trained and evaluated on METR-LA)"
                 },
                 "freshness": {
                     "classification": "STATE_SUPPORTED",
@@ -837,6 +837,8 @@ class METRLADatasetInspector:
         raw_speed = 0.0
         ts_str = "2012-03-01T00:00:00"
         has_speed = False
+        nbr_mean_speed = None
+        valid_nbr_count = 0
 
         if os.path.exists(self.h5_path):
             try:
@@ -854,6 +856,21 @@ class METRLADatasetInspector:
 
                         if "axis1" in df_grp:
                             ts_str = pd.to_datetime(df_grp["axis1"][safe_t]).isoformat()
+
+                        # Calculate true neighbor mean speed from actual METR-LA telemetry
+                        nbr_valid_speeds = []
+                        for n_id in all_nbrs:
+                            if n_id in items:
+                                n_idx = items.index(n_id)
+                                nsp = float(values[safe_t, n_idx])
+                                if nsp > 0.0:
+                                    nbr_valid_speeds.append(nsp)
+                        if nbr_valid_speeds:
+                            nbr_mean_speed = round(sum(nbr_valid_speeds) / len(nbr_valid_speeds), 1)
+                            valid_nbr_count = len(nbr_valid_speeds)
+                        else:
+                            nbr_mean_speed = None
+                            valid_nbr_count = 0
             except Exception:
                 pass
 
@@ -881,6 +898,8 @@ class METRLADatasetInspector:
             },
             "timeSemantics": time_meta,
             "graphNeighbors": all_nbrs,
+            "neighborMeanSpeed": nbr_mean_speed,
+            "validNeighborCount": valid_nbr_count,
             "intraRegionNeighbors": intra_nbrs,
             "crossRegionNeighbors": cross_nbrs
         }

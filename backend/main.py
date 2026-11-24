@@ -116,7 +116,10 @@ def get_blind_spots():
 
 @app.get("/api/decision/evidence/{sensor_id}")
 def get_evidence_chain(sensor_id: str):
-    return data_source_mgr.get_evidence_chain(sensor_id)
+    res = data_source_mgr.get_evidence_chain(sensor_id)
+    if not res:
+        raise HTTPException(status_code=404, detail=f"Sensor '{sensor_id}' not found")
+    return res
 
 
 @app.get("/api/decision/query-candidates")

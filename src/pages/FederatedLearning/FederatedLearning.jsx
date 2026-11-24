@@ -44,7 +44,7 @@ const FROZEN_CLIENT_PARTITIONS = [
     targets: '4,221,681',
     testMae: '2.4446 mph',
     edgeLatency: '14 ms RTT',
-    hardware: 'Jetson Orin Nano Edge Gateway',
+    hardware: 'Target Edge Profile: Jetson Orin Nano (Simulated Partition)',
     colorBorder: 'border-l-blue-500',
     badgeColor: 'text-blue-400 bg-blue-500/10 border-blue-500/20',
     description: 'Lowest prediction error across network'
@@ -60,7 +60,7 @@ const FROZEN_CLIENT_PARTITIONS = [
     targets: '5,107,314',
     testMae: '4.0770 mph',
     edgeLatency: '21 ms RTT',
-    hardware: 'Edge TPU Compute Unit',
+    hardware: 'Target Edge Profile: Coral Edge TPU (Simulated Partition)',
     colorBorder: 'border-l-emerald-500',
     badgeColor: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
     description: 'High-density urban commuter arteries'
@@ -76,7 +76,7 @@ const FROZEN_CLIENT_PARTITIONS = [
     targets: '5,150,446',
     testMae: '3.4840 mph',
     edgeLatency: '16 ms RTT',
-    hardware: 'Industrial IPC Micro-Server',
+    hardware: 'Target Edge Profile: Industrial IPC (Simulated Partition)',
     colorBorder: 'border-l-purple-500',
     badgeColor: 'text-purple-400 bg-purple-500/10 border-purple-500/20',
     description: 'High graph degree arterial interchange'
@@ -92,7 +92,7 @@ const FROZEN_CLIENT_PARTITIONS = [
     targets: '3,950,559',
     testMae: '4.0979 mph',
     edgeLatency: '25 ms RTT',
-    hardware: 'ARM Embedded Telemetry Unit',
+    hardware: 'Target Edge Profile: ARM Embedded Unit (Simulated Partition)',
     colorBorder: 'border-l-amber-500',
     badgeColor: 'text-amber-400 bg-amber-500/10 border-amber-500/20',
     description: 'Valley transition chokepoint highway'
@@ -123,20 +123,19 @@ export default function FederatedLearning() {
   }, []);
 
   const chartRounds = roundsData?.roundsHistory || [
-    { round: 0, validationMAE: 4.82 },
-    { round: 1, validationMAE: 4.12 },
-    { round: 2, validationMAE: 3.75 },
-    { round: 3, validationMAE: 3.52 },
-    { round: 4, validationMAE: 3.39 },
-    { round: 5, validationMAE: 3.29 },
-    { round: 6, validationMAE: 3.22 },
-    { round: 7, validationMAE: 3.18 },
+    { round: 1, validationMAE: 3.3097 },
+    { round: 2, validationMAE: 3.2407 },
+    { round: 3, validationMAE: 3.2056 },
+    { round: 4, validationMAE: 3.1920 },
+    { round: 5, validationMAE: 3.2146 },
+    { round: 6, validationMAE: 3.1827 },
+    { round: 7, validationMAE: 3.1722 },
     { round: 8, validationMAE: 3.1536 },
-    { round: 9, validationMAE: 3.1610 },
-    { round: 10, validationMAE: 3.1705 },
-    { round: 11, validationMAE: 3.1820 },
-    { round: 12, validationMAE: 3.1950 },
-    { round: 13, validationMAE: 3.2100 }
+    { round: 9, validationMAE: 3.1667 },
+    { round: 10, validationMAE: 3.1601 },
+    { round: 11, validationMAE: 3.1684 },
+    { round: 12, validationMAE: 3.1540 },
+    { round: 13, validationMAE: 3.1583 }
   ];
 
   // Top 6 KPIs matching PS-003 frozen evaluation
@@ -192,7 +191,7 @@ export default function FederatedLearning() {
   ];
 
   return (
-    <div className="space-y-6 pb-12">
+    <div className="space-y-6 pb-12 animate-page-enter">
       {/* 1. Header Banner */}
       <div className="relative overflow-hidden rounded-2xl bg-white dark:bg-[#071727] border border-slate-200 dark:border-[#17364E] p-5 lg:p-6 shadow-xs dark:shadow-md transition-colors">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -201,12 +200,9 @@ export default function FederatedLearning() {
               <div className="p-2 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">
                 <Network className="w-5 h-5" />
               </div>
-              <h1 className="text-xl lg:text-2xl font-extrabold text-slate-900 dark:text-[#F5F8FC] tracking-tight">
+              <h1 className="text-xl lg:text-2xl font-bold text-slate-900 dark:text-[#F5F8FC] tracking-tight">
                 Federated Learning
               </h1>
-              <span className="px-2.5 py-0.5 rounded-md text-[11px] font-mono font-bold bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30">
-                PS-003 BENCHMARK
-              </span>
             </div>
             <p className="text-xs sm:text-sm text-slate-600 dark:text-[#CBDDF0] font-medium max-w-3xl">
               Decentralized collaborative speed forecasting across four regional traffic zones with rigorous communication-cost &amp; non-IID evaluation.
@@ -364,7 +360,16 @@ export default function FederatedLearning() {
                 <LineChart data={chartRounds} margin={{ top: 15, right: 20, left: 5, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#17364E" : "#E2E8F0"} opacity={isDark ? 0.6 : 0.9} vertical={false} />
                   <XAxis dataKey="round" stroke={isDark ? "#8295A8" : "#60758A"} fontSize={12} fontFamily="Inter, sans-serif" fontWeight={500} tickLine={false} unit=" r" />
-                  <YAxis domain={[3.0, 5.0]} width={58} stroke={isDark ? "#8295A8" : "#60758A"} fontSize={11} fontFamily="Inter, sans-serif" fontWeight={500} tickLine={false} tickFormatter={(v) => `${v.toFixed(1)} mph`} />
+                  <YAxis
+                    domain={[3.10, 3.35]}
+                    width={58}
+                    stroke={isDark ? "#8295A8" : "#60758A"}
+                    fontSize={11}
+                    fontFamily="Inter, sans-serif"
+                    fontWeight={500}
+                    tickLine={false}
+                    tickFormatter={(v) => `${v.toFixed(2)} mph`}
+                  />
                   <Tooltip
                     content={({ active, payload }) => {
                       if (active && payload && payload.length) {
@@ -389,6 +394,8 @@ export default function FederatedLearning() {
                     stroke="#9D5CFF"
                     strokeWidth={2.5}
                     dot={{ r: 3, fill: '#9D5CFF' }}
+                    isAnimationActive={true}
+                    animationDuration={400}
                   />
                 </LineChart>
               </ResponsiveContainer>

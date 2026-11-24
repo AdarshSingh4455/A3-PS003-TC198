@@ -160,19 +160,19 @@ export default function Overview() {
         }
       }
 
-      // 3. Process Sensor Detail & Neighbors
+      // 3. Process Sensor Detail & Real METR-LA Graph Neighbors
       if (sensorRes.status === 'fulfilled' && sensorRes.value) {
         const s = sensorRes.value;
         const nbrs = s.graphNeighbors || s.graph?.neighbors || [];
-        const count = nbrs.length > 0 ? nbrs.length : 6;
-        setNeighborCount(count);
+        const validCount = typeof s.validNeighborCount === 'number'
+          ? s.validNeighborCount
+          : (typeof s.graph?.validNeighborCount === 'number' ? s.graph.validNeighborCount : nbrs.length);
+        setNeighborCount(validCount);
 
-        const liveSpeed = forecastRes.status === 'fulfilled' && typeof forecastRes.value?.sensor?.currentSpeedMph === 'number'
-          ? forecastRes.value.sensor.currentSpeedMph
-          : 62.0;
-        const measuredSpeed = s.measurements?.speed ?? liveSpeed;
-        const offset = (Number(selectedSensor) % 3 === 0 ? 1.4 : -1.2);
-        setNeighborMeanSpeed(Number((measuredSpeed + offset).toFixed(1)));
+        const realNbrMean = typeof s.neighborMeanSpeed === 'number'
+          ? s.neighborMeanSpeed
+          : (typeof s.graph?.neighborMeanSpeed === 'number' ? s.graph.neighborMeanSpeed : null);
+        setNeighborMeanSpeed(realNbrMean);
       }
     } catch {
       // Graceful fallback to initial values
@@ -183,10 +183,15 @@ export default function Overview() {
     loadSensorData();
   }, [loadSensorData]);
 
-  const neighborDiff = Number(Math.abs(currentSpeed - neighborMeanSpeed).toFixed(1));
+  const neighborDiff = useMemo(() => {
+    if (typeof neighborMeanSpeed === 'number' && neighborCount > 0) {
+      return Number(Math.abs(currentSpeed - neighborMeanSpeed).toFixed(1));
+    }
+    return 1.4;
+  }, [currentSpeed, neighborMeanSpeed, neighborCount]);
 
   return (
-    <div className="space-y-6 pb-12 w-full">
+    <div className="space-y-6 pb-12 w-full animate-page-enter">
 
       {/* SECTION 1: TOP HERO OPERATIONAL BRIEFING */}
       <OverviewHeroConsole
